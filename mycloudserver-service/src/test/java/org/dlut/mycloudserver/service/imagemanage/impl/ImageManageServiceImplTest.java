@@ -56,4 +56,13 @@ public class ImageManageServiceImplTest extends BaseTestCase {
         MyCloudResult<Boolean> result = imageManageService.createImage(imageDTO);
         printObject(result);
     }
+
+    @Test
+    public void testUpdateImage() {
+        ImageDTO imageDTO = new ImageDTO();
+        imageDTO.setImageName("testupdate");
+        imageDTO.setImageUuid("843148d6-fd5c-4a92-8550-53de9dd60218");
+        MyCloudResult<Boolean> result = imageManageService.updateImage(imageDTO);
+        printObject(result);
+    }
 }

@@ -39,4 +39,10 @@ public class ImageManage {
         return imageManageMapper.createImage(imageDO) == 1 ? true : false;
     }
 
+    public boolean updateImage(ImageDO imageDO) {
+        if (imageDO == null) {
+            return false;
+        }
+        return imageManageMapper.updateImage(imageDO) == 1 ? true : false;
+    }
 }

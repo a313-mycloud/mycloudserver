@@ -17,7 +17,27 @@ import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
  */
 public interface IImageManageService {
 
+    /**
+     * 根据镜像的uuid获取镜像信息
+     * 
+     * @param imageUuid
+     * @return
+     */
     public MyCloudResult<ImageDTO> getImageByUuid(String imageUuid);
 
+    /**
+     * 创建一个新的镜像
+     * 
+     * @param imageDTO
+     * @return
+     */
     public MyCloudResult<Boolean> createImage(ImageDTO imageDTO);
+
+    /**
+     * 更新一个镜像
+     * 
+     * @param imageDTO
+     * @return
+     */
+    public MyCloudResult<Boolean> updateImage(ImageDTO imageDTO);
 }

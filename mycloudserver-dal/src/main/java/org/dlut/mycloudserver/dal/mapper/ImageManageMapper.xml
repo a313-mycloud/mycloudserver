@@ -26,6 +26,39 @@
 		LIMIT #{offset}, #{limit}
 	</sql>
 
+	<sql id="set">
+		<set>
+			<if test="imageName!=null">
+				image_name=#{imageName},
+			</if>
+			<if test="imageSize!=null">
+				image_size=#{imageSize},
+			</if>
+			<if test="imagePath!=null">
+				image_path=#{imagePath},
+			</if>
+			<if test="imageFormat!=null">
+				image_format=#{imageFormat},
+			</if>
+			<if test="parentImageUuid!=null">
+				parent_image_uuid=#{parentImageUuid},
+			</if>
+			<if test="referenceCount!=null">
+				reference_count=#{referenceCount},
+			</if>
+			<if test="isDelete!=null">
+				is_delete=#{isDelete},
+			</if>
+			<if test="isTemplate!=null">
+				is_template=#{isTemplate},
+			</if>
+			<if test="desc!=null">
+				image_desc=#{desc},
+			</if>
+			gmt_modified = now(),
+		</set>
+	</sql>
+
 	<select id="getImageByUuid" resultMap="RM-ImageDO">
 		SELECT
 		<include refid="select-param-column" />
@@ -40,5 +73,11 @@
 		#{imageFormat}, #{parentImageUuid}, 0, 0,
 		#{isTemplate}, #{desc}, now(), now())
 	</insert>
+
+	<update id="updateImage">
+		UPDATE mycloud_image
+		<include refid="set" />
+		WHERE image_uuid=#{imageUuid}
+	</update>
 
 </mapper>

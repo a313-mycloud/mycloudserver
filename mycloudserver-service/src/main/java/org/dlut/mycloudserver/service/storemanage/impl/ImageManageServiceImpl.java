@@ -51,4 +51,16 @@ public class ImageManageServiceImpl implements IImageManageService {
         return MyCloudResult.successResult(Boolean.TRUE);
     }
 
+    @Override
+    public MyCloudResult<Boolean> updateImage(ImageDTO imageDTO) {
+        ImageDO imageDO = ImageConvent.conventToImageDO(imageDTO);
+        if (imageDO == null) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
+        }
+        if (!imageManage.updateImage(imageDO)) {
+            return MyCloudResult.failedResult(ErrorEnum.IMAGE_UPDATE_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
 }
