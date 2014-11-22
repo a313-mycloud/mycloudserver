@@ -7,6 +7,9 @@
  */
 package org.dlut.mycloudserver.client.service.storemanage;
 
+import org.dlut.mycloudserver.client.common.MyCloudResult;
+import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
+
 /**
  * 类IImageManageService.java的实现描述：TODO 类实现描述
  * 
@@ -14,4 +17,7 @@ package org.dlut.mycloudserver.client.service.storemanage;
  */
 public interface IImageManageService {
 
+    public MyCloudResult<ImageDTO> getImageByUuid(String imageUuid);
+
+    public MyCloudResult<Boolean> createImage(ImageDTO imageDTO);
 }

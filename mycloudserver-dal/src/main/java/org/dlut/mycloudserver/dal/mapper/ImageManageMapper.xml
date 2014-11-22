@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dlut.mycloudserver.dal.mapper.ImageManageMapper">
+	<resultMap id="RM-ImageDO" type="ImageDO">
+		<result property="imageUuid" column="image_uuid" />
+		<result property="imageName" column="image_name" />
+		<result property="imageSize" column="image_size" />
+		<result property="imagePath" column="image_path" />
+		<result property="imageFormat" column="image_format" />
+		<result property="parentImageUuid" column="parent_image_uuid" />
+		<result property="referenceCount" column="reference_count" />
+		<result property="isDelete" column="is_delete" />
+		<result property="isTemplate" column="is_template" />
+		<result property="desc" column="image_desc" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+	</resultMap>
+
+	<sql id="select-param-column">
+		image_uuid, image_name, image_size, image_path,
+		image_format, parent_image_uuid, reference_count, is_delete,
+		is_template, image_desc, gmt_create, gmt_modified
+	</sql>
+
+	<sql id="page-limit">
+		LIMIT #{offset}, #{limit}
+	</sql>
+
+	<select id="getImageByUuid" resultMap="RM-ImageDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_image where image_uuid = #{imageUuid}
+	</select>
+
+	<insert id="createImage">
+		INSERT INTO mycloud_image(
+		<include refid="select-param-column" />
+		)
+		VALUES(#{imageUuid}, #{imageName}, #{imageSize}, #{imagePath},
+		#{imageFormat}, #{parentImageUuid}, 0, 0,
+		#{isTemplate}, #{desc}, now(), now())
+	</insert>
+
+</mapper>
