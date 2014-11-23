@@ -7,6 +7,8 @@
  */
 package org.dlut.mycloudserver.service.storemanage.impl;
 
+import java.io.File;
+
 import javax.annotation.Resource;
 
 import org.dlut.mycloudserver.client.common.ErrorEnum;
@@ -45,6 +47,12 @@ public class ImageManageServiceImpl implements IImageManageService {
         if (imageDO == null) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
+        // 校验文件是否存在
+        File imageFile = new File(imageDTO.getImagePath());
+        if (!imageFile.isFile()) {
+            return MyCloudResult.failedResult(ErrorEnum.IMAGE_FILE_NOT_EXIST);
+        }
+
         if (!imageManage.createImage(imageDO)) {
             return MyCloudResult.failedResult(ErrorEnum.IMAGE_CREATE_FAIL);
         }
@@ -61,6 +69,11 @@ public class ImageManageServiceImpl implements IImageManageService {
             return MyCloudResult.failedResult(ErrorEnum.IMAGE_UPDATE_FAIL);
         }
         return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    @Override
+    public MyCloudResult<ImageDTO> cloneImage(String srcImageUuid, String destImageName) {
+        return null;
     }
 
 }

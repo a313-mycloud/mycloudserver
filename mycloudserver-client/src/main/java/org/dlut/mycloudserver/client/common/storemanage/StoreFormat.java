@@ -13,16 +13,15 @@ package org.dlut.mycloudserver.client.common.storemanage;
  * @author luojie 2014年11月22日 下午3:58:32
  */
 public enum StoreFormat {
+    RAW("raw", "原始镜像类型"),
+    QCOW2("qcow2", "2代写时拷贝类型");
 
-    RAW(1, "raw"),
-    QCOW2(2, "qcow2");
-
-    private int    value;
+    private String value;
     private String desc;
 
-    public static StoreFormat getStoreFormatByValue(int value) {
+    public static StoreFormat getStoreFormatByValue(String value) {
         for (StoreFormat storeFormat : StoreFormat.values()) {
-            if (storeFormat.getValue() == value) {
+            if (storeFormat.getValue().equals(value)) {
                 return storeFormat;
             }
         }
@@ -30,13 +29,13 @@ public enum StoreFormat {
         return null;
     }
 
-    private StoreFormat(int value, String desc) {
+    private StoreFormat(String value, String desc) {
         this.value = value;
         this.desc = desc;
     }
 
-    public int getValue() {
-        return this.value;
+    public String getValue() {
+        return value;
     }
 
     public String getDesc() {

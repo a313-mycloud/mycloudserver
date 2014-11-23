@@ -37,5 +37,31 @@
 			<artifactId>quartz</artifactId>
 		</dependency>
 
+		<!-- velocity 相关包 -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>velocity-tools</groupId>
+			<artifactId>velocity-tools</artifactId>
+		</dependency>
+
+		<!-- libvirt相关包 -->
+		<dependency>
+			<groupId>org.libvirt</groupId>
+			<artifactId>libvirt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>jmimemagic</groupId>
+			<artifactId>jmimemagic</artifactId>
+		</dependency>
+
 	</dependencies>
 </project>

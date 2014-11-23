@@ -21,6 +21,13 @@
 		<project-version>0.0.1-SNAPSHOT</project-version>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>libvirt-org</id>
+			<url>http://libvirt.org/maven2</url>
+		</repository>
+	</repositories>
+
 	<build>
 		<plugins>
 
@@ -277,6 +284,37 @@
 				<groupId>org.quartz-scheduler</groupId>
 				<artifactId>quartz</artifactId>
 				<version>2.2.0</version>
+			</dependency>
+
+			<!-- velocity 相关包 -->
+			<dependency>
+				<groupId>org.apache.velocity</groupId>
+				<artifactId>velocity</artifactId>
+				<version>1.7</version>
+			</dependency>
+
+			<dependency>
+				<groupId>velocity-tools</groupId>
+				<artifactId>velocity-tools</artifactId>
+				<version>1.4</version>
+			</dependency>
+
+			<!-- libvirt相关包 -->
+			<dependency>
+				<groupId>org.libvirt</groupId>
+				<artifactId>libvirt</artifactId>
+				<version>0.4.8</version>
+			</dependency>
+			<dependency>
+				<groupId>net.java.dev.jna</groupId>
+				<artifactId>jna</artifactId>
+				<version>3.0.9</version>
+			</dependency>
+
+			<dependency>
+				<groupId>jmimemagic</groupId>
+				<artifactId>jmimemagic</artifactId>
+				<version>0.1.2</version>
 			</dependency>
 
 		</dependencies>

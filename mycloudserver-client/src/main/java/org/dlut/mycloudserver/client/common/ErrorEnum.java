@@ -18,6 +18,7 @@ public enum ErrorEnum {
     IMAGE_NOT_EXIST("2", "镜像不存在"),
     IMAGE_CREATE_FAIL("3", "镜像创建失败"),
     IMAGE_UPDATE_FAIL("4", "更新镜像失败"),
+    IMAGE_FILE_NOT_EXIST("5", "镜像文件不存在"),
     PARAM_IS_INVAILD("9999", "参数非法");
 
     private String errCode;

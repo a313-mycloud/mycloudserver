@@ -25,9 +25,9 @@ public class ImageDO extends BaseDO {
     private String  imageName;
 
     /**
-     * 虚拟机镜像大小，单位为字节
+     * 虚拟机镜像的总大小，包括未使用和使用的，单位为字节
      */
-    private Long    imageSize;
+    private Long    imageTotalSize;
 
     /**
      * 虚拟机镜像路径
@@ -37,7 +37,7 @@ public class ImageDO extends BaseDO {
     /**
      * 虚拟机镜像格式
      */
-    private Integer imageFormat;
+    private String  imageFormat;
 
     /**
      * 虚拟机镜像所依赖的父镜像uuid
@@ -128,20 +128,20 @@ public class ImageDO extends BaseDO {
         this.desc = desc;
     }
 
-    public Integer getImageFormat() {
+    public Long getImageTotalSize() {
+        return imageTotalSize;
+    }
+
+    public void setImageTotalSize(Long imageTotalSize) {
+        this.imageTotalSize = imageTotalSize;
+    }
+
+    public String getImageFormat() {
         return imageFormat;
     }
 
-    public void setImageFormat(Integer imageFormat) {
+    public void setImageFormat(String imageFormat) {
         this.imageFormat = imageFormat;
-    }
-
-    public Long getImageSize() {
-        return imageSize;
-    }
-
-    public void setImageSize(Long imageSize) {
-        this.imageSize = imageSize;
     }
 
 }

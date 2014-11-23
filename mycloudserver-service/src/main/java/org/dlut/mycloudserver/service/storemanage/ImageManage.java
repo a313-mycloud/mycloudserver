@@ -45,4 +45,11 @@ public class ImageManage {
         }
         return imageManageMapper.updateImage(imageDO) == 1 ? true : false;
     }
+
+    public boolean deleteImageByUuid(String imageUuid) {
+        if (StringUtils.isBlank(imageUuid)) {
+            return false;
+        }
+        return imageManageMapper.deleteImageByUuid(imageUuid) == 1 ? true : false;
+    }
 }

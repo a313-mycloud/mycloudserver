@@ -1,0 +1,26 @@
+<volume>
+	<name>$name</name>
+	<key>/var/lib/libvirt/images/ubuntu12.04-code-clone.qcow2</key>
+	<source>
+	</source>
+	<capacity>8589934592</capacity>
+	<allocation>139264</allocation>
+	<target>
+		<path>/var/lib/libvirt/images/ubuntu12.04-code-clone.qcow2</path> <!--新卷的地址 -->
+		<format type='qcow2' />
+		<permissions>
+			<mode>0660</mode>
+			<owner>0</owner>
+			<group>0</group>
+		</permissions>
+	</target>
+	<backingStore>
+		<path>/home/luojie/ubuntu12.04.qcow2</path><!--关联的镜像 -->
+		<format type='qcow2' />
+		<permissions>
+			<mode>0600</mode>
+			<owner>107</owner>
+			<group>107</group>
+		</permissions>
+	</backingStore>
+</volume>

@@ -29,9 +29,14 @@ public class ImageDTO extends BaseDTO {
     private String            imageName;
 
     /**
-     * 虚拟机镜像大小，单位字节
+     * 虚拟机镜像的总大小，单位字节
      */
-    private Long              imageSize;
+    private Long              imageTotalSize;
+
+    /**
+     * 虚拟机镜像已使用的大小，单位字节
+     */
+    private Long              imageUsedSize;
 
     /**
      * 虚拟机镜像路径
@@ -82,14 +87,6 @@ public class ImageDTO extends BaseDTO {
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
-    }
-
-    public Long getImageSize() {
-        return imageSize;
-    }
-
-    public void setImageSize(Long imageSize) {
-        this.imageSize = imageSize;
     }
 
     public String getImagePath() {
@@ -146,6 +143,22 @@ public class ImageDTO extends BaseDTO {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public Long getImageTotalSize() {
+        return imageTotalSize;
+    }
+
+    public void setImageTotalSize(Long imageTotalSize) {
+        this.imageTotalSize = imageTotalSize;
+    }
+
+    public Long getImageUsedSize() {
+        return imageUsedSize;
+    }
+
+    public void setImageUsedSize(Long imageUsedSize) {
+        this.imageUsedSize = imageUsedSize;
     }
 
 }

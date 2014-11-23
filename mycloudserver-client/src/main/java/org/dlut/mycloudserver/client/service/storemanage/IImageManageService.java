@@ -40,4 +40,13 @@ public interface IImageManageService {
      * @return
      */
     public MyCloudResult<Boolean> updateImage(ImageDTO imageDTO);
+
+    /**
+     * 快速克隆一个虚拟机镜像
+     * 
+     * @param srcImageUuid
+     * @param destImageName
+     * @return 克隆后的虚拟机镜像信息
+     */
+    public MyCloudResult<ImageDTO> cloneImage(String srcImageUuid, String destImageName);
 }

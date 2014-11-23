@@ -7,6 +7,8 @@
  */
 package org.dlut.mycloudserver.service.storemanage.convent;
 
+import java.io.File;
+
 import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.dal.dataobject.ImageDO;
@@ -27,7 +29,8 @@ public class ImageConvent {
         imageDTO.setImageFormat(StoreFormat.getStoreFormatByValue(imageDO.getImageFormat()));
         imageDTO.setImageName(imageDO.getImageName());
         imageDTO.setImagePath(imageDO.getImagePath());
-        imageDTO.setImageSize(imageDO.getImageSize());
+        imageDTO.setImageTotalSize(imageDO.getImageTotalSize());
+        imageDTO.setImageUsedSize(new File(imageDO.getImagePath()).length());
         imageDTO.setImageUuid(imageDO.getImageUuid());
         imageDTO.setIsDelete(imageDO.getIsDelete());
         imageDTO.setIsTemplagte(imageDO.getIsTemplate());
@@ -49,7 +52,7 @@ public class ImageConvent {
         }
         imageDO.setImageName(imageDTO.getImageName());
         imageDO.setImagePath(imageDTO.getImagePath());
-        imageDO.setImageSize(imageDTO.getImageSize());
+        imageDO.setImageTotalSize(imageDTO.getImageTotalSize());
         imageDO.setImageUuid(imageDTO.getImageUuid());
         imageDO.setIsDelete(imageDTO.getIsDelete());
         imageDO.setIsTemplate(imageDTO.getIsTemplagte());
