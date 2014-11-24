@@ -19,6 +19,9 @@ public enum ErrorEnum {
     IMAGE_CREATE_FAIL("3", "镜像创建失败"),
     IMAGE_UPDATE_FAIL("4", "更新镜像失败"),
     IMAGE_FILE_NOT_EXIST("5", "镜像文件不存在"),
+    IMAGE_GET_FORMAT_SIZE_FAIL("6", "获取镜像格式和大小失败"),
+    IMAGE_FORMAT_UNKNOW("7", "未知的镜像格式"),
+    IMAGE_CLONE_FORMAT_INVAILD("8", "不能克隆qcow2格式以外的镜像"),
     PARAM_IS_INVAILD("9999", "参数非法");
 
     private String errCode;

@@ -66,7 +66,7 @@ public class ImageDTO extends BaseDTO {
     /**
      * 是否是模板
      */
-    private Boolean           isTemplagte;
+    private Boolean           isTemplate;
 
     /**
      * 描述信息
@@ -129,12 +129,12 @@ public class ImageDTO extends BaseDTO {
         this.isDelete = isDelete;
     }
 
-    public Boolean getIsTemplagte() {
-        return isTemplagte;
+    public Boolean getIsTemplate() {
+        return isTemplate;
     }
 
-    public void setIsTemplagte(Boolean isTemplagte) {
-        this.isTemplagte = isTemplagte;
+    public void setIsTemplate(Boolean isTemplate) {
+        this.isTemplate = isTemplate;
     }
 
     public String getDesc() {

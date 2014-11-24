@@ -33,7 +33,7 @@ public class ImageConvent {
         imageDTO.setImageUsedSize(new File(imageDO.getImagePath()).length());
         imageDTO.setImageUuid(imageDO.getImageUuid());
         imageDTO.setIsDelete(imageDO.getIsDelete());
-        imageDTO.setIsTemplagte(imageDO.getIsTemplate());
+        imageDTO.setIsTemplate(imageDO.getIsTemplate());
         imageDTO.setParentImageUuid(imageDO.getParentImageUuid());
         imageDTO.setReferenceCount(imageDO.getReferenceCount());
 
@@ -55,7 +55,7 @@ public class ImageConvent {
         imageDO.setImageTotalSize(imageDTO.getImageTotalSize());
         imageDO.setImageUuid(imageDTO.getImageUuid());
         imageDO.setIsDelete(imageDTO.getIsDelete());
-        imageDO.setIsTemplate(imageDTO.getIsTemplagte());
+        imageDO.setIsTemplate(imageDTO.getIsTemplate());
         imageDO.setParentImageUuid(imageDTO.getParentImageUuid());
         imageDO.setReferenceCount(imageDTO.getReferenceCount());
 

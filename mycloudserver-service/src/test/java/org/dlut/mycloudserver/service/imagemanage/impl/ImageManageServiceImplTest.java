@@ -7,7 +7,6 @@
  */
 package org.dlut.mycloudserver.service.imagemanage.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -16,9 +15,7 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
-import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicException;
-import net.sf.jmimemagic.MagicMatch;
 import net.sf.jmimemagic.MagicMatchNotFoundException;
 import net.sf.jmimemagic.MagicParseException;
 
@@ -28,7 +25,6 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
-import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.client.service.storemanage.IImageManageService;
 import org.dlut.mycloudserver.service.BaseTestCase;
 import org.junit.Test;
@@ -64,12 +60,10 @@ public class ImageManageServiceImplTest extends BaseTestCase {
     @Test
     public void testCreateImage() {
         ImageDTO imageDTO = new ImageDTO();
-        imageDTO.setImageFormat(StoreFormat.QCOW2);
         imageDTO.setImageName("ubuntu12.04");
         imageDTO.setImagePath("/home/luojie/mycloud-store/515359f5-979a-491d-962c-10bf112eb176");
-        //        imageDTO.setImageSize(1258686L);
         imageDTO.setImageUuid(UUID.randomUUID().toString());
-        imageDTO.setIsTemplagte(true);
+        imageDTO.setIsTemplate(true);
         MyCloudResult<Boolean> result = imageManageService.createImage(imageDTO);
         printObject(result);
     }
@@ -112,12 +106,18 @@ public class ImageManageServiceImplTest extends BaseTestCase {
     public void testClone() throws LibvirtException, MagicParseException, MagicMatchNotFoundException, MagicException {
 
         //        printObject(CommonUtil.createUuid());
-        File image = new File("/home/luojie/mycloud-store/515359f5-979a-491d-962c-10bf112eb176");
-        printObject(image.length());
-        MagicMatch match = Magic.getMagicMatch(image, true);
-        printObject(match.getMimeType());
+        //        String imagePath = "/home/luojie/mycloud-store/515359f5-979a-491d-962c-10bf112eb176";
+        //        File image = new File(imagePath);
+        //        Object[] result = FileUtil.getStoreFormatAndSize(imagePath);
+        //        System.out.println(result[0]);
+        //        System.out.println(result[1]);
+        //        printObject(image.length());
+        //        FileUtil.getStoreFormat(imagePath);
         //        Connect conn = new Connect("qemu:///system");
         //        StoragePool pool = conn.storagePoolLookupByName("default");
-    }
+        MyCloudResult<ImageDTO> result = imageManageService.cloneImage("85acd1bc-3ae1-4c3e-a853-90c55fc47f91",
+                "ubuntu-clone", false);
+        printObject(result);
 
+    }
 }

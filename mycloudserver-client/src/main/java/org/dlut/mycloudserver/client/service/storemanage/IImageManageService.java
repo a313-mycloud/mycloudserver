@@ -26,7 +26,7 @@ public interface IImageManageService {
     public MyCloudResult<ImageDTO> getImageByUuid(String imageUuid);
 
     /**
-     * 创建一个新的镜像
+     * 创建一个新的镜像，只需要设置imageName、imageUuid、imagePath以及isTemplate这几个属性即可
      * 
      * @param imageDTO
      * @return
@@ -46,7 +46,8 @@ public interface IImageManageService {
      * 
      * @param srcImageUuid
      * @param destImageName
+     * @param isTemplate 是否作为模板
      * @return 克隆后的虚拟机镜像信息
      */
-    public MyCloudResult<ImageDTO> cloneImage(String srcImageUuid, String destImageName);
+    public MyCloudResult<ImageDTO> cloneImage(String srcImageUuid, String destImageName, boolean isTemplate);
 }

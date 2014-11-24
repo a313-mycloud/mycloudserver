@@ -1,0 +1,26 @@
+<volume>
+	<name>$name</name>
+	<key>$uuid</key>
+	<source>
+	</source>
+	<capacity>8589934592</capacity>
+	<allocation>139264</allocation>
+	<target>
+		<path>$newImagePath</path> <!--新卷的地址 -->
+		<format type='qcow2' />
+		<permissions>
+			<mode>0666</mode>
+			<owner>0</owner>
+			<group>0</group>
+		</permissions>
+	</target>
+	<backingStore>
+		<path>$srcImagePath</path><!--关联的镜像 -->
+		<format type='qcow2' />
+		<permissions>
+			<mode>0666</mode>
+			<owner>107</owner>
+			<group>107</group>
+		</permissions>
+	</backingStore>
+</volume>
