@@ -25,11 +25,11 @@ public class ImageManage {
     @Resource
     private ImageManageMapper imageManageMapper;
 
-    public ImageDO getImageByUuid(String imageUuid) {
+    public ImageDO getImageByUuid(String imageUuid, boolean isIncludDeletedImage) {
         if (StringUtils.isBlank(imageUuid)) {
             return null;
         }
-        return imageManageMapper.getImageByUuid(imageUuid);
+        return imageManageMapper.getImageByUuid(imageUuid, isIncludDeletedImage);
     }
 
     public boolean createImage(ImageDO imageDO) {

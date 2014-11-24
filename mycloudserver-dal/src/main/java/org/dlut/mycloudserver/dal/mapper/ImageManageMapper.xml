@@ -63,6 +63,9 @@
 		SELECT
 		<include refid="select-param-column" />
 		FROM mycloud_image where image_uuid = #{imageUuid}
+		<if test="isIncludDeletedImage=false">
+			WHERE is_delete = 0
+		</if>
 	</select>
 
 	<insert id="createImage">

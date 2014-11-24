@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dlut.mycloudserver.client.common.ErrorEnum;
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
@@ -50,7 +51,7 @@ public class ImageManageServiceImpl implements IImageManageService {
      */
     @Override
     public MyCloudResult<ImageDTO> getImageByUuid(String imageUuid) {
-        ImageDO imageDO = imageManage.getImageByUuid(imageUuid);
+        ImageDO imageDO = imageManage.getImageByUuid(imageUuid, false);
         ImageDTO imageDTO = ImageConvent.conventToImageDTO(imageDO);
         if (imageDTO == null) {
             return MyCloudResult.failedResult(ErrorEnum.IMAGE_NOT_EXIST);
@@ -147,14 +148,72 @@ public class ImageManageServiceImpl implements IImageManageService {
         newImageDTO.setParentImageUuid(srcImageDTO.getImageUuid());
         MyCloudResult<Boolean> createResult = this.createImage(newImageDTO);
         if (!createResult.isSuccess()) {
+            log.warn("在数据库中创建镜像失败，原因：" + createResult.getMsgInfo());
             return MyCloudResult.failedResult(createResult.getMsgCode(), createResult.getMsgInfo());
         }
         // 更新父镜像的依赖数量
         srcImageDTO.setReferenceCount(srcImageDTO.getReferenceCount() + 1);
         MyCloudResult<Boolean> updateResult = this.updateImage(srcImageDTO);
         if (!updateResult.isSuccess()) {
+            log.warn("在数据库中更新镜像失败，原因：" + updateResult.getMsgInfo());
             return MyCloudResult.failedResult(updateResult.getMsgCode(), updateResult.getMsgInfo());
         }
         return MyCloudResult.successResult(newImageDTO);
+    }
+
+    @Override
+    public MyCloudResult<Boolean> deleteImageByUuid(String imageUuid) {
+        MyCloudResult<ImageDTO> result = this.getImageByUuid(imageUuid);
+        if (!result.isSuccess()) {
+            return MyCloudResult.failedResult(result.getMsgCode(), result.getMsgInfo());
+        }
+        ImageDTO needImageDTO = result.getModel();
+        // 允许物理删除
+        if (needImageDTO.getReferenceCount() == 0) {
+
+        } else {
+
+        }
+        return null;
+    }
+
+    /**
+     * 物理删除镜像，包括删除文件以及数据库中的记录
+     * 
+     * @param imageDTO
+     * @return
+     */
+    private boolean physicalDeleteImage(ImageDTO imageDTO) {
+        if (imageDTO == null) {
+            return false;
+        }
+        File imageFile = new File(imageDTO.getImagePath());
+        if (!imageFile.delete()) {
+            log.warn("删除镜像文件 " + imageDTO.getImagePath() + "失败");
+            return false;
+        }
+        if (!imageManage.deleteImageByUuid(imageDTO.getImageUuid())) {
+            log.warn("删除镜像" + imageDTO.getImageUuid() + " 数据库记录失败");
+            return false;
+        }
+        // 如果待删除的镜像有父镜像，则父镜像的引用值减一
+        if (!StringUtils.isBlank(imageDTO.getParentImageUuid())) {
+            if (!decreaseImageReferenceCount(imageDTO.getParentImageUuid())) {
+                log.warn("对父镜像 " + imageDTO.getParentImageUuid() + " 的引用值减一失败");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 递归减少镜像的引用值，如果镜像的is_delete为true，并且引用值为0，则可以物理删除
+     * 
+     * @param imageUuid
+     * @return
+     */
+    private boolean decreaseImageReferenceCount(String imageUuid) {
+
+        return true;
     }
 }

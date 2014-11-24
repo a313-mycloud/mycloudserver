@@ -23,7 +23,7 @@ public interface ImageManageMapper {
      * @param imageUuid
      * @return
      */
-    ImageDO getImageByUuid(@Param("imageUuid") String imageUuid);
+    ImageDO getImageByUuid(@Param("imageUuid") String imageUuid, boolean isIncludDeletedImage);
 
     /**
      * 创建一个新的虚拟机镜像

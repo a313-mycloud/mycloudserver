@@ -50,4 +50,12 @@ public interface IImageManageService {
      * @return 克隆后的虚拟机镜像信息
      */
     public MyCloudResult<ImageDTO> cloneImage(String srcImageUuid, String destImageName, boolean isTemplate);
+
+    /**
+     * 根据uuid删除镜像
+     * 
+     * @param imageUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> deleteImageByUuid(String imageUuid);
 }
