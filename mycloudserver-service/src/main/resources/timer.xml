@@ -8,16 +8,16 @@
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="hostPerformanceTrigger" />
+				<ref bean="hostListenerTrigger" />
 			</list>
 		</property>
 	</bean>
 
-	<bean id="hostPerformanceTrigger"
+	<!-- <bean id="hostPerformanceTrigger"
 		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<property name="jobDetail" ref="hostPerformanceJobDetail" />
-		<property name="startDelay" value="2000"/>
-		<property name="repeatInterval" value="2000"/>
+		<property name="startDelay" value="2000" />
+		<property name="repeatInterval" value="2000" />
 	</bean>
 
 	<bean id="hostPerformanceJobDetail"
@@ -28,8 +28,22 @@
 		<property name="targetMethod">
 			<value>execute</value>
 		</property>
+	</bean> -->
+
+	<bean id="hostListenerTrigger"
+		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+		<property name="jobDetail" ref="hostListenerJobDetail" />
+		<property name="startDelay" value="2000" />
+		<property name="repeatInterval" value="2000" />
 	</bean>
 
-	<!-- <bean id="hostPerformanceFetchJob" class="org.dlut.mycloudserver.service.hostmanage.HostPerformanceFetchJob"/> -->
-
+	<bean id="hostListenerJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="hostListener" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+	</bean>
 </beans>
