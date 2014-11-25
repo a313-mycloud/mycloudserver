@@ -118,7 +118,11 @@ public class ImageDTO extends BaseDTO {
     }
 
     public void setReferenceCount(Integer referenceCount) {
-        this.referenceCount = referenceCount;
+        if (referenceCount >= 0) {
+            this.referenceCount = referenceCount;
+        } else {
+            this.referenceCount = 0;
+        }
     }
 
     public Boolean getIsDelete() {

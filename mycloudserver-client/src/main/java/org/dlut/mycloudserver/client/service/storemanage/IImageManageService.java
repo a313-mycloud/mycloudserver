@@ -23,7 +23,7 @@ public interface IImageManageService {
      * @param imageUuid
      * @return
      */
-    public MyCloudResult<ImageDTO> getImageByUuid(String imageUuid);
+    public MyCloudResult<ImageDTO> getImageByUuid(String imageUuid, boolean isIncludDeletedImage);
 
     /**
      * 创建一个新的镜像，只需要设置imageName、imageUuid、imagePath以及isTemplate这几个属性即可

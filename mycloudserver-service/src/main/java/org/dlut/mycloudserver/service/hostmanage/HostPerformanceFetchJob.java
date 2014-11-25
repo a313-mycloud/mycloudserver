@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class HostPerformanceFetchJob {
 
     public void execute() {
-        System.out.println("haha");
-        System.out.println(this);
+        //        System.out.println("haha");
+        //        System.out.println(this);
     }
 }

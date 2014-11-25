@@ -25,6 +25,7 @@ import org.dlut.mycloudserver.service.storemanage.convent.ImageConvent;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
 import org.libvirt.StoragePool;
+import org.libvirt.StorageVol;
 import org.mycloudserver.common.constants.StoreConstants;
 import org.mycloudserver.common.util.CommonUtil;
 import org.mycloudserver.common.util.FileUtil;
@@ -50,8 +51,8 @@ public class ImageManageServiceImpl implements IImageManageService {
      * 根据镜像的uuid获取镜像信息
      */
     @Override
-    public MyCloudResult<ImageDTO> getImageByUuid(String imageUuid) {
-        ImageDO imageDO = imageManage.getImageByUuid(imageUuid, false);
+    public MyCloudResult<ImageDTO> getImageByUuid(String imageUuid, boolean isIncludDeletedImage) {
+        ImageDO imageDO = imageManage.getImageByUuid(imageUuid, isIncludDeletedImage);
         ImageDTO imageDTO = ImageConvent.conventToImageDTO(imageDO);
         if (imageDTO == null) {
             return MyCloudResult.failedResult(ErrorEnum.IMAGE_NOT_EXIST);
@@ -110,7 +111,7 @@ public class ImageManageServiceImpl implements IImageManageService {
      */
     @Override
     public MyCloudResult<ImageDTO> cloneImage(String srcImageUuid, String destImageName, boolean isTemplate) {
-        MyCloudResult<ImageDTO> result = this.getImageByUuid(srcImageUuid);
+        MyCloudResult<ImageDTO> result = this.getImageByUuid(srcImageUuid, false);
         if (!result.isSuccess()) {
             log.warn("获取待克隆的镜像 " + srcImageUuid + " 失败");
             return MyCloudResult.failedResult(result.getMsgCode(), result.getMsgInfo());
@@ -134,7 +135,7 @@ public class ImageManageServiceImpl implements IImageManageService {
             String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.VOLUME_TEMPLATE_PATH, context);
             System.out.println(xmlDesc);
             pool.storageVolCreateXML(xmlDesc, 0);
-
+            connect.close();
         } catch (LibvirtException e) {
             log.error("error message", e);
             return MyCloudResult.failedResult("-1", e.getMessage());
@@ -163,18 +164,26 @@ public class ImageManageServiceImpl implements IImageManageService {
 
     @Override
     public MyCloudResult<Boolean> deleteImageByUuid(String imageUuid) {
-        MyCloudResult<ImageDTO> result = this.getImageByUuid(imageUuid);
+        MyCloudResult<ImageDTO> result = this.getImageByUuid(imageUuid, false);
         if (!result.isSuccess()) {
             return MyCloudResult.failedResult(result.getMsgCode(), result.getMsgInfo());
         }
         ImageDTO needImageDTO = result.getModel();
         // 允许物理删除
         if (needImageDTO.getReferenceCount() == 0) {
-
+            if (!physicalDeleteImage(needImageDTO)) {
+                log.warn("物理删除镜像 " + needImageDTO + "失败");
+                return MyCloudResult.failedResult(ErrorEnum.IMAGE_PHYSICAL_DELETE_FAIL);
+            }
         } else {
-
+            // 将状态is_delete变为true
+            needImageDTO.setIsDelete(Boolean.TRUE);
+            MyCloudResult<Boolean> updateResult = this.updateImage(needImageDTO);
+            if (!updateResult.isSuccess()) {
+                return MyCloudResult.failedResult(updateResult.getMsgCode(), updateResult.getMsgInfo());
+            }
         }
-        return null;
+        return MyCloudResult.successResult(Boolean.TRUE);
     }
 
     /**
@@ -187,11 +196,12 @@ public class ImageManageServiceImpl implements IImageManageService {
         if (imageDTO == null) {
             return false;
         }
-        File imageFile = new File(imageDTO.getImagePath());
-        if (!imageFile.delete()) {
+        // 删除镜像文件
+        if (!deleteVolByLibvirt(imageDTO.getImageUuid())) {
             log.warn("删除镜像文件 " + imageDTO.getImagePath() + "失败");
             return false;
         }
+        // 删除数据库记录
         if (!imageManage.deleteImageByUuid(imageDTO.getImageUuid())) {
             log.warn("删除镜像" + imageDTO.getImageUuid() + " 数据库记录失败");
             return false;
@@ -207,13 +217,64 @@ public class ImageManageServiceImpl implements IImageManageService {
     }
 
     /**
-     * 递归减少镜像的引用值，如果镜像的is_delete为true，并且引用值为0，则可以物理删除
+     * 减少镜像的引用值，如果镜像的is_delete为true，并且引用值为0，则可以物理删除
      * 
      * @param imageUuid
      * @return
      */
     private boolean decreaseImageReferenceCount(String imageUuid) {
-
+        MyCloudResult<ImageDTO> result = this.getImageByUuid(imageUuid, true);
+        if (!result.isSuccess()) {
+            log.warn("");
+            return false;
+        }
+        ImageDTO imageDTO = result.getModel();
+        imageDTO.setReferenceCount(imageDTO.getReferenceCount() - 1);
+        if (imageDTO.getIsDelete() && imageDTO.getReferenceCount() == 0) {
+            // 物理删除
+            if (!physicalDeleteImage(imageDTO)) {
+                return false;
+            }
+        } else {
+            MyCloudResult<Boolean> updateResult = this.updateImage(imageDTO);
+            if (!updateResult.isSuccess()) {
+                log.warn("更新镜像 " + imageDTO + " 失败，原因：" + updateResult.getMsgInfo());
+                return false;
+            }
+        }
         return true;
+
+    }
+
+    /**
+     * 使用libvirt库删除卷
+     * 
+     * @param imageUuid
+     * @return
+     */
+    private boolean deleteVolByLibvirt(String imageUuid) {
+        Connect conn = null;
+        try {
+            conn = new Connect("qemu:///system");
+            StoragePool pool = conn.storagePoolLookupByName(StoreConstants.STOREPOOL_NAME);
+            StorageVol vol = pool.storageVolLookupByName(imageUuid);
+            if (vol == null) {
+                log.warn("删除镜像 " + imageUuid + "失败，原因：镜像不存在");
+                return false;
+            }
+            vol.delete(0);
+            return true;
+        } catch (LibvirtException e) {
+            log.error("error message", e);
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (LibvirtException e) {
+                    log.error("error message", e);
+                }
+            }
+        }
     }
 }

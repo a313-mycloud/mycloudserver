@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -29,6 +28,7 @@ import org.dlut.mycloudserver.client.service.storemanage.IImageManageService;
 import org.dlut.mycloudserver.service.BaseTestCase;
 import org.junit.Test;
 import org.libvirt.LibvirtException;
+import org.mycloudserver.common.constants.StoreConstants;
 import org.mycloudserver.common.util.TemplateUtil;
 
 /**
@@ -48,7 +48,8 @@ public class ImageManageServiceImplTest extends BaseTestCase {
      */
     @Test
     public void testGetImageByUuid() {
-        MyCloudResult<ImageDTO> result = imageManageService.getImageByUuid("288f4ee6-42f6-4d8a-8e47-46bce4431ab1");
+        MyCloudResult<ImageDTO> result = imageManageService.getImageByUuid("288f4ee6-42f6-4d8a-8e47-46bce4431ab1",
+                false);
         printObject(result);
     }
 
@@ -60,12 +61,14 @@ public class ImageManageServiceImplTest extends BaseTestCase {
     @Test
     public void testCreateImage() {
         ImageDTO imageDTO = new ImageDTO();
+        String imageUuid = "0ca6084d-0d55-4bc8-ba21-0b56951e913a";
         imageDTO.setImageName("ubuntu12.04");
-        imageDTO.setImagePath("/home/luojie/mycloud-store/515359f5-979a-491d-962c-10bf112eb176");
-        imageDTO.setImageUuid(UUID.randomUUID().toString());
+        imageDTO.setImagePath(StoreConstants.STOREPOOL_PATH + imageUuid);
+        imageDTO.setImageUuid(imageUuid);
         imageDTO.setIsTemplate(true);
         MyCloudResult<Boolean> result = imageManageService.createImage(imageDTO);
         printObject(result);
+        //        printObject(CommonUtil.createUuid());
     }
 
     @Test
@@ -115,9 +118,15 @@ public class ImageManageServiceImplTest extends BaseTestCase {
         //        FileUtil.getStoreFormat(imagePath);
         //        Connect conn = new Connect("qemu:///system");
         //        StoragePool pool = conn.storagePoolLookupByName("default");
-        MyCloudResult<ImageDTO> result = imageManageService.cloneImage("85acd1bc-3ae1-4c3e-a853-90c55fc47f91",
+        MyCloudResult<ImageDTO> result = imageManageService.cloneImage("69477f60-34c6-478e-9f0f-74f48053ed8b",
                 "ubuntu-clone", false);
         printObject(result);
-
     }
+
+    @Test
+    public void testDelete() {
+        MyCloudResult<Boolean> result = imageManageService.deleteImageByUuid("621573da-efd6-4584-9df2-fa9d60037cda");
+        printObject(result);
+    }
+
 }
