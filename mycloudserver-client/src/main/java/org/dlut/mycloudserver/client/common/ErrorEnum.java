@@ -23,6 +23,7 @@ public enum ErrorEnum {
     IMAGE_FORMAT_UNKNOW("7", "未知的镜像格式"),
     IMAGE_CLONE_FORMAT_INVAILD("8", "不能克隆qcow2格式以外的镜像"),
     IMAGE_PHYSICAL_DELETE_FAIL("9", "物理删除镜像失败"),
+    GET_LOCAL_CONN("10", "获取本地libvirt连接失败"),
     PARAM_IS_INVAILD("9999", "参数非法");
 
     private String errCode;

@@ -20,9 +20,10 @@ import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.client.service.storemanage.IImageManageService;
 import org.dlut.mycloudserver.dal.dataobject.ImageDO;
+import org.dlut.mycloudserver.service.connpool.Connection;
+import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
 import org.dlut.mycloudserver.service.storemanage.ImageManage;
 import org.dlut.mycloudserver.service.storemanage.convent.ImageConvent;
-import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
 import org.libvirt.StoragePool;
 import org.libvirt.StorageVol;
@@ -42,10 +43,13 @@ import org.springframework.stereotype.Service;
 @Service("imageManageService")
 public class ImageManageServiceImpl implements IImageManageService {
 
-    private static Logger log = LoggerFactory.getLogger(ImageManageServiceImpl.class);
+    private static Logger      log = LoggerFactory.getLogger(ImageManageServiceImpl.class);
 
     @Resource
-    private ImageManage   imageManage;
+    private ImageManage        imageManage;
+
+    @Resource(name = "mutilHostConnPool")
+    private IMutilHostConnPool mutilHostConnPool;
 
     /**
      * 根据镜像的uuid获取镜像信息
@@ -122,11 +126,14 @@ public class ImageManageServiceImpl implements IImageManageService {
         }
         String newImageUuid = CommonUtil.createUuid();
         String newImagePath = StoreConstants.STOREPOOL_PATH + newImageUuid;
+        Connection connect = null;
         try {
             // 克隆镜像
-            // TODO
-            Connect connect = new Connect("qemu:///system");
-            StoragePool pool = connect.storagePoolLookupByName(StoreConstants.STOREPOOL_NAME);
+            connect = mutilHostConnPool.getLocalConn();
+            if (connect == null) {
+                return MyCloudResult.failedResult(ErrorEnum.GET_LOCAL_CONN);
+            }
+            StoragePool pool = connect.getStoragePoolByName(StoreConstants.STOREPOOL_NAME);
             Map<String, Object> context = new HashMap<String, Object>();
             context.put("name", newImageUuid);
             context.put("uuid", newImageUuid);
@@ -135,10 +142,17 @@ public class ImageManageServiceImpl implements IImageManageService {
             String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.VOLUME_TEMPLATE_PATH, context);
             System.out.println(xmlDesc);
             pool.storageVolCreateXML(xmlDesc, 0);
-            connect.close();
         } catch (LibvirtException e) {
             log.error("error message", e);
             return MyCloudResult.failedResult("-1", e.getMessage());
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (LibvirtException e) {
+                    log.error("error message", e);
+                }
+            }
         }
         // 在数据库中记录新生成的镜像
         ImageDTO newImageDTO = new ImageDTO();
@@ -253,10 +267,13 @@ public class ImageManageServiceImpl implements IImageManageService {
      * @return
      */
     private boolean deleteVolByLibvirt(String imageUuid) {
-        Connect conn = null;
+        Connection conn = null;
         try {
-            conn = new Connect("qemu:///system");
-            StoragePool pool = conn.storagePoolLookupByName(StoreConstants.STOREPOOL_NAME);
+            conn = mutilHostConnPool.getLocalConn();
+            if (conn == null) {
+                return false;
+            }
+            StoragePool pool = conn.getStoragePoolByName(StoreConstants.STOREPOOL_NAME);
             StorageVol vol = pool.storageVolLookupByName(imageUuid);
             if (vol == null) {
                 log.warn("删除镜像 " + imageUuid + "失败，原因：镜像不存在");

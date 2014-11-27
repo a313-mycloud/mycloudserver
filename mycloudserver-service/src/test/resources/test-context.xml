@@ -20,6 +20,14 @@
 
 	<context:component-scan base-package="org.dlut.mycloudserver" />
 
+	<bean id="mutilHostConnPool" class="org.dlut.mycloudserver.service.connpool.simpleconnpool.SimpleMutilHostConnPool">
+		<constructor-arg>
+			<value>${init_conn_num}</value>
+		</constructor-arg>
+		<constructor-arg>
+			<value>${max_conn_num}</value>
+		</constructor-arg>
+	</bean>
 
 	<import resource="dal-context.xml" />
 	<import resource="provider/*.xml" />

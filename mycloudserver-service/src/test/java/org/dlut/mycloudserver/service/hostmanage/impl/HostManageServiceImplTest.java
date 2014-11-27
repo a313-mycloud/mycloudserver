@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.hostmanage.HostDTO;
+import org.dlut.mycloudserver.client.common.hostmanage.QueryHostCondition;
 import org.dlut.mycloudserver.client.service.hostmanage.IHostManageService;
 import org.dlut.mycloudserver.service.BaseTestCase;
 import org.junit.Test;
@@ -46,8 +47,8 @@ public class HostManageServiceImplTest extends BaseTestCase {
     @Test
     public void testCreateHost() {
         HostDTO hostDTO = new HostDTO();
-        hostDTO.setHostName("test");
-        hostDTO.setHostIp("127.0.0.1");
+        hostDTO.setHostName("罗劼的台式机");
+        hostDTO.setHostIp("192.168.0.101");
         MyCloudResult<Integer> result = hostManageService.createHost(hostDTO);
         printObject(result);
     }
@@ -79,7 +80,11 @@ public class HostManageServiceImplTest extends BaseTestCase {
      */
     @Test
     public void testCountQuery() {
-        fail("Not yet implemented");
+        QueryHostCondition queryHostCondition = new QueryHostCondition();
+        queryHostCondition.setLimit(100);
+        queryHostCondition.setOffset(0);
+        MyCloudResult<Integer> result = hostManageService.countQuery(queryHostCondition);
+        printObject(result);
     }
 
     /**
