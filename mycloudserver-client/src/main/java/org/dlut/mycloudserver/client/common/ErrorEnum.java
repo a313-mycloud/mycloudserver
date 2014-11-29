@@ -24,6 +24,15 @@ public enum ErrorEnum {
     IMAGE_CLONE_FORMAT_INVAILD("8", "不能克隆qcow2格式以外的镜像"),
     IMAGE_PHYSICAL_DELETE_FAIL("9", "物理删除镜像失败"),
     GET_LOCAL_CONN("10", "获取本地libvirt连接失败"),
+
+    USER_NOT_EXIST("0900", "用户不存在"),
+
+    CLASS_NOT_EXIST("1000", "课程不存在"),
+    CLASS_CREATE_FAIL("1001", "创建课程失败"),
+    CLASS_NOT_TEACHER("1002", "课程对应的用户不是教师"),
+    CLASS_UPDATE_FAIL("1003", "更新课程失败"),
+    CLASS_DELETE_FAIL("1004", "删除课程失败"),
+
     PARAM_IS_INVAILD("9999", "参数非法");
 
     private String errCode;

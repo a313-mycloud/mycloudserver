@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dlut.mycloudserver.dal.mapper.ClassManageMapper">
+	<resultMap id="RM-ClassDO" type="ClassDO">
+		<result property="classId" column="class_id" />
+		<result property="className" column="class_name" />
+		<result property="teacherAccount" column="teacher_account" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+	</resultMap>
+
+	<sql id="select-param-column">
+		class_id, class_name, teacher_account, gmt_create,
+		gmt_modified
+	</sql>
+
+	<sql id="page-limit">
+		LIMIT #{offset}, #{limit}
+	</sql>
+
+	<sql id="query-condition">
+		<if test="classId!=null">
+			class_id=#{classId}
+		</if>
+		<if test="className!=null">
+			AND class_name=#{className}
+		</if>
+		<if test="teacherAccount!=null">
+			AND teacher_account=#{teacherAccount}
+		</if>
+	</sql>
+
+	<select id="getClassById" resultMap="RM-ClassDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_class where class_id=#{classId}
+	</select>
+
+	<insert id="createClass">
+		INSERT INTO mycloud_class(class_name,
+		teacher_account, gmt_create, gmt_modified)
+		VALUES(#{className},
+		#{teacherAccount}, now(), now())
+		<selectKey resultType="int" keyProperty="classId">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<delete id="deleteClassById">
+		<![CDATA[
+		DELETE FROM mycloud_class WHERE class_id = #{classId}
+		]]>
+	</delete>
+
+	<update id="updateClass">
+		UPDATE mycloud_class
+		<set>
+			<if test="className!=null">
+				class_name=#{className},
+			</if>
+			<if test="teacherAccount!=null">
+				teacher_account=#{teacherAccount},
+			</if>
+			gmt_modified=now()
+		</set>
+		WHERE class_id=#{classId}
+	</update>
+
+	<select id="countQuery" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		mycloud_class
+		<where>
+			<include refid="query-condition" />
+		</where>
+	</select>
+
+	<select id="query" resultMap="RM-ClassDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_class
+		<where>
+			<include refid="query-condition" />
+		</where>
+		<include refid="page-limit" />
+	</select>
+
+</mapper>

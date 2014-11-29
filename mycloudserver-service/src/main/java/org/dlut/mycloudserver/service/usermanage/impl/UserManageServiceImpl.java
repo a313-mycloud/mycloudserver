@@ -42,6 +42,9 @@ public class UserManageServiceImpl implements IUserManageService {
     @Override
     public MyCloudResult<UserDTO> getUserByAccount(String account) {
         UserDO userDO = userManage.getUserByAccount(account);
+        if (userDO == null) {
+            return MyCloudResult.failedResult(ErrorEnum.USER_NOT_EXIST);
+        }
         UserDTO userDTO = UserConvent.conventToUserDTO(userDO);
         return MyCloudResult.successResult(userDTO);
     }

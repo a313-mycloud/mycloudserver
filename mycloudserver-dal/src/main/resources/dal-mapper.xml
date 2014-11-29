@@ -27,5 +27,9 @@
 	<bean id="imageManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="mycloudServerBaseMapper">
 		<property name="mapperInterface" value="org.dlut.mycloudserver.dal.mapper.ImageManageMapper" />
 	</bean>
+	
+	<bean id="classManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="mycloudServerBaseMapper">
+		<property name="mapperInterface" value="org.dlut.mycloudserver.dal.mapper.ClassManageMapper" />
+	</bean>
 
 </beans>
