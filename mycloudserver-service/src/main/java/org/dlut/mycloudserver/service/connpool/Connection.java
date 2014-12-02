@@ -7,6 +7,7 @@
  */
 package org.dlut.mycloudserver.service.connpool;
 
+import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.libvirt.StoragePool;
 
@@ -31,7 +32,16 @@ public interface Connection {
      * @param xmlDesc
      * @return
      */
-    public boolean startVm(String xmlDesc) throws LibvirtException;
+    public Domain startVm(String xmlDesc) throws LibvirtException;
+
+    /**
+     * 强制关机
+     * 
+     * @param vmUuid
+     * @return
+     * @throws LibvirtException
+     */
+    public boolean destroyVm(String vmUuid) throws LibvirtException;
 
     /**
      * 关闭连接

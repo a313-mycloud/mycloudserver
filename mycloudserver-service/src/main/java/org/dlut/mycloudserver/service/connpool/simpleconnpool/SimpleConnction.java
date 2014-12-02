@@ -14,7 +14,7 @@ import org.libvirt.LibvirtException;
 import org.libvirt.StoragePool;
 
 /**
- * 类SimpleConnction.java的实现描述：TODO 类实现描述
+ * 类SimpleConnction.java的实现描述：TODO 类实现描述 线程不安全
  * 
  * @author luojie 2014年11月26日 下午3:14:13
  */
@@ -52,8 +52,18 @@ public class SimpleConnction implements Connection {
     }
 
     @Override
-    public boolean startVm(String xmlDesc) throws LibvirtException {
+    public Domain startVm(String xmlDesc) throws LibvirtException {
         Domain domain = conn.domainCreateXML(xmlDesc, 0);
-        return domain != null;
+        return domain;
+    }
+
+    @Override
+    public boolean destroyVm(String vmUuid) throws LibvirtException {
+        Domain domain = conn.domainLookupByUUIDString(vmUuid);
+        if (domain == null) {
+            return false;
+        }
+        domain.destroy();
+        return true;
     }
 }

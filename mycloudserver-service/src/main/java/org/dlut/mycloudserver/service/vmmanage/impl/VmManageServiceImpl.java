@@ -29,6 +29,7 @@ import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
 import org.dlut.mycloudserver.service.vmmanage.VmManage;
 import org.dlut.mycloudserver.service.vmmanage.convent.VmConvent;
+import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.mycloudserver.common.constants.VmConstants;
 import org.mycloudserver.common.util.TemplateUtil;
@@ -136,10 +137,12 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
         }
         try {
-            if (!conn.startVm(xmlDesc)) {
+            Domain domain = conn.startVm(xmlDesc);
+            if (domain == null) {
                 log.error("创建虚拟机" + vmUuid + "失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
             }
+            System.out.println(domain.getXMLDesc(0));
         } catch (LibvirtException e) {
             log.error("error message", e);
             return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
