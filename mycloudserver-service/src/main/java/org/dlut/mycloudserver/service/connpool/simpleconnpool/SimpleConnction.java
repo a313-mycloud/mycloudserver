@@ -9,6 +9,7 @@ package org.dlut.mycloudserver.service.connpool.simpleconnpool;
 
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.libvirt.Connect;
+import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.libvirt.StoragePool;
 
@@ -48,5 +49,11 @@ public class SimpleConnction implements Connection {
 
     public Connect getLibvirtConn() {
         return this.conn;
+    }
+
+    @Override
+    public boolean startVm(String xmlDesc) throws LibvirtException {
+        Domain domain = conn.domainCreateXML(xmlDesc, 0);
+        return domain != null;
     }
 }

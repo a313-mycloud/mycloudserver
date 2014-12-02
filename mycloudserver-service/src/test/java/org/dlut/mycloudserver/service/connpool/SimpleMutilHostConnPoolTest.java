@@ -13,7 +13,13 @@ import javax.annotation.Resource;
 
 import org.dlut.mycloudserver.service.BaseTestCase;
 import org.junit.Test;
+import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
+import org.libvirt.jna.ConnectionPointer;
+import org.libvirt.jna.DomainPointer;
+import org.libvirt.jna.Libvirt.VirConnectDomainEventGenericCallback;
+
+import com.sun.jna.Pointer;
 
 /**
  * 类SimpleMutilHostConnPoolTest.java的实现描述：TODO 类实现描述
@@ -65,4 +71,18 @@ public class SimpleMutilHostConnPoolTest extends BaseTestCase {
         fail("Not yet implemented");
     }
 
+    @Test
+    public void test() throws LibvirtException, InterruptedException {
+        Connect conn = new Connect("qemu:///system");
+        printObject(conn.getHostName());
+        VirConnectDomainEventGenericCallback callBack = new VirConnectDomainEventGenericCallback() {
+
+            @Override
+            public void eventCallback(ConnectionPointer arg0, DomainPointer arg1, Pointer arg2) {
+                System.out.println("haha");
+            }
+        };
+        conn.domainEventRegisterAny(null, 0, callBack);
+        Thread.sleep(50000);
+    }
 }

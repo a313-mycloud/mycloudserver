@@ -24,6 +24,7 @@ public enum ErrorEnum {
     IMAGE_CLONE_FORMAT_INVAILD("8", "不能克隆qcow2格式以外的镜像"),
     IMAGE_PHYSICAL_DELETE_FAIL("9", "物理删除镜像失败"),
     GET_LOCAL_CONN("10", "获取本地libvirt连接失败"),
+    GET_CONN_FAIL("11", "获取连接失败"),
 
     USER_NOT_EXIST("0900", "用户不存在"),
 
@@ -32,6 +33,10 @@ public enum ErrorEnum {
     CLASS_NOT_TEACHER("1002", "课程对应的用户不是教师"),
     CLASS_UPDATE_FAIL("1003", "更新课程失败"),
     CLASS_DELETE_FAIL("1004", "删除课程失败"),
+
+    VM_NOT_EXIST("2000", "虚拟机不存在"),
+    VM_CREATE_FAIL("2001", "创建虚拟机失败"),
+    VM_START_FAIL("2002", "启动虚拟机失败"),
 
     PARAM_IS_INVAILD("9999", "参数非法");
 

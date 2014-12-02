@@ -140,7 +140,6 @@ public class ImageManageServiceImpl implements IImageManageService {
             context.put("newImagePath", newImagePath);
             context.put("srcImagePath", srcImageDTO.getImagePath());
             String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.VOLUME_TEMPLATE_PATH, context);
-            System.out.println(xmlDesc);
             pool.storageVolCreateXML(xmlDesc, 0);
         } catch (LibvirtException e) {
             log.error("error message", e);

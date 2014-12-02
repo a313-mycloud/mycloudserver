@@ -15,21 +15,35 @@
 		abstract="true">
 		<property name="sqlSessionFactory" ref="mycloudServerSqlSessionFactory" />
 	</bean>
-	
-	<bean id="userManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="mycloudServerBaseMapper">
-		<property name="mapperInterface" value="org.dlut.mycloudserver.dal.mapper.UserManageMapper" />
+
+	<bean id="userManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"
+		parent="mycloudServerBaseMapper">
+		<property name="mapperInterface"
+			value="org.dlut.mycloudserver.dal.mapper.UserManageMapper" />
 	</bean>
-	
-	<bean id="hostManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="mycloudServerBaseMapper">
-		<property name="mapperInterface" value="org.dlut.mycloudserver.dal.mapper.HostManageMapper" />
+
+	<bean id="hostManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"
+		parent="mycloudServerBaseMapper">
+		<property name="mapperInterface"
+			value="org.dlut.mycloudserver.dal.mapper.HostManageMapper" />
 	</bean>
-	
-	<bean id="imageManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="mycloudServerBaseMapper">
-		<property name="mapperInterface" value="org.dlut.mycloudserver.dal.mapper.ImageManageMapper" />
+
+	<bean id="imageManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"
+		parent="mycloudServerBaseMapper">
+		<property name="mapperInterface"
+			value="org.dlut.mycloudserver.dal.mapper.ImageManageMapper" />
 	</bean>
-	
-	<bean id="classManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="mycloudServerBaseMapper">
-		<property name="mapperInterface" value="org.dlut.mycloudserver.dal.mapper.ClassManageMapper" />
+
+	<bean id="classManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"
+		parent="mycloudServerBaseMapper">
+		<property name="mapperInterface"
+			value="org.dlut.mycloudserver.dal.mapper.ClassManageMapper" />
+	</bean>
+
+	<bean id="vmManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"
+		parent="mycloudServerBaseMapper">
+		<property name="mapperInterface"
+			value="org.dlut.mycloudserver.dal.mapper.VmManageMapper" />
 	</bean>
 
 </beans>

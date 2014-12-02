@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dlut.mycloudserver.dal.mapper.VmManageMapper">
+	<resultMap id="RM-VmDO" type="VmDO">
+		<result property="vmUuid" column="vm_uuid" />
+		<result property="vmVcpu" column="vm_vcpu" />
+		<result property="vmMemory" column="vm_memory" />
+		<result property="imageUuid" column="image_uuid" />
+		<result property="vmStatus" column="vm_status" />
+		<result property="hostId" column="host_id" />
+		<result property="userAccount" column="user_account" />
+		<result property="classId" column="class_id" />
+		<result property="desc" column="vm_desc" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+	</resultMap>
+
+	<sql id="select-param-column">
+		vm_uuid, vm_vcpu, vm_memory, image_uuid, vm_status, host_id,
+		user_account, class_id, vm_desc, gmt_create, gmt_modified
+	</sql>
+
+	<sql id="page-limit">
+		LIMIT #{offset}, #{limit}
+	</sql>
+
+	<sql id="query-condition">
+		<if test="vmUuid!=null">
+			vm_uuid=#{vmUuid}
+		</if>
+		<if test="vmVcpu!=null">
+			AND vm_vcpu=#{vmVcpu}
+		</if>
+		<if test="vmMemory!=null">
+			AND vm_memory=#{vmMemory}
+		</if>
+		<if test="imageUuid!=null">
+			AND image_uuid=#{imageUuid}
+		</if>
+		<if test="vmStatus!=null">
+			AND vm_status=#{vmStatus.status}
+		</if>
+		<if test="hostId!=null">
+			AND host_id=#{hostId}
+		</if>
+		<if test="userAccount!=null">
+			AND user_account=#{userAccount}
+		</if>
+		<if test="classId!=null">
+			AND class_id=#{classId}
+		</if>
+	</sql>
+
+	<select id="getVmByUuid" resultMap="RM-VmDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_vm where vm_uuid=#{vmUuid}
+	</select>
+
+	<insert id="createVm">
+		INSERT INTO mycloud_vm(vm_uuid, vm_vcpu, vm_memory,
+		image_uuid, vm_status, host_id, user_account, class_id, vm_desc,
+		gmt_create, gmt_modified)
+		VALUES(#{vmUuid}, #{vmVcpu}, #{vmMemory},
+		#{imageUuid}, #{vmStatus},
+		#{hostId}, #{userAccount}, #{classId},
+		#{desc}, now(), now())
+	</insert>
+
+	<delete id="deleteVmByUuid">
+		<![CDATA[
+		DELETE FROM mycloud_vm WHERE vm_uuid = #{vmUuid}
+		]]>
+	</delete>
+
+	<update id="updateVm">
+		UPDATE mycloud_vm
+		<set>
+			<if test="vmVcpu!=null">
+				vm_vcpu=#{vmVcpu},
+			</if>
+			<if test="vmMemory!=null">
+				vm_memory=#{vmMemory},
+			</if>
+			<if test="vmStatus!=null">
+				vm_status=#{vmStatus},
+			</if>
+			<if test="hostId!=null">
+				host_id=#{hostId},
+			</if>
+			<if test="desc!=null">
+				vm_desc=#{desc},
+			</if>
+			gmt_modified=now()
+		</set>
+		WHERE vm_uuid=#{vmUuid}
+	</update>
+
+	<select id="countQuery" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		mycloud_vm
+		<where>
+			<include refid="query-condition" />
+		</where>
+	</select>
+
+	<select id="query" resultMap="RM-VmDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_vm
+		<where>
+			<include refid="query-condition" />
+		</where>
+		<include refid="page-limit" />
+	</select>
+
+</mapper>

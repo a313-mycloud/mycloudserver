@@ -26,9 +26,18 @@ public interface Connection {
     public StoragePool getStoragePoolByName(String storagePoolName) throws LibvirtException;
 
     /**
+     * 从xmlDesc中启动虚拟机
+     * 
+     * @param xmlDesc
+     * @return
+     */
+    public boolean startVm(String xmlDesc) throws LibvirtException;
+
+    /**
      * 关闭连接
      * 
      * @return
      */
     public int close() throws LibvirtException;
+
 }
