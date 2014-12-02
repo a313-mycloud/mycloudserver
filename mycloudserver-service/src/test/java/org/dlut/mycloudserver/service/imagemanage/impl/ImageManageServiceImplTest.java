@@ -14,10 +14,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import net.sf.jmimemagic.MagicException;
-import net.sf.jmimemagic.MagicMatchNotFoundException;
-import net.sf.jmimemagic.MagicParseException;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -106,7 +102,7 @@ public class ImageManageServiceImplTest extends BaseTestCase {
     }
 
     @Test
-    public void testClone() throws LibvirtException, MagicParseException, MagicMatchNotFoundException, MagicException {
+    public void testClone() throws LibvirtException {
 
         //        printObject(CommonUtil.createUuid());
         //        String imagePath = "/home/luojie/mycloud-store/515359f5-979a-491d-962c-10bf112eb176";

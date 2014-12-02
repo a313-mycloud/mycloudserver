@@ -58,9 +58,10 @@
 			<artifactId>jna</artifactId>
 		</dependency>
 
+		<!-- dom4j相关包 -->
 		<dependency>
-			<groupId>jmimemagic</groupId>
-			<artifactId>jmimemagic</artifactId>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
 		</dependency>
 
 	</dependencies>

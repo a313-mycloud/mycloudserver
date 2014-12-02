@@ -9,6 +9,7 @@ package org.dlut.mycloudserver.service.vmmanage.impl;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -17,6 +18,10 @@ import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.service.BaseTestCase;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.junit.Test;
 
 /**
@@ -70,6 +75,16 @@ public class VmManageServiceImplTest extends BaseTestCase {
         String vmUuid = "04efb738-953f-4c74-b747-cf30ead3321f";
         MyCloudResult<Boolean> result = vmManageService.startVm(vmUuid);
         printObject(result);
+    }
+
+    @Test
+    public void testDom4j() throws DocumentException {
+        SAXReader saxReader = new SAXReader();
+        Document document = saxReader.read(new File("src/test/resources/test.xml"));
+        Element root = document.getRootElement();
+        Element device = root.element("devices");
+        Element graphics = device.element("graphics");
+        printObject(graphics.attributeValue("port"));
     }
 
 }

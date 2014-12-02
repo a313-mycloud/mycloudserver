@@ -40,4 +40,12 @@ public interface IVmManageService {
      * @return
      */
     public MyCloudResult<Boolean> startVm(String vmUuid);
+
+    /**
+     * 强制关闭虚拟机
+     * 
+     * @param vmUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> forceShutDownVm(String vmUuid);
 }

@@ -7,6 +7,7 @@
  */
 package org.dlut.mycloudserver.service.vmmanage.impl;
 
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +30,10 @@ import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
 import org.dlut.mycloudserver.service.vmmanage.VmManage;
 import org.dlut.mycloudserver.service.vmmanage.convent.VmConvent;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.mycloudserver.common.constants.VmConstants;
@@ -142,7 +147,10 @@ public class VmManageServiceImpl implements IVmManageService {
                 log.error("创建虚拟机" + vmUuid + "失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
             }
-            System.out.println(domain.getXMLDesc(0));
+            String domainXmlDesc = domain.getXMLDesc(0);
+            System.out.println(domainXmlDesc);
+            Integer vncPort = displayVnc(domainXmlDesc);
+            System.out.println("vnc 端口号为：" + vncPort);
         } catch (LibvirtException e) {
             log.error("error message", e);
             return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
@@ -154,5 +162,41 @@ public class VmManageServiceImpl implements IVmManageService {
             }
         }
         return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    /**
+     * 获取虚拟机vnc端口号
+     * 
+     * @param domainXmlDesc
+     * @return
+     */
+    private Integer displayVnc(String domainXmlDesc) {
+        if (StringUtils.isBlank(domainXmlDesc)) {
+            return null;
+        }
+
+        SAXReader saxReader = new SAXReader();
+        try {
+            Document document = saxReader.read(new StringReader(domainXmlDesc));
+            Element root = document.getRootElement();
+            String strPort = root.element("devices").element("graphics").attributeValue("port");
+            int vncPort = Integer.parseInt(strPort);
+            return vncPort;
+        } catch (DocumentException e) {
+            log.error("解析" + domainXmlDesc + "失败", e);
+            return null;
+        } catch (NumberFormatException e) {
+            log.error("vnc端口号不是数字");
+            return null;
+        }
+    }
+
+    @Override
+    public MyCloudResult<Boolean> forceShutDownVm(String vmUuid) {
+        if (StringUtils.isBlank(vmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+
+        return null;
     }
 }
