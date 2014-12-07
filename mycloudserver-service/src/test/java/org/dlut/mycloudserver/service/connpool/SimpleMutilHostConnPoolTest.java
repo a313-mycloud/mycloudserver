@@ -12,6 +12,7 @@ import static org.junit.Assert.fail;
 import javax.annotation.Resource;
 
 import org.dlut.mycloudserver.service.BaseTestCase;
+import org.dlut.mycloudserver.service.schedule.IScheduler;
 import org.junit.Test;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
@@ -30,6 +31,9 @@ public class SimpleMutilHostConnPoolTest extends BaseTestCase {
 
     @Resource(name = "mutilHostConnPool")
     private IMutilHostConnPool mutiHostConnPool;
+
+    @Resource(name = "scheduler")
+    private IScheduler         scheduler;
 
     /**
      * Test method for
@@ -55,10 +59,21 @@ public class SimpleMutilHostConnPoolTest extends BaseTestCase {
      * Test method for
      * {@link org.dlut.mycloudserver.service.connpool.simpleconnpool.SimpleMutilHostConnPool#getConnByHostId(int)}
      * .
+     * 
+     * @throws LibvirtException
+     * @throws InterruptedException
      */
     @Test
-    public void testGetConnByHostId() {
-        fail("Not yet implemented");
+    public void testGetConnByHostId() throws LibvirtException, InterruptedException {
+        Thread.sleep(5000);
+        Integer hostId = scheduler.getBestHostId(null);
+        if (hostId == null) {
+            printObject("调度失败");
+            return;
+        }
+        Connection conn = mutiHostConnPool.getConnByHostId(hostId);
+        printObject(conn.getHostName());
+        conn.close();
     }
 
     /**

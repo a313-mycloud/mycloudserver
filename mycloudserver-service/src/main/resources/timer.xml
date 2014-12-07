@@ -9,6 +9,7 @@
 		<property name="triggers">
 			<list>
 				<ref bean="hostListenerTrigger" />
+				<ref bean="simpleConnPoolListenerTrigger"/>
 			</list>
 		</property>
 	</bean>
@@ -20,6 +21,7 @@
 		<property name="repeatInterval" value="2000" />
 	</bean>
 
+	<!-- 监听物理机的运行状态 -->
 	<bean id="hostListenerJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
@@ -29,4 +31,22 @@
 			<value>execute</value>
 		</property>
 	</bean>
+	
+	<bean id="simpleConnPoolListenerTrigger"
+		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+		<property name="jobDetail" ref="simpleConnPoolJobDetail" />
+		<property name="startDelay" value="2000" />
+		<property name="repeatInterval" value="2000" />
+	</bean>
+	
+	<bean id="simpleConnPoolJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="mutilHostConnPool" />
+		</property>
+		<property name="targetMethod">
+			<value>updateRemoteMutilHostConnPoolMap</value>
+		</property>
+	</bean>
+	
 </beans>

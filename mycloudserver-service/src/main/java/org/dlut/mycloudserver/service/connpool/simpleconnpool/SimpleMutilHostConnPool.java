@@ -24,14 +24,12 @@ import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
 import org.dlut.mycloudserver.service.connpool.ISingleHostConnPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 /**
  * 类SimpleMutilHostConnPool.java的实现描述：TODO 类实现描述
  * 
  * @author luojie 2014年11月26日 下午3:39:13
  */
-@Service("mutilHostConnPool")
 public class SimpleMutilHostConnPool implements IMutilHostConnPool {
 
     private static Logger                     log            = LoggerFactory.getLogger(SimpleMutilHostConnPool.class);
@@ -75,7 +73,11 @@ public class SimpleMutilHostConnPool implements IMutilHostConnPool {
 
     @Override
     public Connection getConnByHostId(int hostId) {
-        return null;
+        ISingleHostConnPool singleHostConnPool = remoteMutilHostConnPoolMap.get(hostId);
+        if (singleHostConnPool == null) {
+            return null;
+        }
+        return singleHostConnPool.getConn();
     }
 
     /**

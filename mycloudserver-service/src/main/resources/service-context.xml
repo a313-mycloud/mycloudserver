@@ -12,7 +12,7 @@
            http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
 	<context:component-scan base-package="org.dlut.mycloudserver" />
-
+	
 	<!-- 连接池 -->
 	<bean id="mutilHostConnPool" class="org.dlut.mycloudserver.service.connpool.simpleconnpool.SimpleMutilHostConnPool">
 		<constructor-arg>
@@ -22,6 +22,9 @@
 			<value>${max_conn_num}</value>
 		</constructor-arg>
 	</bean>
+
+	<!-- 调度器 -->
+	<bean id="scheduler" class="org.dlut.mycloudserver.service.schedule.RandomScheduler" />
 
 	<import resource="dal-context.xml" />
 	<import resource="provider/*.xml" />

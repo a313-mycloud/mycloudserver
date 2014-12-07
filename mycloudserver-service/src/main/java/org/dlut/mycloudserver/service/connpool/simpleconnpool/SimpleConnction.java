@@ -66,4 +66,9 @@ public class SimpleConnction implements Connection {
         domain.destroy();
         return true;
     }
+
+    @Override
+    public String getHostName() throws LibvirtException {
+        return conn.getHostName();
+    }
 }

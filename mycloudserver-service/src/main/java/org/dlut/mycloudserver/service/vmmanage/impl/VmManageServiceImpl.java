@@ -28,6 +28,7 @@ import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.dal.dataobject.VmDO;
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
+import org.dlut.mycloudserver.service.schedule.IScheduler;
 import org.dlut.mycloudserver.service.vmmanage.VmManage;
 import org.dlut.mycloudserver.service.vmmanage.convent.VmConvent;
 import org.dom4j.Document;
@@ -66,6 +67,9 @@ public class VmManageServiceImpl implements IVmManageService {
 
     @Resource(name = "mutilHostConnPool")
     private IMutilHostConnPool  mutilHostConnPool;
+
+    @Resource(name = "scheduler")
+    private IScheduler          scheduler;
 
     @Override
     public MyCloudResult<VmDTO> getVmByUuid(String vmUuid) {

@@ -55,6 +55,11 @@ public class VmDO extends BaseDO {
     private Integer classId;
 
     /**
+     * vnc端口号
+     */
+    private Integer vncPort;
+
+    /**
      * 描述
      */
     private String  desc;
@@ -129,6 +134,14 @@ public class VmDO extends BaseDO {
 
     public void setClassId(Integer classId) {
         this.classId = classId;
+    }
+
+    public Integer getVncPort() {
+        return vncPort;
+    }
+
+    public void setVncPort(Integer vncPort) {
+        this.vncPort = vncPort;
     }
 
 }

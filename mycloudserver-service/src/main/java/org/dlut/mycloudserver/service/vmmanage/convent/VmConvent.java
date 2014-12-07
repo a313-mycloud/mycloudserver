@@ -33,6 +33,7 @@ public class VmConvent {
         vmDTO.setVmVcpu(vmDO.getVmVcpu());
         vmDTO.setUserAccount(vmDO.getUserAccount());
         vmDTO.setClassId(vmDO.getClassId());
+        vmDTO.setVncPort(vmDO.getVncPort());
 
         return vmDTO;
     }
@@ -54,6 +55,7 @@ public class VmConvent {
         }
         vmDO.setVmUuid(vmDTO.getVmUuid());
         vmDO.setVmVcpu(vmDTO.getVmVcpu());
+        vmDO.setVncPort(vmDTO.getVncPort());
 
         return vmDO;
     }

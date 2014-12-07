@@ -19,6 +19,14 @@ import org.libvirt.StoragePool;
 public interface Connection {
 
     /**
+     * 获取物理机的主机名称
+     * 
+     * @return
+     * @throws LibvirtException
+     */
+    public String getHostName() throws LibvirtException;
+
+    /**
      * 根据名称获取对应的存储池
      * 
      * @param storagePoolName

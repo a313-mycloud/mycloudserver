@@ -10,6 +10,7 @@
 		<result property="hostId" column="host_id" />
 		<result property="userAccount" column="user_account" />
 		<result property="classId" column="class_id" />
+		<result property="vncPort" column="vnc_port" />
 		<result property="desc" column="vm_desc" />
 		<result property="gmtCreate" column="gmt_create" />
 		<result property="gmtModified" column="gmt_modified" />
@@ -17,7 +18,7 @@
 
 	<sql id="select-param-column">
 		vm_uuid, vm_vcpu, vm_memory, image_uuid, vm_status, host_id,
-		user_account, class_id, vm_desc, gmt_create, gmt_modified
+		user_account, class_id, vnc_port, vm_desc, gmt_create, gmt_modified
 	</sql>
 
 	<sql id="page-limit">
@@ -59,11 +60,11 @@
 
 	<insert id="createVm">
 		INSERT INTO mycloud_vm(vm_uuid, vm_vcpu, vm_memory,
-		image_uuid, vm_status, host_id, user_account, class_id, vm_desc,
+		image_uuid, vm_status, host_id, user_account, class_id, vnc_port, vm_desc,
 		gmt_create, gmt_modified)
 		VALUES(#{vmUuid}, #{vmVcpu}, #{vmMemory},
 		#{imageUuid}, #{vmStatus},
-		#{hostId}, #{userAccount}, #{classId},
+		#{hostId}, #{userAccount}, #{classId}, #{vnc_port}
 		#{desc}, now(), now())
 	</insert>
 
@@ -90,6 +91,9 @@
 			</if>
 			<if test="desc!=null">
 				vm_desc=#{desc},
+			</if>
+			<if test="vncPort!=null">
+				vnc_port=#{vncPort},
 			</if>
 			gmt_modified=now()
 		</set>
