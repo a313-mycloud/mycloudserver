@@ -27,7 +27,7 @@
     </appender>  
    
     <appender name="activexAppender" class="org.apache.log4j.DailyRollingFileAppender">  
-        <param name="File" value="D:/activex.log" />   
+        <param name="File" value="activex.log" />   
         <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />   
         <layout class="org.apache.log4j.PatternLayout">  
          <param name="ConversionPattern"   

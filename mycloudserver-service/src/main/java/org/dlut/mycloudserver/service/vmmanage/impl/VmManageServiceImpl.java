@@ -137,10 +137,17 @@ public class VmManageServiceImpl implements IVmManageService {
         context.put("vmMemory", vmDTO.getVmMemory() / 1024);
         context.put("vmVcpu", vmDTO.getVmVcpu());
         context.put("imagePath", imageDTO.getImagePath());
+        context.put("showType", vmDTO.getShowType());
+        context.put("showPassword", vmDTO.getShowPassword());
         String xmlDesc = TemplateUtil.renderTemplate(VmConstants.VOLUME_TEMPLATE_PATH, context);
         System.out.println(xmlDesc);
 
-        Connection conn = mutilHostConnPool.getLocalConn();
+        Integer bestHostId = scheduler.getBestHostId(vmDTO);
+        if (bestHostId == null) {
+            log.error("启动虚拟机" + vmDTO + "时，获取最佳物理机id失败");
+            return MyCloudResult.failedResult(ErrorEnum.VM_GET_BEST_HOST_FIAL);
+        }
+        Connection conn = mutilHostConnPool.getConnByHostId(bestHostId);
         if (conn == null) {
             log.error("获取连接失败");
             return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
@@ -153,8 +160,17 @@ public class VmManageServiceImpl implements IVmManageService {
             }
             String domainXmlDesc = domain.getXMLDesc(0);
             System.out.println(domainXmlDesc);
-            Integer vncPort = displayVnc(domainXmlDesc);
-            System.out.println("vnc 端口号为：" + vncPort);
+            Integer showPort = displayPort(domainXmlDesc);
+            System.out.println("vnc 端口号为：" + showPort);
+
+            // 在数据库中更新虚拟机
+            vmDTO.setVmStatus(VmStatusEnum.RUNNING);
+            vmDTO.setHostId(bestHostId);
+            vmDTO.setShowPort(showPort);
+            if (!updateVm(vmDTO)) {
+                log.error("在数据库中更新vm失败");
+                return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
+            }
         } catch (LibvirtException e) {
             log.error("error message", e);
             return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
@@ -174,7 +190,7 @@ public class VmManageServiceImpl implements IVmManageService {
      * @param domainXmlDesc
      * @return
      */
-    private Integer displayVnc(String domainXmlDesc) {
+    private Integer displayPort(String domainXmlDesc) {
         if (StringUtils.isBlank(domainXmlDesc)) {
             return null;
         }
@@ -202,5 +218,20 @@ public class VmManageServiceImpl implements IVmManageService {
         }
 
         return null;
+    }
+
+    /**
+     * 更新虚拟机
+     * 
+     * @param vmDTO
+     * @return
+     */
+    private boolean updateVm(VmDTO vmDTO) {
+        VmDO vmDO = VmConvent.conventToVmDO(vmDTO);
+        if (vmDO == null) {
+            return false;
+        }
+
+        return vmManage.updateVm(vmDO);
     }
 }

@@ -24,48 +24,61 @@
 			<target dev='hda' bus='ide' />
 			<address type='drive' controller='0' bus='0' target='0' unit='0' />
 		</disk>
-		<controller type='usb' index='0'>
+		<!-- <controller type='usb' index='0'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x01'
 				function='0x2' />
-		</controller>
-		<controller type='pci' index='0' model='pci-root' />
-		<controller type='ide' index='0'>
+		</controller> -->
+		<!-- <controller type='pci' index='0' model='pci-root' /> -->
+		<!-- <controller type='ide' index='0'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x01'
 				function='0x1' />
 		</controller>
 		<controller type='virtio-serial' index='0'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x06'
 				function='0x0' />
-		</controller>
+		</controller> -->
 		<interface type='network'>
 			<source network='default' />
 			<model type='rtl8139' />
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x03'
 				function='0x0' />
 		</interface>
-		<serial type='pty'>
+		<!-- <serial type='pty'>
 			<target port='0' />
 		</serial>
 		<console type='pty'>
 			<target type='serial' port='0' />
-		</console>
-		<input type='mouse' bus='ps2' />
-		<input type='keyboard' bus='ps2' />
-		<graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'>
+		</console> -->
+		#if ($!showType.value == 1)
+		<channel type='spicevmc'>
+			<target type='virtio' name='com.redhat.spice.0' />
+			<address type='virtio-serial' controller='0' bus='0' port='1' />
+		</channel>
+		<graphics type='spice' port='-1' autoport='yes' listen='0.0.0.0' passwd='$!showPassword'>
 			<listen type='address' address='0.0.0.0' />
 		</graphics>
-		<sound model='ich6'>
-			<address type='pci' domain='0x0000' bus='0x00' slot='0x04'
+		<video>
+			<model type='qxl' ram='65536' vram='65536' heads='1' />
+			<address type='pci' domain='0x0000' bus='0x00' slot='0x02'
 				function='0x0' />
-		</sound>
+		</video>
+		#else
+		<graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' passwd='$!showPassword'>
+			<listen type='address' address='0.0.0.0' />
+		</graphics>
 		<video>
 			<model type='cirrus' vram='9216' heads='1' />
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x02'
 				function='0x0' />
 		</video>
-		<memballoon model='virtio'>
+		#end
+		<sound model='ich6'>
+			<address type='pci' domain='0x0000' bus='0x00' slot='0x04'
+				function='0x0' />
+		</sound>
+		<!-- <memballoon model='virtio'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x05'
 				function='0x0' />
-		</memballoon>
+		</memballoon> -->
 	</devices>
 </domain>

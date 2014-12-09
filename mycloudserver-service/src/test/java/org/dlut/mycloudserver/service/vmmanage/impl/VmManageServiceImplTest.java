@@ -69,9 +69,12 @@ public class VmManageServiceImplTest extends BaseTestCase {
      * Test method for
      * {@link org.dlut.mycloudserver.service.vmmanage.impl.VmManageServiceImpl#startVm(java.lang.String)}
      * .
+     * 
+     * @throws InterruptedException
      */
     @Test
-    public void testStartVm() {
+    public void testStartVm() throws InterruptedException {
+        Thread.sleep(15000);
         String vmUuid = "04efb738-953f-4c74-b747-cf30ead3321f";
         MyCloudResult<Boolean> result = vmManageService.startVm(vmUuid);
         printObject(result);

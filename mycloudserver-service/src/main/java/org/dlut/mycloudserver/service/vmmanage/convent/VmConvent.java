@@ -7,6 +7,7 @@
  */
 package org.dlut.mycloudserver.service.vmmanage.convent;
 
+import org.dlut.mycloudserver.client.common.vmmanage.ShowTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
 import org.dlut.mycloudserver.dal.dataobject.VmDO;
@@ -28,12 +29,18 @@ public class VmConvent {
         vmDTO.setHostId(vmDO.getHostId());
         vmDTO.setImageUuid(vmDO.getImageUuid());
         vmDTO.setVmMemory(vmDO.getVmMemory());
-        vmDTO.setVmStatus(VmStatusEnum.getVmStatusByStatus(vmDO.getVmStatus()));
+        if (vmDO.getVmStatus() != null) {
+            vmDTO.setVmStatus(VmStatusEnum.getVmStatusByStatus(vmDO.getVmStatus()));
+        }
         vmDTO.setVmUuid(vmDO.getVmUuid());
         vmDTO.setVmVcpu(vmDO.getVmVcpu());
         vmDTO.setUserAccount(vmDO.getUserAccount());
         vmDTO.setClassId(vmDO.getClassId());
-        vmDTO.setVncPort(vmDO.getVncPort());
+        if (vmDO.getShowType() != null) {
+            vmDTO.setShowType(ShowTypeEnum.getShowTypeByValue(vmDO.getShowType()));
+        }
+        vmDTO.setShowPort(vmDO.getShowPort());
+        vmDTO.setShowPassword(vmDO.getShowPassword());
 
         return vmDTO;
     }
@@ -55,7 +62,11 @@ public class VmConvent {
         }
         vmDO.setVmUuid(vmDTO.getVmUuid());
         vmDO.setVmVcpu(vmDTO.getVmVcpu());
-        vmDO.setVncPort(vmDTO.getVncPort());
+        if (vmDTO.getShowType() != null) {
+            vmDO.setShowType(vmDTO.getShowType().getValue());
+        }
+        vmDO.setShowPort(vmDTO.getShowPort());
+        vmDO.setShowPassword(vmDTO.getShowPassword());
 
         return vmDO;
     }

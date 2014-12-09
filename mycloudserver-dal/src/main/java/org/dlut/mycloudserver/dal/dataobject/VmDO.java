@@ -55,9 +55,19 @@ public class VmDO extends BaseDO {
     private Integer classId;
 
     /**
-     * vnc端口号
+     * 显示类型，有vnc和spice两种类型
      */
-    private Integer vncPort;
+    private Integer showType;
+
+    /**
+     * 显示的端口号
+     */
+    private Integer showPort;
+
+    /**
+     * 连接显示的密码
+     */
+    private String  showPassword;
 
     /**
      * 描述
@@ -136,12 +146,28 @@ public class VmDO extends BaseDO {
         this.classId = classId;
     }
 
-    public Integer getVncPort() {
-        return vncPort;
+    public Integer getShowType() {
+        return showType;
     }
 
-    public void setVncPort(Integer vncPort) {
-        this.vncPort = vncPort;
+    public void setShowType(Integer showType) {
+        this.showType = showType;
+    }
+
+    public Integer getShowPort() {
+        return showPort;
+    }
+
+    public void setShowPort(Integer showPort) {
+        this.showPort = showPort;
+    }
+
+    public String getShowPassword() {
+        return showPassword;
+    }
+
+    public void setShowPassword(String showPassword) {
+        this.showPassword = showPassword;
     }
 
 }
