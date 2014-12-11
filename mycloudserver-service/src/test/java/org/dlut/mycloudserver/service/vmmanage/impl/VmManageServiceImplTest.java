@@ -15,6 +15,9 @@ import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.dlut.mycloudserver.client.common.MyCloudResult;
+import org.dlut.mycloudserver.client.common.Pagination;
+import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
+import org.dlut.mycloudserver.client.common.vmmanage.ShowTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.service.BaseTestCase;
@@ -57,11 +60,10 @@ public class VmManageServiceImplTest extends BaseTestCase {
         vmDTO.setVmUuid(vmUuid);
         vmDTO.setVmVcpu(2);
         vmDTO.setVmMemory((long) (512 * 1024 * 1024));
-        vmDTO.setImageUuid("0ca6084d-0d55-4bc8-ba21-0b56951e913a");
         vmDTO.setUserAccount("admin");
         vmDTO.setClassId(1);
 
-        MyCloudResult<Boolean> result = vmManageService.createVm(vmDTO);
+        MyCloudResult<String> result = vmManageService.createVm(vmDTO);
         printObject(result);
     }
 
@@ -74,9 +76,24 @@ public class VmManageServiceImplTest extends BaseTestCase {
      */
     @Test
     public void testStartVm() throws InterruptedException {
-        Thread.sleep(15000);
-        String vmUuid = "04efb738-953f-4c74-b747-cf30ead3321f";
+        Thread.sleep(10000);
+        String vmUuid = "bd5721bf-89b6-40e1-9d77-2c6ec7e8116e";
         MyCloudResult<Boolean> result = vmManageService.startVm(vmUuid);
+        printObject(result);
+    }
+
+    @Test
+    public void testForceCloseVm() throws InterruptedException {
+        Thread.sleep(10000);
+        String vmUuid = "bd5721bf-89b6-40e1-9d77-2c6ec7e8116e";
+        MyCloudResult<Boolean> result = vmManageService.forceShutDownVm(vmUuid);
+        printObject(result);
+    }
+
+    @Test
+    public void testDeleteVm() {
+        String vmUuid = "bd5721bf-89b6-40e1-9d77-2c6ec7e8116e";
+        MyCloudResult<Boolean> result = vmManageService.deleteVm(vmUuid);
         printObject(result);
     }
 
@@ -90,4 +107,24 @@ public class VmManageServiceImplTest extends BaseTestCase {
         printObject(graphics.attributeValue("port"));
     }
 
+    @Test
+    public void testVmQuery() {
+        QueryVmCondition queryVmCondition = new QueryVmCondition();
+        queryVmCondition.setUserAccount("admin");
+        MyCloudResult<Pagination<VmDTO>> result = vmManageService.query(queryVmCondition);
+        printObject(result);
+    }
+
+    @Test
+    public void testCloneVm() {
+        String srcVmUuid = "04efb738-953f-4c74-b747-cf30ead3321f";
+        VmDTO destVmDTO = new VmDTO();
+        destVmDTO.setVmVcpu(2);
+        destVmDTO.setVmMemory((long) (512 * 1024 * 1024));
+        destVmDTO.setUserAccount("31317030");
+        destVmDTO.setShowType(ShowTypeEnum.SPICE);
+        destVmDTO.setShowPassword("10041104");
+        MyCloudResult<String> result = vmManageService.cloneVm(destVmDTO, srcVmUuid);
+        printObject(result);
+    }
 }

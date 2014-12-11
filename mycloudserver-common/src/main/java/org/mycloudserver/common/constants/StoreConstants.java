@@ -27,5 +27,6 @@ public class StoreConstants {
     /**
      * 存储池的路径
      */
-    public static final String STOREPOOL_PATH       = "/var/lib/mycloud/images/";
+    //    public static final String STOREPOOL_PATH       = "/var/lib/mycloud/images/";
+    public static final String STOREPOOL_PATH       = "/home/luojie/mycloud-pool/images/";
 }

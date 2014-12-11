@@ -9,6 +9,7 @@ package org.dlut.mycloudserver.service.vmmanage.impl;
 
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -16,9 +17,11 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.dlut.mycloudserver.client.common.ErrorEnum;
 import org.dlut.mycloudserver.client.common.MyCloudResult;
+import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.classmanage.ClassDTO;
 import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
 import org.dlut.mycloudserver.client.common.usermanage.UserDTO;
+import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
 import org.dlut.mycloudserver.client.service.classmanage.IClassManageService;
@@ -38,6 +41,7 @@ import org.dom4j.io.SAXReader;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.mycloudserver.common.constants.VmConstants;
+import org.mycloudserver.common.util.CommonUtil;
 import org.mycloudserver.common.util.TemplateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +87,9 @@ public class VmManageServiceImpl implements IVmManageService {
     }
 
     @Override
-    public MyCloudResult<Boolean> createVm(VmDTO vmDTO) {
+    public MyCloudResult<String> createVm(VmDTO vmDTO) {
+        String vmUuid = CommonUtil.createUuid();
+        vmDTO.setVmUuid(vmUuid);
         VmDO vmDO = VmConvent.conventToVmDO(vmDTO);
         if (vmDO == null) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
@@ -110,7 +116,7 @@ public class VmManageServiceImpl implements IVmManageService {
             log.error("创建虚拟机 " + vmDO + "失败");
             return MyCloudResult.failedResult(ErrorEnum.VM_CREATE_FAIL);
         }
-        return MyCloudResult.successResult(Boolean.TRUE);
+        return MyCloudResult.successResult(vmUuid);
     }
 
     @Override
@@ -211,13 +217,49 @@ public class VmManageServiceImpl implements IVmManageService {
         }
     }
 
+    /**
+     * 强制关闭虚拟机
+     */
     @Override
     public MyCloudResult<Boolean> forceShutDownVm(String vmUuid) {
         if (StringUtils.isBlank(vmUuid)) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
         }
-
-        return null;
+        MyCloudResult<VmDTO> result = getVmByUuid(vmUuid);
+        if (!result.isSuccess()) {
+            log.warn("获取虚拟机" + vmUuid + "失败，原因：" + result.getMsgInfo());
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
+        }
+        VmDTO vmDTO = result.getModel();
+        if (vmDTO.getVmStatus() == VmStatusEnum.CLOSED) {
+            return MyCloudResult.successResult(Boolean.TRUE);
+        }
+        Connection conn = mutilHostConnPool.getConnByHostId(vmDTO.getHostId());
+        if (conn == null) {
+            log.error("获取连接失败");
+            return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
+        }
+        try {
+            if (!conn.destroyVm(vmUuid)) {
+                return MyCloudResult.failedResult(ErrorEnum.VM_DESTROY_FAIL);
+            }
+            // 在数据库中更新虚拟机状态
+            vmDTO.setVmStatus(VmStatusEnum.CLOSED);
+            if (!updateVm(vmDTO)) {
+                log.error("在数据库中更新vm失败");
+                return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
+            }
+            return MyCloudResult.successResult(Boolean.TRUE);
+        } catch (LibvirtException e) {
+            log.error("error message", e);
+            return MyCloudResult.failedResult(ErrorEnum.VM_DESTROY_FAIL);
+        } finally {
+            try {
+                conn.close();
+            } catch (LibvirtException e) {
+                log.error("error message", e);
+            }
+        }
     }
 
     /**
@@ -233,5 +275,83 @@ public class VmManageServiceImpl implements IVmManageService {
         }
 
         return vmManage.updateVm(vmDO);
+    }
+
+    @Override
+    public MyCloudResult<Integer> countQuery(QueryVmCondition queryVmCondition) {
+        if (queryVmCondition == null) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        int count = vmManage.countQuery(queryVmCondition);
+        return MyCloudResult.successResult(count);
+    }
+
+    @Override
+    public MyCloudResult<Pagination<VmDTO>> query(QueryVmCondition queryVmCondition) {
+        if (queryVmCondition == null) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        int totalCount = vmManage.countQuery(queryVmCondition);
+        List<VmDO> vmDOList = vmManage.query(queryVmCondition);
+        List<VmDTO> vmDTOList = VmConvent.coventToVmDTOList(vmDOList);
+        Pagination<VmDTO> pagination = new Pagination<VmDTO>(queryVmCondition.getOffset(), queryVmCondition.getLimit(),
+                totalCount, vmDTOList);
+        return MyCloudResult.successResult(pagination);
+    }
+
+    @Override
+    public MyCloudResult<String> cloneVm(VmDTO destVmDTO, String srcVmUuid) {
+        if (destVmDTO == null || StringUtils.isBlank(srcVmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        MyCloudResult<VmDTO> result = getVmByUuid(srcVmUuid);
+        if (!result.isSuccess()) {
+            log.warn("虚拟机" + srcVmUuid + "不存在");
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
+        }
+        VmDTO vmDTO = result.getModel();
+        MyCloudResult<ImageDTO> imageResult = imageManageService.getImageByUuid(vmDTO.getImageUuid(), false);
+        if (!imageResult.isSuccess()) {
+            log.error("虚拟机镜像" + vmDTO.getImageUuid() + "不存在");
+            return MyCloudResult.failedResult(ErrorEnum.IMAGE_NOT_EXIST);
+        }
+        ImageDTO srcImageDTO = imageResult.getModel();
+        // 克隆镜像
+        // 克隆的镜像沿用父镜像的名称
+        MyCloudResult<ImageDTO> cloneImageResult = imageManageService.cloneImage(srcImageDTO.getImageUuid(),
+                srcImageDTO.getImageName(), false);
+        if (!cloneImageResult.isSuccess()) {
+            log.error("虚拟机镜像克隆失败，原因：" + cloneImageResult.getMsgInfo());
+            return MyCloudResult.failedResult(cloneImageResult.getMsgCode(), cloneImageResult.getMsgInfo());
+        }
+        destVmDTO.setImageUuid(cloneImageResult.getModel().getImageUuid());
+        MyCloudResult<String> createResult = createVm(destVmDTO);
+        if (!createResult.isSuccess()) {
+            log.error("创建虚拟机" + destVmDTO + "失败，原因：" + createResult.getMsgInfo());
+            return MyCloudResult.failedResult(createResult.getMsgCode(), createResult.getMsgInfo());
+        }
+        return MyCloudResult.successResult(createResult.getModel());
+    }
+
+    @Override
+    public MyCloudResult<Boolean> deleteVm(String vmUuid) {
+        if (StringUtils.isBlank(vmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        MyCloudResult<VmDTO> result = getVmByUuid(vmUuid);
+        if (!result.isSuccess()) {
+            log.warn("虚拟机" + vmUuid + "不存在");
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
+        }
+        VmDTO vmDTO = result.getModel();
+        MyCloudResult<Boolean> deleteImageResult = imageManageService.deleteImageByUuid(vmDTO.getImageUuid());
+        if (!deleteImageResult.isSuccess()) {
+            log.error("删除虚拟机镜像" + vmDTO.getImageUuid() + "失败，原因：" + deleteImageResult.getMsgInfo());
+            return MyCloudResult.failedResult(deleteImageResult.getMsgCode(), deleteImageResult.getMsgInfo());
+        }
+        if (!vmManage.deleteVmByUuid(vmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_DELETE_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
     }
 }

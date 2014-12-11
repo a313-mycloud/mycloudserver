@@ -7,6 +7,9 @@
  */
 package org.dlut.mycloudserver.service.vmmanage.convent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dlut.mycloudserver.client.common.vmmanage.ShowTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
@@ -69,5 +72,18 @@ public class VmConvent {
         vmDO.setShowPassword(vmDTO.getShowPassword());
 
         return vmDO;
+    }
+
+    public static List<VmDTO> coventToVmDTOList(List<VmDO> vmDOList) {
+        List<VmDTO> vmDTOList = new ArrayList<VmDTO>();
+        if (vmDOList == null) {
+            return vmDTOList;
+        }
+
+        for (VmDO vmDO : vmDOList) {
+            vmDTOList.add(conventToVmDTO(vmDO));
+        }
+
+        return vmDTOList;
     }
 }

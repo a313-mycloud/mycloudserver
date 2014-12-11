@@ -10,8 +10,6 @@
 		<format type='qcow2' />
 		<permissions>
 			<mode>0666</mode>
-			<owner>0</owner>
-			<group>0</group>
 		</permissions>
 	</target>
 	<backingStore>
@@ -19,8 +17,6 @@
 		<format type='qcow2' />
 		<permissions>
 			<mode>0666</mode>
-			<owner>107</owner>
-			<group>107</group>
 		</permissions>
 	</backingStore>
 </volume>

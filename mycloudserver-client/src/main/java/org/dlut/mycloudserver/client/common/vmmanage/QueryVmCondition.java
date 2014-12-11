@@ -48,6 +48,20 @@ public class QueryVmCondition implements Serializable {
      */
     private Integer           hostId;
 
+    /**
+     * 用户账号
+     */
+    private String            userAccount;
+
+    /**
+     * 课程id
+     */
+    private Integer           classId;
+
+    private int               offset           = 0;
+
+    private int               limit            = 10;
+
     public String getVmUuid() {
         return vmUuid;
     }
@@ -94,6 +108,38 @@ public class QueryVmCondition implements Serializable {
 
     public void setHostId(Integer hostId) {
         this.hostId = hostId;
+    }
+
+    public String getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
+    }
+
+    public Integer getClassId() {
+        return classId;
+    }
+
+    public void setClassId(Integer classId) {
+        this.classId = classId;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
 }

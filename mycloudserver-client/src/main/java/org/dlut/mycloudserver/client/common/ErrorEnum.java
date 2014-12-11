@@ -39,6 +39,8 @@ public enum ErrorEnum {
     VM_START_FAIL("2002", "启动虚拟机失败"),
     VM_GET_BEST_HOST_FIAL("2003", "获取最佳物理机失败"),
     VM_UPDATE_FIAL("2004", "在数据库中更新虚拟机失败"),
+    VM_DESTROY_FAIL("2005", "虚拟机强制关机失败"),
+    VM_DELETE_FAIL("2006", "删除虚拟机失败"),
 
     PARAM_IS_INVAILD("9999", "参数非法");
 
