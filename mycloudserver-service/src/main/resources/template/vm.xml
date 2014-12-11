@@ -24,37 +24,28 @@
 			<target dev='hda' bus='ide' />
 			<address type='drive' controller='0' bus='0' target='0' unit='0' />
 		</disk>
-		<!-- <controller type='usb' index='0'>
-			<address type='pci' domain='0x0000' bus='0x00' slot='0x01'
-				function='0x2' />
-		</controller> -->
+		<!-- <controller type='usb' index='0'> <address type='pci' domain='0x0000' 
+			bus='0x00' slot='0x01' function='0x2' /> </controller> -->
 		<!-- <controller type='pci' index='0' model='pci-root' /> -->
-		<!-- <controller type='ide' index='0'>
-			<address type='pci' domain='0x0000' bus='0x00' slot='0x01'
-				function='0x1' />
-		</controller>
-		<controller type='virtio-serial' index='0'>
-			<address type='pci' domain='0x0000' bus='0x00' slot='0x06'
-				function='0x0' />
-		</controller> -->
+		<!-- <controller type='ide' index='0'> <address type='pci' domain='0x0000' 
+			bus='0x00' slot='0x01' function='0x1' /> </controller> <controller type='virtio-serial' 
+			index='0'> <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0' 
+			/> </controller> -->
 		<interface type='network'>
 			<source network='default' />
 			<model type='rtl8139' />
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x03'
 				function='0x0' />
 		</interface>
-		<!-- <serial type='pty'>
-			<target port='0' />
-		</serial>
-		<console type='pty'>
-			<target type='serial' port='0' />
-		</console> -->
+		<!-- <serial type='pty'> <target port='0' /> </serial> <console type='pty'> 
+			<target type='serial' port='0' /> </console> -->
 		#if ($!showType.value == 1)
 		<channel type='spicevmc'>
 			<target type='virtio' name='com.redhat.spice.0' />
 			<address type='virtio-serial' controller='0' bus='0' port='1' />
 		</channel>
-		<graphics type='spice' port='-1' autoport='yes' listen='0.0.0.0' passwd='$!showPassword'>
+		<graphics type='spice' port='-1' autoport='yes' listen='0.0.0.0'
+			passwd='$!showPassword'>
 			<listen type='address' address='0.0.0.0' />
 		</graphics>
 		<video>
@@ -63,7 +54,8 @@
 				function='0x0' />
 		</video>
 		#else
-		<graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' passwd='$!showPassword'>
+		<graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'
+			passwd='$!showPassword'>
 			<listen type='address' address='0.0.0.0' />
 		</graphics>
 		<video>
@@ -72,13 +64,16 @@
 				function='0x0' />
 		</video>
 		#end
-		<sound model='ich6'>
+		<sound model='ac97'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x04'
 				function='0x0' />
 		</sound>
-		<!-- <memballoon model='virtio'>
-			<address type='pci' domain='0x0000' bus='0x00' slot='0x05'
+
+		<!-- <sound model='ich6'>
+			<address type='pci' domain='0x0000' bus='0x00' slot='0x04'
 				function='0x0' />
-		</memballoon> -->
+		</sound> -->
+		<!-- <memballoon model='virtio'> <address type='pci' domain='0x0000' bus='0x00' 
+			slot='0x05' function='0x0' /> </memballoon> -->
 	</devices>
 </domain>

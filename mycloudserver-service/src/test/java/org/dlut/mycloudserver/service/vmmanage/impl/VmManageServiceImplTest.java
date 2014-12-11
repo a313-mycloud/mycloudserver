@@ -77,7 +77,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testStartVm() throws InterruptedException {
         Thread.sleep(10000);
-        String vmUuid = "bd5721bf-89b6-40e1-9d77-2c6ec7e8116e";
+        String vmUuid = "04efb738-953f-4c74-b747-cf30ead3321f";
         MyCloudResult<Boolean> result = vmManageService.startVm(vmUuid);
         printObject(result);
     }
@@ -85,14 +85,14 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testForceCloseVm() throws InterruptedException {
         Thread.sleep(10000);
-        String vmUuid = "bd5721bf-89b6-40e1-9d77-2c6ec7e8116e";
+        String vmUuid = "0b2a0b5a-0ff0-4829-91d4-29a32467461f";
         MyCloudResult<Boolean> result = vmManageService.forceShutDownVm(vmUuid);
         printObject(result);
     }
 
     @Test
     public void testDeleteVm() {
-        String vmUuid = "bd5721bf-89b6-40e1-9d77-2c6ec7e8116e";
+        String vmUuid = "e11e80cf-47e2-4ac5-aff3-78bc87e2ded5";
         MyCloudResult<Boolean> result = vmManageService.deleteVm(vmUuid);
         printObject(result);
     }
@@ -120,7 +120,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
         String srcVmUuid = "04efb738-953f-4c74-b747-cf30ead3321f";
         VmDTO destVmDTO = new VmDTO();
         destVmDTO.setVmVcpu(2);
-        destVmDTO.setVmMemory((long) (512 * 1024 * 1024));
+        destVmDTO.setVmMemory(2147483648L);
         destVmDTO.setUserAccount("31317030");
         destVmDTO.setShowType(ShowTypeEnum.SPICE);
         destVmDTO.setShowPassword("10041104");
