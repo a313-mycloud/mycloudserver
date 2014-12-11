@@ -11,7 +11,7 @@
            http://www.springframework.org/schema/mvc     
            http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<bean id="httpService"
+	<bean id="httpUserManageService"
 		class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
 		<property name="service">
 			<ref bean="userManageService" />
@@ -23,7 +23,7 @@
 	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
 			<props>
-				<prop key="/userManageService">httpService</prop>
+				<prop key="/userManageService">httpUserManageService</prop>
 			</props>
 		</property>
 	</bean>
