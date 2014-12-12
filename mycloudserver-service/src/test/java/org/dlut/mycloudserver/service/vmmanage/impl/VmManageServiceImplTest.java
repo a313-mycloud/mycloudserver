@@ -115,7 +115,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testVmQuery() {
         QueryVmCondition queryVmCondition = new QueryVmCondition();
-        queryVmCondition.setUserAccount("admin");
+        queryVmCondition.setUserAccount("student");
         MyCloudResult<Pagination<VmDTO>> result = vmManageService.query(queryVmCondition);
         printObject(result);
     }

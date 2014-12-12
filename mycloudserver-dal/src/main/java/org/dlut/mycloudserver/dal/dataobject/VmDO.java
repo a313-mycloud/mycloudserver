@@ -15,6 +15,11 @@ package org.dlut.mycloudserver.dal.dataobject;
 public class VmDO extends BaseDO {
 
     /**
+     * 虚拟机名称
+     */
+    private String  vmName;
+
+    /**
      * 虚拟机的uuid
      */
     private String  vmUuid;
@@ -73,6 +78,14 @@ public class VmDO extends BaseDO {
      * 描述
      */
     private String  desc;
+
+    public String getVmName() {
+        return vmName;
+    }
+
+    public void setVmName(String vmName) {
+        this.vmName = vmName;
+    }
 
     public String getVmUuid() {
         return vmUuid;

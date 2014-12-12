@@ -19,6 +19,11 @@ public class VmDTO extends BaseDTO {
     private static final long serialVersionUID = 1190643482692634742L;
 
     /**
+     * 虚拟机名称
+     */
+    private String            vmName;
+
+    /**
      * 虚拟机uuid
      */
     private String            vmUuid;
@@ -77,6 +82,14 @@ public class VmDTO extends BaseDTO {
      * 描述
      */
     private String            desc;
+
+    public String getVmName() {
+        return vmName;
+    }
+
+    public void setVmName(String vmName) {
+        this.vmName = vmName;
+    }
 
     public String getVmUuid() {
         return vmUuid;

@@ -19,6 +19,11 @@ public class QueryVmCondition implements Serializable {
     private static final long serialVersionUID = 3647882884780360660L;
 
     /**
+     * 虚拟机名称
+     */
+    private String            vmName;
+
+    /**
      * 虚拟机uuid
      */
     private String            vmUuid;
@@ -61,6 +66,14 @@ public class QueryVmCondition implements Serializable {
     private int               offset           = 0;
 
     private int               limit            = 10;
+
+    public String getVmName() {
+        return vmName;
+    }
+
+    public void setVmName(String vmName) {
+        this.vmName = vmName;
+    }
 
     public String getVmUuid() {
         return vmUuid;

@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.dlut.mycloudserver.dal.mapper.VmManageMapper">
 	<resultMap id="RM-VmDO" type="VmDO">
+		<result property="vmName" column="vm_name" />
 		<result property="vmUuid" column="vm_uuid" />
 		<result property="vmVcpu" column="vm_vcpu" />
 		<result property="vmMemory" column="vm_memory" />
@@ -19,9 +20,9 @@
 	</resultMap>
 
 	<sql id="select-param-column">
-		vm_uuid, vm_vcpu, vm_memory, image_uuid, vm_status,
-		host_id, user_account, class_id, show_type, show_port, show_password,
-		vm_desc, gmt_create, gmt_modified
+		vm_name, vm_uuid, vm_vcpu, vm_memory, image_uuid,
+		vm_status, host_id, user_account, class_id, show_type, show_port,
+		show_password, vm_desc, gmt_create, gmt_modified
 	</sql>
 
 	<sql id="page-limit">
@@ -31,6 +32,9 @@
 	<sql id="query-condition">
 		<if test="vmUuid!=null">
 			vm_uuid=#{vmUuid}
+		</if>
+		<if test="vmName!=null">
+			AND vm_name=#{vmName}
 		</if>
 		<if test="vmVcpu!=null">
 			AND vm_vcpu=#{vmVcpu}
@@ -62,15 +66,18 @@
 	</select>
 
 	<insert id="createVm">
-		INSERT INTO mycloud_vm(vm_uuid, vm_vcpu, vm_memory,
-		image_uuid, vm_status, host_id, user_account, class_id, show_type, show_port, show_password, 
+		INSERT INTO mycloud_vm(vm_name, vm_uuid, vm_vcpu, vm_memory,
+		image_uuid, vm_status, host_id, user_account, class_id, show_type,
+		show_port, show_password,
 		vm_desc,
 		gmt_create, gmt_modified)
-		VALUES(#{vmUuid}, #{vmVcpu},
+		VALUES(#{vmName}, #{vmUuid}, #{vmVcpu},
 		#{vmMemory},
 		#{imageUuid}, #{vmStatus},
 		#{hostId}, #{userAccount},
-		#{classId}, #{showType}, #{showPort}, #{showPassword}, 
+		#{classId},
+		#{showType}, #{showPort},
+		#{showPassword},
 		#{desc}, now(), now())
 	</insert>
 
@@ -85,6 +92,9 @@
 		<set>
 			<if test="vmVcpu!=null">
 				vm_vcpu=#{vmVcpu},
+			</if>
+			<if test="vmName!=null">
+				vm_name=#{vmName},
 			</if>
 			<if test="vmMemory!=null">
 				vm_memory=#{vmMemory},

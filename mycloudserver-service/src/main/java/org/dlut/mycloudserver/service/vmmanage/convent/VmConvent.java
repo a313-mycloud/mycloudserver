@@ -44,6 +44,7 @@ public class VmConvent {
         }
         vmDTO.setShowPort(vmDO.getShowPort());
         vmDTO.setShowPassword(vmDO.getShowPassword());
+        vmDTO.setVmName(vmDO.getVmName());
 
         return vmDTO;
     }
@@ -70,6 +71,7 @@ public class VmConvent {
         }
         vmDO.setShowPort(vmDTO.getShowPort());
         vmDO.setShowPassword(vmDTO.getShowPassword());
+        vmDO.setVmName(vmDTO.getVmName());
 
         return vmDO;
     }
