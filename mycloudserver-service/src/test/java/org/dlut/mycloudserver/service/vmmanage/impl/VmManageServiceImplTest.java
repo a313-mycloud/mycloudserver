@@ -10,6 +10,10 @@ package org.dlut.mycloudserver.service.vmmanage.impl;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -26,6 +30,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.Test;
+import org.mycloudserver.common.util.TemplateUtil;
 
 /**
  * 类VmManageServiceImplTest.java的实现描述：TODO 类实现描述
@@ -77,7 +82,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testStartVm() throws InterruptedException {
         Thread.sleep(10000);
-        String vmUuid = "04efb738-953f-4c74-b747-cf30ead3321f";
+        String vmUuid = "efaf8734-6788-475c-b574-aa41feaca87e";
         MyCloudResult<Boolean> result = vmManageService.startVm(vmUuid);
         printObject(result);
     }
@@ -85,7 +90,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testForceCloseVm() throws InterruptedException {
         Thread.sleep(10000);
-        String vmUuid = "0b2a0b5a-0ff0-4829-91d4-29a32467461f";
+        String vmUuid = "efaf8734-6788-475c-b574-aa41feaca87e";
         MyCloudResult<Boolean> result = vmManageService.forceShutDownVm(vmUuid);
         printObject(result);
     }
@@ -121,10 +126,17 @@ public class VmManageServiceImplTest extends BaseTestCase {
         VmDTO destVmDTO = new VmDTO();
         destVmDTO.setVmVcpu(2);
         destVmDTO.setVmMemory(2147483648L);
-        destVmDTO.setUserAccount("31317030");
+        destVmDTO.setUserAccount("student");
         destVmDTO.setShowType(ShowTypeEnum.SPICE);
         destVmDTO.setShowPassword("10041104");
         MyCloudResult<String> result = vmManageService.cloneVm(destVmDTO, srcVmUuid);
         printObject(result);
+    }
+
+    @Test
+    public void testPath() throws URISyntaxException {
+        URL resourceUrl = TemplateUtil.class.getResource("/template/vm.xml");
+        Path resoutcePath = Paths.get(resourceUrl.toURI());
+        printObject(resoutcePath);
     }
 }

@@ -17,7 +17,7 @@ public class StoreConstants {
     /**
      * 卷模板路径
      */
-    public static final String VOLUME_TEMPLATE_PATH = "src/main/resources/template/volume.xml";
+    public static final String VOLUME_TEMPLATE_PATH = "template/volume.xml";
 
     /**
      * 存储池的名称

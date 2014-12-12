@@ -14,6 +14,8 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 /**
  * 类TemplateUtil.java的实现描述：TODO 类实现描述
@@ -26,6 +28,8 @@ public class TemplateUtil {
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.setProperty(Velocity.INPUT_ENCODING, "utf8");
         velocityEngine.setProperty(Velocity.OUTPUT_ENCODING, "utf8");
+        velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+        velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         velocityEngine.init();
         Template template = velocityEngine.getTemplate(templatePath);
         VelocityContext velContext = new VelocityContext(context);

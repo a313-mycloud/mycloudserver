@@ -17,5 +17,5 @@ public class VmConstants {
     /**
      * 卷模板路径
      */
-    public static final String VOLUME_TEMPLATE_PATH = "src/main/resources/template/vm.xml";
+    public static final String VOLUME_TEMPLATE_PATH = "template/vm.xml";
 }
