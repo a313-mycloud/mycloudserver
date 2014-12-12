@@ -173,7 +173,7 @@ public class VmManageServiceImpl implements IVmManageService {
             vmDTO.setVmStatus(VmStatusEnum.RUNNING);
             vmDTO.setHostId(bestHostId);
             vmDTO.setShowPort(showPort);
-            if (!updateVm(vmDTO)) {
+            if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
             }
@@ -245,7 +245,7 @@ public class VmManageServiceImpl implements IVmManageService {
             }
             // 在数据库中更新虚拟机状态
             vmDTO.setVmStatus(VmStatusEnum.CLOSED);
-            if (!updateVm(vmDTO)) {
+            if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
             }
@@ -268,7 +268,7 @@ public class VmManageServiceImpl implements IVmManageService {
      * @param vmDTO
      * @return
      */
-    private boolean updateVm(VmDTO vmDTO) {
+    private boolean updateVmIn(VmDTO vmDTO) {
         VmDO vmDO = VmConvent.conventToVmDO(vmDTO);
         if (vmDO == null) {
             return false;
@@ -351,6 +351,17 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         if (!vmManage.deleteVmByUuid(vmUuid)) {
             return MyCloudResult.failedResult(ErrorEnum.VM_DELETE_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    @Override
+    public MyCloudResult<Boolean> updateVm(VmDTO vmDTO) {
+        if (vmDTO == null) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        if (!updateVmIn(vmDTO)) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
         }
         return MyCloudResult.successResult(Boolean.TRUE);
     }

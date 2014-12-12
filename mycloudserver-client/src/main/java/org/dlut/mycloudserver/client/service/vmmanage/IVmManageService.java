@@ -85,4 +85,12 @@ public interface IVmManageService {
      * @return
      */
     public MyCloudResult<Boolean> deleteVm(String vmUuid);
+
+    /**
+     * 更新虚拟机
+     * 
+     * @param vmDTO
+     * @return
+     */
+    public MyCloudResult<Boolean> updateVm(VmDTO vmDTO);
 }
