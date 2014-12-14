@@ -16,11 +16,18 @@ import org.dlut.mycloudserver.client.common.ErrorEnum;
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.hostmanage.HostDTO;
+import org.dlut.mycloudserver.client.common.hostmanage.HostStatusEnum;
 import org.dlut.mycloudserver.client.common.hostmanage.QueryHostCondition;
+import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
+import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
+import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
 import org.dlut.mycloudserver.client.service.hostmanage.IHostManageService;
+import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.dal.dataobject.HostDO;
 import org.dlut.mycloudserver.service.hostmanage.HostManage;
 import org.dlut.mycloudserver.service.hostmanage.convent.HostConvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,8 +38,13 @@ import org.springframework.stereotype.Service;
 @Service("hostManageService")
 public class HostManageServiceImpl implements IHostManageService {
 
+    private static Logger    log = LoggerFactory.getLogger(HostManageServiceImpl.class);
+
     @Resource
-    private HostManage hostManage;
+    private HostManage       hostManage;
+
+    @Resource(name = "vmManageService")
+    private IVmManageService vmManageService;
 
     /**
      * 根据id获取主机
@@ -70,9 +82,36 @@ public class HostManageServiceImpl implements IHostManageService {
     @Override
     public MyCloudResult<Boolean> deleteHostById(int hostId) {
         if (hostId <= 0) {
-            return MyCloudResult.successResult(Boolean.FALSE);
+            MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
-        return MyCloudResult.successResult(hostManage.deleteHostById(hostId));
+        MyCloudResult<HostDTO> hostResult = getHostById(hostId);
+        if (!hostResult.isSuccess()) {
+            return MyCloudResult.failedResult(ErrorEnum.HOST_NOT_EXIST);
+        }
+        // 如果物理机处于运行状态，则强制关闭运行在此物理机上的虚拟机
+        if (hostResult.getModel().getHostStatusEnum() == HostStatusEnum.RUNNING) {
+            // 获取在该物理机上运行的虚拟机列表
+            QueryVmCondition queryVmCondition = new QueryVmCondition();
+            queryVmCondition.setHostId(hostId);
+            queryVmCondition.setVmStatus(VmStatusEnum.RUNNING);
+            queryVmCondition.setOffset(0);
+            queryVmCondition.setLimit(100);
+            MyCloudResult<Pagination<VmDTO>> result = vmManageService.query(queryVmCondition);
+            if (!result.isSuccess()) {
+                log.error("获取物理机下运行的虚拟机列表失败，原因：" + result.getMsgInfo());
+                return MyCloudResult.failedResult(result.getMsgCode(), result.getMsgInfo());
+            }
+            for (VmDTO vmDTO : result.getModel().getList()) {
+                MyCloudResult<Boolean> forceResult = vmManageService.forceShutDownVm(vmDTO.getVmUuid());
+                if (!forceResult.isSuccess()) {
+                    return MyCloudResult.failedResult(forceResult.getMsgCode(), forceResult.getMsgInfo());
+                }
+            }
+        }
+        if (!hostManage.deleteHostById(hostId)) {
+            return MyCloudResult.failedResult(ErrorEnum.HOST_DELETE_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
     }
 
     @Override

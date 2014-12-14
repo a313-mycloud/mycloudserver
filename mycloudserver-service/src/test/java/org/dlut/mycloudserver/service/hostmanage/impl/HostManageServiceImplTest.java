@@ -78,10 +78,14 @@ public class HostManageServiceImplTest extends BaseTestCase {
      * Test method for
      * {@link org.dlut.mycloudserver.service.hostmanage.impl.HostManageServiceImpl#deleteHostById(int)}
      * .
+     * 
+     * @throws InterruptedException
      */
     @Test
-    public void testDeleteHostById() {
-        fail("Not yet implemented");
+    public void testDeleteHostById() throws InterruptedException {
+        Thread.sleep(10000);
+        MyCloudResult<Boolean> result = hostManageService.deleteHostById(14);
+        printObject(result);
     }
 
     /**

@@ -42,6 +42,9 @@ public enum ErrorEnum {
     VM_DESTROY_FAIL("2005", "虚拟机强制关机失败"),
     VM_DELETE_FAIL("2006", "删除虚拟机失败"),
 
+    HOST_NOT_EXIST("3000", "物理机不存在"),
+    HOST_DELETE_FAIL("3001", "删除物理机失败"),
+
     PARAM_IS_INVAILD("9999", "参数非法");
 
     private String errCode;

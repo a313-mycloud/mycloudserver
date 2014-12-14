@@ -44,7 +44,7 @@ public interface IHostManageService {
     MyCloudResult<Boolean> updateHost(HostDTO hostDTO);
 
     /**
-     * 根据id删除物理机
+     * 根据id删除物理机，如果物理机上还有运行的虚拟机，则将强制关闭这些虚拟机(以后可以改为热迁移)
      * 
      * @param hostId
      * @return
