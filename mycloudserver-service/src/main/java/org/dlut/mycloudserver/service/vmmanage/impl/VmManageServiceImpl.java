@@ -7,7 +7,6 @@
  */
 package org.dlut.mycloudserver.service.vmmanage.impl;
 
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,10 +33,6 @@ import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
 import org.dlut.mycloudserver.service.schedule.IScheduler;
 import org.dlut.mycloudserver.service.vmmanage.VmManage;
 import org.dlut.mycloudserver.service.vmmanage.convent.VmConvent;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.mycloudserver.common.constants.VmConstants;
@@ -166,7 +161,7 @@ public class VmManageServiceImpl implements IVmManageService {
             }
             String domainXmlDesc = domain.getXMLDesc(0);
             System.out.println(domainXmlDesc);
-            Integer showPort = displayPort(domainXmlDesc);
+            Integer showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc);
             System.out.println("vnc 端口号为：" + showPort);
 
             // 在数据库中更新虚拟机
@@ -190,32 +185,32 @@ public class VmManageServiceImpl implements IVmManageService {
         return MyCloudResult.successResult(Boolean.TRUE);
     }
 
-    /**
-     * 获取虚拟机vnc端口号
-     * 
-     * @param domainXmlDesc
-     * @return
-     */
-    private Integer displayPort(String domainXmlDesc) {
-        if (StringUtils.isBlank(domainXmlDesc)) {
-            return null;
-        }
-
-        SAXReader saxReader = new SAXReader();
-        try {
-            Document document = saxReader.read(new StringReader(domainXmlDesc));
-            Element root = document.getRootElement();
-            String strPort = root.element("devices").element("graphics").attributeValue("port");
-            int vncPort = Integer.parseInt(strPort);
-            return vncPort;
-        } catch (DocumentException e) {
-            log.error("解析" + domainXmlDesc + "失败", e);
-            return null;
-        } catch (NumberFormatException e) {
-            log.error("vnc端口号不是数字");
-            return null;
-        }
-    }
+    //    /**
+    //     * 获取虚拟机vnc端口号
+    //     * 
+    //     * @param domainXmlDesc
+    //     * @return
+    //     */
+    //    private Integer displayPort(String domainXmlDesc) {
+    //        if (StringUtils.isBlank(domainXmlDesc)) {
+    //            return null;
+    //        }
+    //
+    //        SAXReader saxReader = new SAXReader();
+    //        try {
+    //            Document document = saxReader.read(new StringReader(domainXmlDesc));
+    //            Element root = document.getRootElement();
+    //            String strPort = root.element("devices").element("graphics").attributeValue("port");
+    //            int vncPort = Integer.parseInt(strPort);
+    //            return vncPort;
+    //        } catch (DocumentException e) {
+    //            log.error("解析" + domainXmlDesc + "失败", e);
+    //            return null;
+    //        } catch (NumberFormatException e) {
+    //            log.error("vnc端口号不是数字");
+    //            return null;
+    //        }
+    //    }
 
     /**
      * 强制关闭虚拟机

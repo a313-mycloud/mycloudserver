@@ -18,6 +18,13 @@ import org.dlut.mycloudserver.client.service.hostmanage.IHostManageService;
 import org.dlut.mycloudserver.service.BaseTestCase;
 import org.dlut.mycloudserver.service.hostmanage.HostListener;
 import org.junit.Test;
+import org.libvirt.Connect;
+import org.libvirt.LibvirtException;
+import org.libvirt.jna.ConnectionPointer;
+import org.libvirt.jna.DomainPointer;
+import org.libvirt.jna.Libvirt.VirConnectDomainEventGenericCallback;
+
+import com.sun.jna.Pointer;
 
 /**
  * 类HostManageServiceImplTest.java的实现描述：TODO 类实现描述
@@ -104,5 +111,24 @@ public class HostManageServiceImplTest extends BaseTestCase {
     @Test
     public void testHostListen() {
         hostListener.execute();
+    }
+
+    @Test
+    public void testEvent() throws LibvirtException, InterruptedException {
+        Connect conn = new Connect("qemu:///system");
+        VirConnectDomainEventGenericCallback callBack = new VirConnectDomainEventGenericCallback() {
+
+            @Override
+            public void eventCallback(ConnectionPointer arg0, DomainPointer arg1, Pointer arg2) {
+                printObject("event happend");
+            }
+
+        };
+        conn.domainEventRegisterAny(null, 0, callBack);
+        int a = 0;
+        for (int i = 0; i < 10000; i++) {
+            Thread.sleep(1000);
+            a++;
+        }
     }
 }

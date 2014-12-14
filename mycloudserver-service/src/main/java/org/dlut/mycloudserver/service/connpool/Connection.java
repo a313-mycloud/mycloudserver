@@ -7,6 +7,8 @@
  */
 package org.dlut.mycloudserver.service.connpool;
 
+import java.util.List;
+
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.libvirt.StoragePool;
@@ -35,6 +37,14 @@ public interface Connection {
     public StoragePool getStoragePoolByName(String storagePoolName) throws LibvirtException;
 
     /**
+     * 列出在线的虚拟机列表的名称
+     * 
+     * @return 虚拟机的uuid列表
+     * @throws LibvirtException
+     */
+    public List<String> listActiveVmName() throws LibvirtException;
+
+    /**
      * 从xmlDesc中启动虚拟机
      * 
      * @param xmlDesc
@@ -50,6 +60,15 @@ public interface Connection {
      * @throws LibvirtException
      */
     public boolean destroyVm(String vmUuid) throws LibvirtException;
+
+    /**
+     * 根据名称获取虚拟机
+     * 
+     * @param vmName
+     * @return
+     * @throws LibvirtException
+     */
+    public Domain getDomainByName(String vmName) throws LibvirtException;
 
     /**
      * 关闭连接

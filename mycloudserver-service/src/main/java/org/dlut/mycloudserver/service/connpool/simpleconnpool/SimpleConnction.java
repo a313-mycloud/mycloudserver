@@ -7,6 +7,9 @@
  */
 package org.dlut.mycloudserver.service.connpool.simpleconnpool;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.libvirt.Connect;
 import org.libvirt.Domain;
@@ -71,4 +74,24 @@ public class SimpleConnction implements Connection {
     public String getHostName() throws LibvirtException {
         return conn.getHostName();
     }
+
+    @Override
+    public List<String> listActiveVmName() throws LibvirtException {
+        List<String> activieVmList = new ArrayList<String>();
+        int[] activeVmIds = conn.listDomains();
+        if (activeVmIds == null) {
+            return activieVmList;
+        }
+        for (int vmId : activeVmIds) {
+            Domain domain = conn.domainLookupByID(vmId);
+            activieVmList.add(domain.getName());
+        }
+        return activieVmList;
+    }
+
+    @Override
+    public Domain getDomainByName(String vmName) throws LibvirtException {
+        return conn.domainLookupByName(vmName);
+    }
+
 }

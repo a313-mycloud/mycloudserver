@@ -32,5 +32,11 @@
 			<artifactId>velocity-tools</artifactId>
 		</dependency>
 
+		<!-- dom4j相关包 -->
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+		</dependency>
+
 	</dependencies>
 </project>

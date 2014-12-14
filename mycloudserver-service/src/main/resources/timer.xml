@@ -10,6 +10,7 @@
 			<list>
 				<ref bean="hostListenerTrigger" />
 				<ref bean="simpleConnPoolListenerTrigger"/>
+				<ref bean="vmListenerTrigger"/>
 			</list>
 		</property>
 	</bean>
@@ -32,6 +33,7 @@
 		</property>
 	</bean>
 	
+	<!-- 连接池的更新 -->
 	<bean id="simpleConnPoolListenerTrigger"
 		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<property name="jobDetail" ref="simpleConnPoolJobDetail" />
@@ -46,6 +48,24 @@
 		</property>
 		<property name="targetMethod">
 			<value>updateRemoteMutilHostConnPoolMap</value>
+		</property>
+	</bean>
+	
+	<bean id="vmListenerTrigger"
+		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+		<property name="jobDetail" ref="vmListenerJobDetail" />
+		<property name="startDelay" value="4000" />
+		<property name="repeatInterval" value="2000" />
+	</bean>
+
+	<!-- 监听虚拟机运行状态 -->
+	<bean id="vmListenerJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="vmListener" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
 		</property>
 	</bean>
 	

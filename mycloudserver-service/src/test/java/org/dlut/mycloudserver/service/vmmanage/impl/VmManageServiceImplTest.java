@@ -10,10 +10,6 @@ package org.dlut.mycloudserver.service.vmmanage.impl;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -30,7 +26,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.Test;
-import org.mycloudserver.common.util.TemplateUtil;
+import org.mycloudserver.common.util.CommonUtil;
 
 /**
  * 类VmManageServiceImplTest.java的实现描述：TODO 类实现描述
@@ -134,9 +130,8 @@ public class VmManageServiceImplTest extends BaseTestCase {
     }
 
     @Test
-    public void testPath() throws URISyntaxException {
-        URL resourceUrl = TemplateUtil.class.getResource("/template/vm.xml");
-        Path resoutcePath = Paths.get(resourceUrl.toURI());
-        printObject(resoutcePath);
+    public void test() {
+        String srcVmUuid = "04efb738-953f-4c74-b747-cf30ead3321fa";
+        printObject(CommonUtil.isUuidFormat(srcVmUuid));
     }
 }
