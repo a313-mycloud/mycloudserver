@@ -63,6 +63,7 @@
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x02'
 				function='0x0' />
 		</video>
+		<input type=’tablet’ bus=’usb’/>
 		#end
 		<sound model='ac97'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x04'

@@ -320,6 +320,7 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(cloneImageResult.getMsgCode(), cloneImageResult.getMsgInfo());
         }
         destVmDTO.setImageUuid(cloneImageResult.getModel().getImageUuid());
+        destVmDTO.setVmName(vmDTO.getVmName());
         MyCloudResult<String> createResult = createVm(destVmDTO);
         if (!createResult.isSuccess()) {
             log.error("创建虚拟机" + destVmDTO + "失败，原因：" + createResult.getMsgInfo());

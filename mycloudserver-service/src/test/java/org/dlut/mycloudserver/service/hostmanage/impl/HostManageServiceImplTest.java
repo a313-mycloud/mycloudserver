@@ -19,6 +19,7 @@ import org.dlut.mycloudserver.service.BaseTestCase;
 import org.dlut.mycloudserver.service.hostmanage.HostListener;
 import org.junit.Test;
 import org.libvirt.Connect;
+import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.libvirt.jna.ConnectionPointer;
 import org.libvirt.jna.DomainPointer;
@@ -120,6 +121,7 @@ public class HostManageServiceImplTest extends BaseTestCase {
     @Test
     public void testEvent() throws LibvirtException, InterruptedException {
         Connect conn = new Connect("qemu:///system");
+        Domain domain;
         VirConnectDomainEventGenericCallback callBack = new VirConnectDomainEventGenericCallback() {
 
             @Override

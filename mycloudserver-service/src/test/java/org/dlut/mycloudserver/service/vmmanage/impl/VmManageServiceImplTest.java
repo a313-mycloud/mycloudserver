@@ -10,7 +10,6 @@ package org.dlut.mycloudserver.service.vmmanage.impl;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -56,14 +55,13 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testCreateVm() {
         VmDTO vmDTO = new VmDTO();
-        String vmUuid = UUID.randomUUID().toString();
-        printObject(vmUuid);
-        vmDTO.setVmUuid(vmUuid);
+        vmDTO.setVmName("xp");
+        vmDTO.setImageUuid("2d688e07-d654-4bb7-a43b-a95bd222fe5d");
         vmDTO.setVmVcpu(2);
-        vmDTO.setVmMemory((long) (512 * 1024 * 1024));
+        vmDTO.setVmMemory(2147483648L);
         vmDTO.setUserAccount("admin");
-        vmDTO.setClassId(1);
-
+        vmDTO.setShowType(ShowTypeEnum.SPICE);
+        vmDTO.setShowPassword("10041104");
         MyCloudResult<String> result = vmManageService.createVm(vmDTO);
         printObject(result);
     }
@@ -118,7 +116,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void testCloneVm() {
-        String srcVmUuid = "04efb738-953f-4c74-b747-cf30ead3321f";
+        String srcVmUuid = "e0e04ed6-1658-4a92-a5b1-e0307c972612";
         VmDTO destVmDTO = new VmDTO();
         destVmDTO.setVmVcpu(2);
         destVmDTO.setVmMemory(2147483648L);
@@ -131,7 +129,6 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void test() {
-        String srcVmUuid = "04efb738-953f-4c74-b747-cf30ead3321fa";
-        printObject(CommonUtil.isUuidFormat(srcVmUuid));
+        printObject(CommonUtil.createUuid());
     }
 }
