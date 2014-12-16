@@ -46,4 +46,10 @@
 			value="org.dlut.mycloudserver.dal.mapper.VmManageMapper" />
 	</bean>
 
+	<bean id="studentClassMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"
+		parent="mycloudServerBaseMapper">
+		<property name="mapperInterface"
+			value="org.dlut.mycloudserver.dal.mapper.StudentClassMapper" />
+	</bean>
+
 </beans>

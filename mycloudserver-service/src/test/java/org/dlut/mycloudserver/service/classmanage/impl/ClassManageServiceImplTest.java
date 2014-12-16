@@ -13,6 +13,7 @@ import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.classmanage.ClassDTO;
 import org.dlut.mycloudserver.client.common.classmanage.QueryClassCondition;
+import org.dlut.mycloudserver.client.common.usermanage.UserDTO;
 import org.dlut.mycloudserver.client.service.classmanage.IClassManageService;
 import org.dlut.mycloudserver.service.BaseTestCase;
 import org.junit.Test;
@@ -46,8 +47,8 @@ public class ClassManageServiceImplTest extends BaseTestCase {
     @Test
     public void testCreateClass() {
         ClassDTO classDTO = new ClassDTO();
-        classDTO.setClassName("操作系统3");
-        classDTO.setTeacherAccount("a");
+        classDTO.setClassName("a313");
+        classDTO.setTeacherAccount("teacher");
         MyCloudResult<Integer> result = classManageService.createClass(classDTO);
         printObject(result);
     }
@@ -83,6 +84,28 @@ public class ClassManageServiceImplTest extends BaseTestCase {
         queryClassCondition.setLimit(5);
         queryClassCondition.setOffset(0);
         MyCloudResult<Pagination<ClassDTO>> result = classManageService.query(queryClassCondition);
+        printObject(result);
+    }
+
+    @Test
+    public void testAddStudentInOneClass() {
+        int classId = 3;
+        String studentAccount = "1";
+        MyCloudResult<Boolean> result = classManageService.addStudentInOneClass(studentAccount, classId);
+        printObject(result);
+    }
+
+    @Test
+    public void testGetClassesOfOneStudent() {
+        String studentAccount = "student";
+        MyCloudResult<Pagination<ClassDTO>> result = classManageService.getClassesOfOneStudent(studentAccount, 0, 10);
+        printObject(result);
+    }
+
+    @Test
+    public void testGetStudentsInOneClass() {
+        int classId = 3;
+        MyCloudResult<Pagination<UserDTO>> result = classManageService.getStudentsInOneClass(classId, 0, 10);
         printObject(result);
     }
 }

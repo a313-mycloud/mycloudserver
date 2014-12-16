@@ -11,6 +11,7 @@ import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.classmanage.ClassDTO;
 import org.dlut.mycloudserver.client.common.classmanage.QueryClassCondition;
+import org.dlut.mycloudserver.client.common.usermanage.UserDTO;
 
 /**
  * 类IClassManageService.java的实现描述：TODO 类实现描述
@@ -67,4 +68,57 @@ public interface IClassManageService {
      */
     public MyCloudResult<Pagination<ClassDTO>> query(QueryClassCondition queryClassCondition);
 
+    /**
+     * 将一个学生添加到一门课程中
+     * 
+     * @param studentAccount
+     * @param classId
+     * @return
+     */
+    public MyCloudResult<Boolean> addStudentInOneClass(String studentAccount, int classId);
+
+    /**
+     * 删除一门课中的一个学生
+     * 
+     * @param studentAccount
+     * @param classId
+     * @return
+     */
+    public MyCloudResult<Boolean> deleteStudentInOneClass(String studentAccount, int classId);
+
+    /**
+     * 删除一个学生的所有课程
+     * 
+     * @param studentAccount
+     * @return
+     */
+    public MyCloudResult<Boolean> deleteStudentAllClass(String studentAccount);
+
+    /**
+     * 删除一门课下面的所有学生
+     * 
+     * @param classId
+     * @return
+     */
+    public MyCloudResult<Boolean> deleteAllStudentInOneClass(int classId);
+
+    /**
+     * 分页获取一个课程下的学生列表
+     * 
+     * @param classId
+     * @param offset
+     * @param limit
+     * @return
+     */
+    public MyCloudResult<Pagination<UserDTO>> getStudentsInOneClass(int classId, int offset, int limit);
+
+    /**
+     * 分页获取一个学生的课程列表
+     * 
+     * @param studentAccount
+     * @param offset
+     * @param limit
+     * @return
+     */
+    public MyCloudResult<Pagination<ClassDTO>> getClassesOfOneStudent(String studentAccount, int offset, int limit);
 }
