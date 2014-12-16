@@ -186,8 +186,8 @@ public class ImageManageServiceImpl implements IImageManageService {
             return MyCloudResult.failedResult(result.getMsgCode(), result.getMsgInfo());
         }
         ImageDTO needImageDTO = result.getModel();
-        // 允许物理删除
-        if (needImageDTO.getReferenceCount() == 0) {
+        // 如果引用为0，并且不是模板，允许物理删除
+        if (needImageDTO.getReferenceCount() == 0 && !needImageDTO.getIsTemplate()) {
             if (!physicalDeleteImage(needImageDTO)) {
                 log.warn("物理删除镜像 " + needImageDTO + "失败");
                 return MyCloudResult.failedResult(ErrorEnum.IMAGE_PHYSICAL_DELETE_FAIL);
@@ -247,7 +247,8 @@ public class ImageManageServiceImpl implements IImageManageService {
         }
         ImageDTO imageDTO = result.getModel();
         imageDTO.setReferenceCount(imageDTO.getReferenceCount() - 1);
-        if (imageDTO.getIsDelete() && imageDTO.getReferenceCount() == 0) {
+        // 如果被标记为已删除，并且引用值为0，且不是模板，则可以删除
+        if (imageDTO.getIsDelete() && imageDTO.getReferenceCount() == 0 && !imageDTO.getIsTemplate()) {
             // 物理删除
             if (!physicalDeleteImage(imageDTO)) {
                 return false;
