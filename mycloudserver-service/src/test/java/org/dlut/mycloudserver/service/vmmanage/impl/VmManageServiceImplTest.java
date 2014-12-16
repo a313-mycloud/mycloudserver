@@ -62,6 +62,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
         vmDTO.setUserAccount("admin");
         vmDTO.setShowType(ShowTypeEnum.SPICE);
         vmDTO.setShowPassword("10041104");
+        vmDTO.setClassId(0);
         MyCloudResult<String> result = vmManageService.createVm(vmDTO);
         printObject(result);
     }
@@ -116,13 +117,14 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void testCloneVm() {
-        String srcVmUuid = "e0e04ed6-1658-4a92-a5b1-e0307c972612";
+        String srcVmUuid = "04efb738-953f-4c74-b747-cf30ead3321f";
         VmDTO destVmDTO = new VmDTO();
         destVmDTO.setVmVcpu(2);
         destVmDTO.setVmMemory(2147483648L);
-        destVmDTO.setUserAccount("student");
+        destVmDTO.setUserAccount("teacher");
         destVmDTO.setShowType(ShowTypeEnum.SPICE);
         destVmDTO.setShowPassword("10041104");
+        destVmDTO.setClassId(0);
         MyCloudResult<String> result = vmManageService.cloneVm(destVmDTO, srcVmUuid);
         printObject(result);
     }

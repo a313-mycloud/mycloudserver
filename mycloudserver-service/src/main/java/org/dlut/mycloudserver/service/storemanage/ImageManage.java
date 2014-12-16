@@ -7,9 +7,13 @@
  */
 package org.dlut.mycloudserver.service.storemanage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dlut.mycloudserver.client.common.storemanage.QueryImageCondition;
 import org.dlut.mycloudserver.dal.dataobject.ImageDO;
 import org.dlut.mycloudserver.dal.mapper.ImageManageMapper;
 import org.springframework.stereotype.Service;
@@ -51,5 +55,31 @@ public class ImageManage {
             return false;
         }
         return imageManageMapper.deleteImageByUuid(imageUuid) == 1 ? true : false;
+    }
+
+    /**
+     * 统计数量
+     * 
+     * @param queryImageCondition
+     * @return
+     */
+    public int countQuery(QueryImageCondition queryImageCondition) {
+        if (queryImageCondition == null) {
+            return 0;
+        }
+        return imageManageMapper.countQuery(queryImageCondition);
+    }
+
+    /**
+     * 分页获取列表
+     * 
+     * @param queryImageCondition
+     * @return
+     */
+    public List<ImageDO> query(QueryImageCondition queryImageCondition) {
+        if (queryImageCondition == null) {
+            return new ArrayList<ImageDO>();
+        }
+        return imageManageMapper.query(queryImageCondition);
     }
 }

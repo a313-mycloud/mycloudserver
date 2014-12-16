@@ -7,7 +7,10 @@
  */
 package org.dlut.mycloudserver.dal.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
+import org.dlut.mycloudserver.client.common.storemanage.QueryImageCondition;
 import org.dlut.mycloudserver.dal.dataobject.ImageDO;
 
 /**
@@ -48,5 +51,21 @@ public interface ImageManageMapper {
      * @return
      */
     int deleteImageByUuid(@Param("imageUuid") String imageUuid);
+
+    /**
+     * 统计数量
+     * 
+     * @param queryImageCondition
+     * @return
+     */
+    int countQuery(QueryImageCondition queryImageCondition);
+
+    /**
+     * 分页获取列表
+     * 
+     * @param queryImageCondition
+     * @return
+     */
+    List<ImageDO> query(QueryImageCondition queryImageCondition);
 
 }

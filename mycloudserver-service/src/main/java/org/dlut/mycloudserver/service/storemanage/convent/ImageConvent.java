@@ -8,6 +8,8 @@
 package org.dlut.mycloudserver.service.storemanage.convent;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
@@ -60,5 +62,17 @@ public class ImageConvent {
         imageDO.setReferenceCount(imageDTO.getReferenceCount());
 
         return imageDO;
+    }
+
+    public static List<ImageDTO> conventToImageDTOList(List<ImageDO> imageDOList) {
+        List<ImageDTO> imageDTOList = new ArrayList<ImageDTO>();
+        if (imageDOList == null) {
+            return imageDTOList;
+        }
+        for (ImageDO imageDO : imageDOList) {
+            imageDTOList.add(conventToImageDTO(imageDO));
+        }
+
+        return imageDTOList;
     }
 }

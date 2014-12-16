@@ -185,33 +185,6 @@ public class VmManageServiceImpl implements IVmManageService {
         return MyCloudResult.successResult(Boolean.TRUE);
     }
 
-    //    /**
-    //     * 获取虚拟机vnc端口号
-    //     * 
-    //     * @param domainXmlDesc
-    //     * @return
-    //     */
-    //    private Integer displayPort(String domainXmlDesc) {
-    //        if (StringUtils.isBlank(domainXmlDesc)) {
-    //            return null;
-    //        }
-    //
-    //        SAXReader saxReader = new SAXReader();
-    //        try {
-    //            Document document = saxReader.read(new StringReader(domainXmlDesc));
-    //            Element root = document.getRootElement();
-    //            String strPort = root.element("devices").element("graphics").attributeValue("port");
-    //            int vncPort = Integer.parseInt(strPort);
-    //            return vncPort;
-    //        } catch (DocumentException e) {
-    //            log.error("解析" + domainXmlDesc + "失败", e);
-    //            return null;
-    //        } catch (NumberFormatException e) {
-    //            log.error("vnc端口号不是数字");
-    //            return null;
-    //        }
-    //    }
-
     /**
      * 强制关闭虚拟机
      */

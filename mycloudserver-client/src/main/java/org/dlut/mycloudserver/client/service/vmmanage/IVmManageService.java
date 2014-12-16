@@ -29,7 +29,7 @@ public interface IVmManageService {
 
     /**
      * 创建新的虚拟机，必须设置vmVcpu、vmMemory、imageUuid、userAccount、showType、
-     * showPassword，可选：classId、desc
+     * showPassword，classId(0表示没有课程), 可选：desc
      * 
      * @param vmDTO
      * @return 新创建的vm的uuid
@@ -37,8 +37,8 @@ public interface IVmManageService {
     public MyCloudResult<String> createVm(VmDTO vmDTO);
 
     /**
-     * 克隆虚拟机，必须设置vmVcpu、vmMemory、userAccount、showType、showPassword，
-     * 可选：classId、desc
+     * 克隆虚拟机，必须设置vmVcpu、vmMemory、userAccount、showType、showPassword，classId
+     * 可选：desc
      * 
      * @param destVmDTO
      * @param srcVmUuid

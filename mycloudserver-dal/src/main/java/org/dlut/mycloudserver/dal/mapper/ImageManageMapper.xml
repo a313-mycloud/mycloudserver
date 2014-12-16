@@ -59,6 +59,27 @@
 		</set>
 	</sql>
 
+	<sql id="query-condition">
+		<if test="imageUuid!=null">
+			image_uuid=#{imageUuid}
+		</if>
+		<if test="imageFormat!=null">
+			AND image_format=#{imageFormat.value}
+		</if>
+		<if test="parentImageUuid!=null">
+			AND parent_image_uuid=#{parentImageUuid}
+		</if>
+		<if test="referenceCount!=null">
+			AND reference_count=#{referenceCount}
+		</if>
+		<if test="isTemplate!=null">
+			AND is_template=#{isTemplate}
+		</if>
+		<if test="isDelete!=null">
+			AND is_delete=#{isDelete}
+		</if>
+	</sql>
+
 	<select id="getImageByUuid" resultMap="RM-ImageDO">
 		SELECT
 		<include refid="select-param-column" />
@@ -89,5 +110,24 @@
 		DELETE FROM mycloud_image WHERE image_uuid = #{imageUuid}
 		]]>
 	</delete>
+
+	<select id="countQuery" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		mycloud_image
+		<where>
+			<include refid="query-condition" />
+		</where>
+	</select>
+
+	<select id="query" resultMap="RM-ImageDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_image
+		<where>
+			<include refid="query-condition" />
+		</where>
+		<include refid="page-limit" />
+	</select>
 
 </mapper>

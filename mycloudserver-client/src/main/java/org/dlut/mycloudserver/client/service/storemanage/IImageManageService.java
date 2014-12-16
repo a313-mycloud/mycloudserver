@@ -8,7 +8,9 @@
 package org.dlut.mycloudserver.client.service.storemanage;
 
 import org.dlut.mycloudserver.client.common.MyCloudResult;
+import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
+import org.dlut.mycloudserver.client.common.storemanage.QueryImageCondition;
 
 /**
  * 类IImageManageService.java的实现描述：TODO 类实现描述
@@ -58,4 +60,21 @@ public interface IImageManageService {
      * @return
      */
     public MyCloudResult<Boolean> deleteImageByUuid(String imageUuid);
+
+    /**
+     * 根据查询条件统计数量
+     * 
+     * @param queryImageCondition
+     * @return
+     */
+    public MyCloudResult<Integer> countQuery(QueryImageCondition queryImageCondition);
+
+    /**
+     * 根据查询条件分页获取镜像列表
+     * 
+     * @param queryImageCondition
+     * @return
+     */
+    public MyCloudResult<Pagination<ImageDTO>> query(QueryImageCondition queryImageCondition);
+
 }

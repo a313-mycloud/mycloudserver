@@ -9,6 +9,7 @@ package org.dlut.mycloudserver.service.storemanage.impl;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -16,7 +17,9 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.dlut.mycloudserver.client.common.ErrorEnum;
 import org.dlut.mycloudserver.client.common.MyCloudResult;
+import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
+import org.dlut.mycloudserver.client.common.storemanage.QueryImageCondition;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.client.service.storemanage.IImageManageService;
 import org.dlut.mycloudserver.dal.dataobject.ImageDO;
@@ -87,6 +90,7 @@ public class ImageManageServiceImpl implements IImageManageService {
         }
         imageDTO.setImageFormat((StoreFormat) result[0]);
         imageDTO.setImageTotalSize((Long) result[1]);
+        imageDTO.setParentImageUuid("");
 
         ImageDO imageDO = ImageConvent.conventToImageDO(imageDTO);
         if (!imageManage.createImage(imageDO)) {
@@ -292,5 +296,27 @@ public class ImageManageServiceImpl implements IImageManageService {
                 }
             }
         }
+    }
+
+    @Override
+    public MyCloudResult<Integer> countQuery(QueryImageCondition queryImageCondition) {
+        if (queryImageCondition == null) {
+            MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        int totalCount = imageManage.countQuery(queryImageCondition);
+        return MyCloudResult.successResult(totalCount);
+    }
+
+    @Override
+    public MyCloudResult<Pagination<ImageDTO>> query(QueryImageCondition queryImageCondition) {
+        if (queryImageCondition == null) {
+            MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        int totalCount = imageManage.countQuery(queryImageCondition);
+        List<ImageDO> imageDOList = imageManage.query(queryImageCondition);
+        List<ImageDTO> imageDTOList = ImageConvent.conventToImageDTOList(imageDOList);
+        Pagination<ImageDTO> pagination = new Pagination<ImageDTO>(queryImageCondition.getOffset(),
+                queryImageCondition.getLimit(), totalCount, imageDTOList);
+        return MyCloudResult.successResult(pagination);
     }
 }
