@@ -7,13 +7,13 @@
  */
 package org.dlut.mycloudserver.service.storemanage.convent;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.dlut.mycloudserver.client.common.storemanage.ImageDTO;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.dal.dataobject.ImageDO;
+import org.mycloudserver.common.util.FileUtil;
 
 /**
  * 类ImageConvent.java的实现描述：TODO 类实现描述
@@ -32,7 +32,8 @@ public class ImageConvent {
         imageDTO.setImageName(imageDO.getImageName());
         imageDTO.setImagePath(imageDO.getImagePath());
         imageDTO.setImageTotalSize(imageDO.getImageTotalSize());
-        imageDTO.setImageUsedSize(new File(imageDO.getImagePath()).length());
+        //        imageDTO.setImageUsedSize(new File(imageDO.getImagePath()).length());
+        imageDTO.setImageUsedSize(FileUtil.getFileSize(imageDO.getImagePath()));
         imageDTO.setImageUuid(imageDO.getImageUuid());
         imageDTO.setIsDelete(imageDO.getIsDelete());
         imageDTO.setIsTemplate(imageDO.getIsTemplate());

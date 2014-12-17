@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dlut.mycloudserver.dal.mapper.DiskManageMapper">
+	<resultMap id="RM-DiskDO" type="DiskDO">
+		<result property="diskUuid" column="disk_uuid" />
+		<result property="diskName" column="disk_name" />
+		<result property="diskTotalSize" column="disk_total_size" />
+		<result property="diskPath" column="disk_path" />
+		<result property="diskFormat" column="disk_format" />
+		<result property="attachVmUuid" column="attach_vm_uuid" />
+		<result property="userAccount" column="user_account" />
+		<result property="desc" column="disk_desc" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+	</resultMap>
+
+	<sql id="select-param-column">
+		disk_uuid, disk_name, disk_total_size, disk_path,
+		disk_format, attach_vm_uuid, user_account, disk_desc, gmt_create,
+		gmt_modified
+	</sql>
+
+	<sql id="page-limit">
+		LIMIT #{offset}, #{limit}
+	</sql>
+
+	<sql id="set">
+		<set>
+			<if test="diskName!=null">
+				disk_name=#{diskName},
+			</if>
+			<if test="diskTotalSize!=null">
+				disk_total_size=#{diskTotalSize},
+			</if>
+			<if test="attachVmUuid!=null">
+				attach_vm_uuid=#{attachVmUuid},
+			</if>
+			<if test="desc!=null">
+				image_desc=#{desc},
+			</if>
+			gmt_modified = now(),
+		</set>
+	</sql>
+
+	<sql id="query-condition">
+		<if test="diskUuid!=null">
+			disk_uuid=#{diskUuid}
+		</if>
+		<if test="diskName!=null">
+			AND disk_name=#{diskName}
+		</if>
+		<if test="diskFormat!=null">
+			AND disk_format=#{diskFormat.value}
+		</if>
+		<if test="attachVmUuid!=null">
+			AND attach_vm_uuid=#{attachVmUuid}
+		</if>
+		<if test="userAccount!=null">
+			AND user_account=#{userAccount}
+		</if>
+	</sql>
+
+	<select id="getDiskByUuid" resultMap="RM-DiskDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_disk where disk_uuid = #{diskUuid}
+	</select>
+
+	<insert id="createDisk">
+		INSERT INTO mycloud_disk(
+		<include refid="select-param-column" />
+		)
+		VALUES(#{diskUuid}, #{diskName}, #{diskTotalSize}, #{diskPath},
+		#{diskFormat}, #{attachVmUuid}, #{userAccount}, #{desc},
+		now(), now())
+	</insert>
+
+	<update id="updateDisk">
+		UPDATE mycloud_disk
+		<include refid="set" />
+		WHERE disk_uuid=#{diskUuid}
+	</update>
+
+	<delete id="deleteDiskByUuid">
+		DELETE FROM
+		mycloud_disk
+		WHERE
+		disk_uuid = #{diskUuid}
+	</delete>
+
+	<select id="countQuery" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		mycloud_disk
+		<where>
+			<include refid="query-condition" />
+		</where>
+	</select>
+
+	<select id="query" resultMap="RM-DiskDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_disk
+		<where>
+			<include refid="query-condition" />
+		</where>
+		<include refid="page-limit" />
+	</select>
+
+</mapper>

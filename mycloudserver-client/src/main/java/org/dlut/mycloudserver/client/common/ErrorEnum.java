@@ -48,6 +48,8 @@ public enum ErrorEnum {
     HOST_NOT_EXIST("3000", "物理机不存在"),
     HOST_DELETE_FAIL("3001", "删除物理机失败"),
 
+    DISK_NOT_EXIST("4000", "硬盘不存在"),
+
     PARAM_IS_INVAILD("9999", "参数非法");
 
     private String errCode;

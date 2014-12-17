@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.apache.commons.lang.StringUtils;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,5 +68,22 @@ public class FileUtil {
         }
         return result;
 
+    }
+
+    /**
+     * 获取文件的大小，如果文件不存在，返回0
+     * 
+     * @param filePath
+     * @return
+     */
+    public static long getFileSize(String filePath) {
+        if (StringUtils.isBlank(filePath)) {
+            return 0;
+        }
+        File file = new File(filePath);
+        if (!file.isFile()) {
+            return 0;
+        }
+        return file.length();
     }
 }

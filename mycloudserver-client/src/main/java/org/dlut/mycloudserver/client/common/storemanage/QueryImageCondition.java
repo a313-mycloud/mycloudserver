@@ -7,46 +7,50 @@
  */
 package org.dlut.mycloudserver.client.common.storemanage;
 
+import java.io.Serializable;
+
 /**
  * 类QueryImageCondition.java的实现描述：TODO 类实现描述
  * 
  * @author luojie 2014年12月16日 下午5:52:34
  */
-public class QueryImageCondition {
+public class QueryImageCondition implements Serializable {
+
+    private static final long serialVersionUID = 6373399484088311327L;
 
     /**
      * 镜像uuid
      */
-    private String      imageUuid;
+    private String            imageUuid;
 
     /**
      * 镜像格式
      */
-    private StoreFormat imageFormat;
+    private StoreFormat       imageFormat;
 
     /**
      * 父镜像uuid
      */
-    private String      parentImageUuid;
+    private String            parentImageUuid;
 
     /**
      * 被子镜像引用的次数
      */
-    private Integer     referenceCount;
+    private Integer           referenceCount;
 
     /**
      * 是否为模板
      */
-    private Boolean     isTemplate;
+    private Boolean           isTemplate;
 
     /**
      * 是否已经删除
      */
-    private Boolean     isDelete;
+    private Boolean           isDelete;
 
-    private int         offset = 0;
+    private int               offset           = 0;
 
-    private int         limit  = 10;
+    private int               limit            = 10;
 
     public String getImageUuid() {
         return imageUuid;
