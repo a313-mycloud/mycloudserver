@@ -52,7 +52,7 @@
 			value="org.dlut.mycloudserver.dal.mapper.StudentClassMapper" />
 	</bean>
 
-	<bean id="diskManage" class="org.mybatis.spring.mapper.MapperFactoryBean"
+	<bean id="diskManageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"
 		parent="mycloudServerBaseMapper">
 		<property name="mapperInterface"
 			value="org.dlut.mycloudserver.dal.mapper.DiskManageMapper" />
