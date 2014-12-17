@@ -99,7 +99,7 @@ public class VmManageServiceImpl implements IVmManageService {
             log.warn("用户 " + vmDTO.getUserAccount() + " 不存在");
             return MyCloudResult.failedResult(ErrorEnum.USER_NOT_EXIST);
         }
-        if (vmDTO.getClassId() != null) {
+        if (vmDTO.getClassId() != 0) {
             MyCloudResult<ClassDTO> classResult = classManageService.getClassById(vmDTO.getClassId());
             if (!classResult.isSuccess()) {
                 log.warn("课程 " + vmDTO.getClassId() + "不存在");
