@@ -3,7 +3,7 @@
 	<key>$uuid</key>
 	<source>
 	</source>
-	<capacity>8589934592</capacity>
+	<capacity>$imageSize</capacity>
 	<allocation>139264</allocation>
 	<target>
 		<path>$newImagePath</path> <!--新卷的地址 -->

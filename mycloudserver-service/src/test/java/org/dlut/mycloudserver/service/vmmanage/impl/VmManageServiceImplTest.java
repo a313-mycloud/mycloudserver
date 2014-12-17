@@ -55,11 +55,11 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testCreateVm() {
         VmDTO vmDTO = new VmDTO();
-        vmDTO.setVmName("xp");
-        vmDTO.setImageUuid("2d688e07-d654-4bb7-a43b-a95bd222fe5d");
+        vmDTO.setVmName("win7");
+        vmDTO.setImageUuid("0c1b12e1-d3c0-4dca-a0f2-edc578523191");
         vmDTO.setVmVcpu(2);
         vmDTO.setVmMemory(2147483648L);
-        vmDTO.setUserAccount("admin");
+        vmDTO.setUserAccount("teacher");
         vmDTO.setShowType(ShowTypeEnum.SPICE);
         vmDTO.setShowPassword("10041104");
         vmDTO.setClassId(0);
@@ -92,7 +92,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void testDeleteVm() {
-        String vmUuid = "b62c1e04-4a7e-4f79-b8ca-88757f88154f";
+        String vmUuid = "490dd28e-c22e-41cd-9052-a7673f7f8645";
         MyCloudResult<Boolean> result = vmManageService.deleteVm(vmUuid);
         printObject(result);
     }
@@ -117,7 +117,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void testCloneVm() {
-        String srcVmUuid = "04efb738-953f-4c74-b747-cf30ead3321f";
+        String srcVmUuid = "9252eaeb-920e-457f-adb0-3494254abba0";
         VmDTO destVmDTO = new VmDTO();
         destVmDTO.setVmVcpu(2);
         destVmDTO.setVmMemory(2147483648L);

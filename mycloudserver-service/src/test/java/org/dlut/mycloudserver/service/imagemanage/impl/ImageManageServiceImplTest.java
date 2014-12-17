@@ -57,8 +57,8 @@ public class ImageManageServiceImplTest extends BaseTestCase {
     @Test
     public void testCreateImage() {
         ImageDTO imageDTO = new ImageDTO();
-        String imageUuid = "2d688e07-d654-4bb7-a43b-a95bd222fe5d";
-        imageDTO.setImageName("xp");
+        String imageUuid = "0c1b12e1-d3c0-4dca-a0f2-edc578523191";
+        imageDTO.setImageName("win7");
         imageDTO.setImagePath(StoreConstants.STOREPOOL_PATH + imageUuid);
         imageDTO.setImageUuid(imageUuid);
         imageDTO.setIsTemplate(true);
