@@ -92,7 +92,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void testDeleteVm() {
-        String vmUuid = "e11e80cf-47e2-4ac5-aff3-78bc87e2ded5";
+        String vmUuid = "b62c1e04-4a7e-4f79-b8ca-88757f88154f";
         MyCloudResult<Boolean> result = vmManageService.deleteVm(vmUuid);
         printObject(result);
     }

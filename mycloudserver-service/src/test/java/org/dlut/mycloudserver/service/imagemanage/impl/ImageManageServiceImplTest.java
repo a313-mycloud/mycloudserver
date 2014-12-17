@@ -62,6 +62,7 @@ public class ImageManageServiceImplTest extends BaseTestCase {
         imageDTO.setImagePath(StoreConstants.STOREPOOL_PATH + imageUuid);
         imageDTO.setImageUuid(imageUuid);
         imageDTO.setIsTemplate(true);
+        imageDTO.setParentImageUuid("");
         MyCloudResult<Boolean> result = imageManageService.createImage(imageDTO);
         printObject(result);
         //        printObject(CommonUtil.createUuid());
@@ -114,14 +115,14 @@ public class ImageManageServiceImplTest extends BaseTestCase {
         //        FileUtil.getStoreFormat(imagePath);
         //        Connect conn = new Connect("qemu:///system");
         //        StoragePool pool = conn.storagePoolLookupByName("default");
-        MyCloudResult<ImageDTO> result = imageManageService.cloneImage("69477f60-34c6-478e-9f0f-74f48053ed8b",
-                "ubuntu-clone", false);
+        MyCloudResult<ImageDTO> result = imageManageService.cloneImage("2d688e07-d654-4bb7-a43b-a95bd222fe5d",
+                "xp-clone", false);
         printObject(result);
     }
 
     @Test
     public void testDelete() {
-        MyCloudResult<Boolean> result = imageManageService.deleteImageByUuid("621573da-efd6-4584-9df2-fa9d60037cda");
+        MyCloudResult<Boolean> result = imageManageService.deleteImageByUuid("6e1a6849-a6ea-4287-9277-105b3360acb7");
         printObject(result);
     }
 

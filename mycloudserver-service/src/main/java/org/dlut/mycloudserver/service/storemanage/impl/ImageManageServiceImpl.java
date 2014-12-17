@@ -90,7 +90,6 @@ public class ImageManageServiceImpl implements IImageManageService {
         }
         imageDTO.setImageFormat((StoreFormat) result[0]);
         imageDTO.setImageTotalSize((Long) result[1]);
-        imageDTO.setParentImageUuid("");
 
         ImageDO imageDO = ImageConvent.conventToImageDO(imageDTO);
         if (!imageManage.createImage(imageDO)) {
@@ -203,6 +202,26 @@ public class ImageManageServiceImpl implements IImageManageService {
         return MyCloudResult.successResult(Boolean.TRUE);
     }
 
+    //    /**
+    //     * 判断镜像是否和虚拟机绑定
+    //     * 
+    //     * @param imageUuid
+    //     * @return
+    //     */
+    //    private boolean isBindVm(String imageUuid) {
+    //        QueryVmCondition queryVmCondition = new QueryVmCondition();
+    //        queryVmCondition.setImageUuid(imageUuid);
+    //        MyCloudResult<Integer> result = vmManageService.countQuery(queryVmCondition);
+    //        if (!result.isSuccess()) {
+    //            log.error("查询虚拟机数量失败");
+    //            return false;
+    //        }
+    //        if (result.getModel() == 0) {
+    //            return false;
+    //        }
+    //        return true;
+    //    }
+
     /**
      * 物理删除镜像，包括删除文件以及数据库中的记录
      * 
@@ -278,6 +297,7 @@ public class ImageManageServiceImpl implements IImageManageService {
                 return false;
             }
             StoragePool pool = conn.getStoragePoolByName(StoreConstants.STOREPOOL_NAME);
+            pool.refresh(0);
             StorageVol vol = pool.storageVolLookupByName(imageUuid);
             if (vol == null) {
                 log.warn("删除镜像 " + imageUuid + "失败，原因：镜像不存在");
