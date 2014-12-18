@@ -22,7 +22,7 @@ public class StoreConstants {
     /**
      * 存储池的名称
      */
-    public static final String STOREPOOL_NAME       = "mycloud-pool";
+    public static final String IMAGE_POOL_NAME      = "mycloud-image-pool";
 
     /**
      * 存储池的路径

@@ -136,7 +136,7 @@ public class ImageManageServiceImpl implements IImageManageService {
             if (connect == null) {
                 return MyCloudResult.failedResult(ErrorEnum.GET_LOCAL_CONN);
             }
-            StoragePool pool = connect.getStoragePoolByName(StoreConstants.STOREPOOL_NAME);
+            StoragePool pool = connect.getStoragePoolByName(StoreConstants.IMAGE_POOL_NAME);
             Map<String, Object> context = new HashMap<String, Object>();
             context.put("name", newImageUuid);
             context.put("uuid", newImageUuid);
@@ -297,7 +297,7 @@ public class ImageManageServiceImpl implements IImageManageService {
             if (conn == null) {
                 return false;
             }
-            StoragePool pool = conn.getStoragePoolByName(StoreConstants.STOREPOOL_NAME);
+            StoragePool pool = conn.getStoragePoolByName(StoreConstants.IMAGE_POOL_NAME);
             pool.refresh(0);
             StorageVol vol = pool.storageVolLookupByName(imageUuid);
             if (vol == null) {
