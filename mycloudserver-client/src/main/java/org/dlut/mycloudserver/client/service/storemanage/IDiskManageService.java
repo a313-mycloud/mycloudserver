@@ -36,7 +36,7 @@ public interface IDiskManageService {
     public MyCloudResult<String> createDisk(DiskDTO diskDTO);
 
     /**
-     * 更新硬盘，只能更新diskName、diskTotalSize、attachVmUuid、desc
+     * 更新硬盘，只能更新diskName、attachVmUuid、desc
      * 
      * @param diskDTO
      * @return

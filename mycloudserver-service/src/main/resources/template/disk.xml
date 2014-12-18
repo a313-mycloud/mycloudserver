@@ -1,0 +1,14 @@
+<volume>
+	<name>$name</name>
+	<key>$uuid</key>
+	<source>
+	</source>
+	<capacity>$diskSize</capacity>
+	<target>
+		<path>$newDiskPath</path> <!--新卷的地址 -->
+		<format type='qcow2' />
+		<permissions>
+			<mode>0666</mode>
+		</permissions>
+	</target>
+</volume>

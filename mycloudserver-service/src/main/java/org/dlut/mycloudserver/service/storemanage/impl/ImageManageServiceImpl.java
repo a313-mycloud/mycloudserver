@@ -128,7 +128,7 @@ public class ImageManageServiceImpl implements IImageManageService {
             return MyCloudResult.failedResult(ErrorEnum.IMAGE_CLONE_FORMAT_INVAILD);
         }
         String newImageUuid = CommonUtil.createUuid();
-        String newImagePath = StoreConstants.STOREPOOL_PATH + newImageUuid;
+        String newImagePath = StoreConstants.IMAGE_POOL_PATH + newImageUuid;
         Connection connect = null;
         try {
             // 克隆镜像

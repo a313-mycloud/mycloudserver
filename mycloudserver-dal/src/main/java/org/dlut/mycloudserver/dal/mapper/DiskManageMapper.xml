@@ -29,9 +29,6 @@
 			<if test="diskName!=null">
 				disk_name=#{diskName},
 			</if>
-			<if test="diskTotalSize!=null">
-				disk_total_size=#{diskTotalSize},
-			</if>
 			<if test="attachVmUuid!=null">
 				attach_vm_uuid=#{attachVmUuid},
 			</if>

@@ -49,6 +49,11 @@ public enum ErrorEnum {
     HOST_DELETE_FAIL("3001", "删除物理机失败"),
 
     DISK_NOT_EXIST("4000", "硬盘不存在"),
+    DISK_PHYSICAL_CREATE_FAIL("4001", "物理创建硬盘失败"),
+    DISK_DB_CREATE_FAIL("4002", "在数据库中创建硬盘失败"),
+    DISK_UPDATE_FAIL("4003", "更新硬盘失败"),
+    DISK_DB_DELETE_FAIL("4004", "数据库删除硬盘失败"),
+    DISK_PHYSICAL_DELETE_FAIL("4005", "物理删除硬盘失败"),
 
     PARAM_IS_INVAILD("9999", "参数非法");
 

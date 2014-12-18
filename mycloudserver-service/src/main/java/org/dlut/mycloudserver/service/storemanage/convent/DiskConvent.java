@@ -7,6 +7,9 @@
  */
 package org.dlut.mycloudserver.service.storemanage.convent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dlut.mycloudserver.client.common.storemanage.DiskDTO;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.dal.dataobject.DiskDO;
@@ -56,5 +59,18 @@ public class DiskConvent {
         diskDO.setUserAccount(diskDTO.getUserAccount());
 
         return diskDO;
+    }
+
+    public static List<DiskDTO> conventToDiskDTOList(List<DiskDO> diskDOList) {
+        List<DiskDTO> diskDTOList = new ArrayList<DiskDTO>();
+        if (diskDOList == null) {
+            return diskDTOList;
+        }
+
+        for (DiskDO diskDO : diskDOList) {
+            diskDTOList.add(conventToDiskDTO(diskDO));
+        }
+
+        return diskDTOList;
     }
 }
