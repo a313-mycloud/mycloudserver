@@ -115,7 +115,7 @@ public class DiskManageServiceImpl implements IDiskManageService {
             context.put("uuid", diskUuid);
             context.put("diskSize", diskTotalSize);
             context.put("newDiskPath", StoreConstants.DISK_POOL_PATH + diskUuid);
-            String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.DISK_TEMPLATE_PATH, context);
+            String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.DISK_VOLUME_TEMPLATE_PATH, context);
             diskPool.storageVolCreateXML(xmlDesc, 0);
         } catch (LibvirtException e) {
             log.error("创建硬盘失败", e);

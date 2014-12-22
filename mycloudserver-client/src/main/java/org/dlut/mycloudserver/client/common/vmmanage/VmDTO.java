@@ -8,6 +8,7 @@
 package org.dlut.mycloudserver.client.common.vmmanage;
 
 import org.dlut.mycloudserver.client.common.BaseDTO;
+import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 
 /**
  * 类VmDTO.java的实现描述：TODO 类实现描述
@@ -44,6 +45,21 @@ public class VmDTO extends BaseDTO {
     private String            imageUuid;
 
     /**
+     * 镜像的总大小
+     */
+    private Long              imageTotalSize;
+
+    /**
+     * 镜像格式
+     */
+    private StoreFormat       imageFormat;
+
+    /**
+     * 镜像的存储路径
+     */
+    private String            imagePath;
+
+    /**
      * 虚拟机的运行状态
      */
     private VmStatusEnum      vmStatus;
@@ -77,6 +93,16 @@ public class VmDTO extends BaseDTO {
      * 连接显示的密码
      */
     private String            showPassword;
+
+    /**
+     * 父虚拟机的uuid
+     */
+    private String            parentVmUuid;
+
+    /**
+     * 是否为模板虚拟机
+     */
+    private Boolean           isTemplateVm;
 
     /**
      * 描述
@@ -185,6 +211,46 @@ public class VmDTO extends BaseDTO {
 
     public void setShowPassword(String showPassword) {
         this.showPassword = showPassword;
+    }
+
+    public Long getImageTotalSize() {
+        return imageTotalSize;
+    }
+
+    public void setImageTotalSize(Long imageTotalSize) {
+        this.imageTotalSize = imageTotalSize;
+    }
+
+    public StoreFormat getImageFormat() {
+        return imageFormat;
+    }
+
+    public void setImageFormat(StoreFormat imageFormat) {
+        this.imageFormat = imageFormat;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getParentVmUuid() {
+        return parentVmUuid;
+    }
+
+    public void setParentVmUuid(String parentVmUuid) {
+        this.parentVmUuid = parentVmUuid;
+    }
+
+    public Boolean getIsTemplateVm() {
+        return isTemplateVm;
+    }
+
+    public void setIsTemplateVm(Boolean isTemplateVm) {
+        this.isTemplateVm = isTemplateVm;
     }
 
 }

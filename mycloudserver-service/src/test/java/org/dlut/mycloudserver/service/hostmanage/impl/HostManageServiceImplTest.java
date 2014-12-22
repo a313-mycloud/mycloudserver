@@ -122,6 +122,7 @@ public class HostManageServiceImplTest extends BaseTestCase {
     public void testEvent() throws LibvirtException, InterruptedException {
         Connect conn = new Connect("qemu:///system");
         Domain domain;
+        //        domain.
         VirConnectDomainEventGenericCallback callBack = new VirConnectDomainEventGenericCallback() {
 
             @Override

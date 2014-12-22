@@ -40,6 +40,16 @@ public class VmDO extends BaseDO {
     private String  imageUuid;
 
     /**
+     * 镜像的总大小
+     */
+    private Long    imageTotalSize;
+
+    /**
+     * 虚拟机的镜像格式
+     */
+    private String  imageFormat;
+
+    /**
      * 虚拟机的运行状态
      */
     private Integer vmStatus;
@@ -55,7 +65,7 @@ public class VmDO extends BaseDO {
     private String  userAccount;
 
     /**
-     * 虚拟机所属的课程，可以为null
+     * 虚拟机所属的课程，如果为0，表示空课程
      */
     private Integer classId;
 
@@ -73,6 +83,16 @@ public class VmDO extends BaseDO {
      * 连接显示的密码
      */
     private String  showPassword;
+
+    /**
+     * 表示从哪个虚拟机克隆过来的
+     */
+    private String  parentVmUuid;
+
+    /**
+     * 是否为模板虚拟机
+     */
+    private Boolean isTemplateVm;
 
     /**
      * 描述
@@ -181,6 +201,38 @@ public class VmDO extends BaseDO {
 
     public void setShowPassword(String showPassword) {
         this.showPassword = showPassword;
+    }
+
+    public Long getImageTotalSize() {
+        return imageTotalSize;
+    }
+
+    public void setImageTotalSize(Long imageTotalSize) {
+        this.imageTotalSize = imageTotalSize;
+    }
+
+    public String getImageFormat() {
+        return imageFormat;
+    }
+
+    public void setImageFormat(String imageFormat) {
+        this.imageFormat = imageFormat;
+    }
+
+    public String getParentVmUuid() {
+        return parentVmUuid;
+    }
+
+    public void setParentVmUuid(String parentVmUuid) {
+        this.parentVmUuid = parentVmUuid;
+    }
+
+    public Boolean getIsTemplateVm() {
+        return isTemplateVm;
+    }
+
+    public void setIsTemplateVm(Boolean isTemplateVm) {
+        this.isTemplateVm = isTemplateVm;
     }
 
 }

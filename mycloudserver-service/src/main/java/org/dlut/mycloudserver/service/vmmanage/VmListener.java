@@ -162,6 +162,8 @@ public class VmListener {
         }
         VmDTO vmDTO = result.getModel();
         vmDTO.setVmStatus(VmStatusEnum.CLOSED);
+        vmDTO.setHostId(0);
+        vmDTO.setShowPort(0);
         MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
         if (!updateResult.isSuccess()) {
             log.error("更新虚拟机" + vmDTO + "失败，原因：" + updateResult.getMsgInfo());

@@ -15,32 +15,37 @@ package org.mycloudserver.common.constants;
 public class StoreConstants {
 
     /**
-     * 卷模板路径
+     * 镜像卷模板路径
      */
-    public static final String VOLUME_TEMPLATE_PATH = "template/volume.xml";
+    public static final String IMAGE_VOLUME_TEMPLATE_PATH = "template/image-volume.xml";
+
+    /**
+     * 硬盘卷模板路径
+     */
+    public static final String DISK_VOLUME_TEMPLATE_PATH  = "template/disk-volume.xml";
 
     /**
      * 硬盘模板路径
      */
-    public static final String DISK_TEMPLATE_PATH   = "template/disk.xml";
+    public static final String DISK_TEMPLATE_PATH         = "template/disk.xml";
 
     /**
      * 镜像存储池的名称
      */
-    public static final String IMAGE_POOL_NAME      = "mycloud-image-pool";
+    public static final String IMAGE_POOL_NAME            = "mycloud-image-pool";
 
     /**
      * 镜像存储池的路径
      */
-    public static final String IMAGE_POOL_PATH      = "/home/luojie/mycloud-pool/images/";
+    public static final String IMAGE_POOL_PATH            = "/home/luojie/mycloud-pool/images/";
 
     /**
      * 硬盘存储池的名称
      */
-    public static final String DISK_POOL_NAME       = "mycloud-disk-pool";
+    public static final String DISK_POOL_NAME             = "mycloud-disk-pool";
 
     /**
      * 硬盘存储池的路径
      */
-    public static final String DISK_POOL_PATH       = "/home/luojie/mycloud-pool/disks/";
+    public static final String DISK_POOL_PATH             = "/home/luojie/mycloud-pool/disks/";
 }

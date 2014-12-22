@@ -7,6 +7,8 @@
 		<result property="vmVcpu" column="vm_vcpu" />
 		<result property="vmMemory" column="vm_memory" />
 		<result property="imageUuid" column="image_uuid" />
+		<result property="imageTotalSize" column="image_total_size" />
+		<result property="imageFormat" column="image_format" />
 		<result property="vmStatus" column="vm_status" />
 		<result property="hostId" column="host_id" />
 		<result property="userAccount" column="user_account" />
@@ -14,6 +16,8 @@
 		<result property="showType" column="show_type" />
 		<result property="showPort" column="show_port" />
 		<result property="showPassword" column="show_password" />
+		<result property="parentVmUuid" column="parent_vm_uuid" />
+		<result property="isTemplateVm" column="is_template_vm" />
 		<result property="desc" column="vm_desc" />
 		<result property="gmtCreate" column="gmt_create" />
 		<result property="gmtModified" column="gmt_modified" />
@@ -21,8 +25,11 @@
 
 	<sql id="select-param-column">
 		vm_name, vm_uuid, vm_vcpu, vm_memory, image_uuid,
-		vm_status, host_id, user_account, class_id, show_type, show_port,
-		show_password, vm_desc, gmt_create, gmt_modified
+		image_total_size, image_format,
+		vm_status, host_id, user_account,
+		class_id, show_type, show_port,
+		show_password, parent_vm_uuid,
+		is_template_vm, vm_desc, gmt_create, gmt_modified
 	</sql>
 
 	<sql id="page-limit">
@@ -57,6 +64,12 @@
 		<if test="classId!=null">
 			AND class_id=#{classId}
 		</if>
+		<if test="parentVmUuid!=null">
+			AND parent_vm_uuid=#{parentVmUuid}
+		</if>
+		<if test="isTemplateVm!=null">
+			AND is_template_vm=#{isTemplateVm}
+		</if>
 	</sql>
 
 	<select id="getVmByUuid" resultMap="RM-VmDO">
@@ -66,18 +79,25 @@
 	</select>
 
 	<insert id="createVm">
-		INSERT INTO mycloud_vm(vm_name, vm_uuid, vm_vcpu, vm_memory,
-		image_uuid, vm_status, host_id, user_account, class_id, show_type,
+		INSERT INTO mycloud_vm(vm_name, vm_uuid, vm_vcpu,
+		vm_memory,
+		image_uuid, image_total_size, image_format, vm_status,
+		host_id, user_account, class_id,
+		show_type,
 		show_port, show_password,
+		parent_vm_uuid, is_template_vm,
 		vm_desc,
 		gmt_create, gmt_modified)
 		VALUES(#{vmName}, #{vmUuid}, #{vmVcpu},
 		#{vmMemory},
-		#{imageUuid}, #{vmStatus},
+		#{imageUuid}, #{imageTotalSize}, #{imageFormat},
+		#{vmStatus},
 		#{hostId}, #{userAccount},
 		#{classId},
-		#{showType}, #{showPort},
+		#{showType},
+		#{showPort},
 		#{showPassword},
+		#{parentVmUuid}, #{isTemplateVm},
 		#{desc}, now(), now())
 	</insert>
 
@@ -116,6 +136,9 @@
 			</if>
 			<if test="showPassword!=null">
 				show_password=#{showPassword},
+			</if>
+			<if test="isTemplateVm!=null">
+				is_template_vm=#{isTemplateVm},
 			</if>
 			gmt_modified=now()
 		</set>

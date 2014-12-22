@@ -48,7 +48,7 @@ public class DiskManageServiceImplTest extends BaseTestCase {
     public void testCreateDisk() {
         DiskDTO diskDTO = new DiskDTO();
         diskDTO.setDiskName("test");
-        diskDTO.setUserAccount("student");
+        diskDTO.setUserAccount("teacher");
         diskDTO.setDiskTotalSize(2147483648L);
         MyCloudResult<String> result = diskManageService.createDisk(diskDTO);
         printObject(result);

@@ -63,6 +63,16 @@ public class QueryVmCondition implements Serializable {
      */
     private Integer           classId;
 
+    /**
+     * 父虚拟机uuid
+     */
+    private String            parentVmUuid;
+
+    /**
+     * 是否为模板虚拟机
+     */
+    private Boolean           isTemplateVm;
+
     private int               offset           = 0;
 
     private int               limit            = 10;
@@ -153,6 +163,22 @@ public class QueryVmCondition implements Serializable {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    public String getParentVmUuid() {
+        return parentVmUuid;
+    }
+
+    public void setParentVmUuid(String parentVmUuid) {
+        this.parentVmUuid = parentVmUuid;
+    }
+
+    public Boolean getIsTemplateVm() {
+        return isTemplateVm;
+    }
+
+    public void setIsTemplateVm(Boolean isTemplateVm) {
+        this.isTemplateVm = isTemplateVm;
     }
 
 }

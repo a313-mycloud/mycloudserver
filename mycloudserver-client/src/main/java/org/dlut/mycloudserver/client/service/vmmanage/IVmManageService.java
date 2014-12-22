@@ -28,8 +28,9 @@ public interface IVmManageService {
     public MyCloudResult<VmDTO> getVmByUuid(String vmUuid);
 
     /**
-     * 创建新的虚拟机，必须设置vmVcpu、vmMemory、imageUuid、userAccount、showType、
-     * showPassword，classId(0表示没有课程), 可选：desc
+     * 创建新的虚拟机，必须设置vmName, vmVcpu、vmMemory、imageUuid、userAccount、showType、
+     * showPassword，classId(0表示没有课程),parentVmUuid(如果没有，则设为“”),isTemplateVm
+     * 可选：desc
      * 
      * @param vmDTO
      * @return 新创建的vm的uuid
@@ -37,7 +38,8 @@ public interface IVmManageService {
     public MyCloudResult<String> createVm(VmDTO vmDTO);
 
     /**
-     * 克隆虚拟机，必须设置vmVcpu、vmMemory、userAccount、showType、showPassword，classId
+     * 克隆虚拟机，必须设置vmName,
+     * vmVcpu、vmMemory、userAccount、showType、showPassword，classId, isTemplateVM
      * 可选：desc
      * 
      * @param destVmDTO
@@ -47,7 +49,7 @@ public interface IVmManageService {
     public MyCloudResult<String> cloneVm(VmDTO destVmDTO, String srcVmUuid);
 
     /**
-     * 开启虚拟机
+     * 开启虚拟机，模板镜像不能启动虚拟机
      * 
      * @param vmUuid
      * @return
@@ -93,4 +95,21 @@ public interface IVmManageService {
      * @return
      */
     public MyCloudResult<Boolean> updateVm(VmDTO vmDTO);
+
+    /**
+     * 在数据库中将硬盘绑定到虚拟机，如果此时虚拟机正在运行，则会将硬盘挂载到虚拟机上
+     * 
+     * @param vmUuid
+     * @param diskUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> attachDisk(String vmUuid, String diskUuid);
+
+    /**
+     * 在数据库中将硬盘和虚拟机解绑定，如果此时虚拟机正在运行，则会将硬盘从虚拟机中卸载
+     * 
+     * @param diskUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> detachDisk(String diskUuid);
 }

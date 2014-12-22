@@ -25,6 +25,7 @@ public enum ErrorEnum {
     IMAGE_PHYSICAL_DELETE_FAIL("9", "物理删除镜像失败"),
     GET_LOCAL_CONN("10", "获取本地libvirt连接失败"),
     GET_CONN_FAIL("11", "获取连接失败"),
+    IMAGE_HAS_BIND_VM("12", "镜像已近和其他虚拟机绑定"),
 
     USER_NOT_EXIST("0900", "用户不存在"),
     USER_NOT_STUDENT("0901", "用户不是学生"),
@@ -44,6 +45,8 @@ public enum ErrorEnum {
     VM_UPDATE_FIAL("2004", "在数据库中更新虚拟机失败"),
     VM_DESTROY_FAIL("2005", "虚拟机强制关机失败"),
     VM_DELETE_FAIL("2006", "删除虚拟机失败"),
+    VM_TEMPLATE_CAN_NOT_START("2007", "模板虚拟机不能启动"),
+    VM_ONLY_CLONE_FROM_TEMPLATE("2008", "只能从模板虚拟机中克隆虚拟机"),
 
     HOST_NOT_EXIST("3000", "物理机不存在"),
     HOST_DELETE_FAIL("3001", "删除物理机失败"),
@@ -54,6 +57,9 @@ public enum ErrorEnum {
     DISK_UPDATE_FAIL("4003", "更新硬盘失败"),
     DISK_DB_DELETE_FAIL("4004", "数据库删除硬盘失败"),
     DISK_PHYSICAL_DELETE_FAIL("4005", "物理删除硬盘失败"),
+    DISK_HAS_ATTACH_VM("4006", "硬盘已挂载到虚拟机上"),
+    DISK_ATTACH_FAIL("4007", "硬盘挂载失败"),
+    DISK_DETACH_FAIL("4008", "硬盘卸载失败"),
 
     PARAM_IS_INVAILD("9999", "参数非法");
 

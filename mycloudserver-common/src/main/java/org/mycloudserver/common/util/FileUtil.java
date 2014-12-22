@@ -86,4 +86,15 @@ public class FileUtil {
         }
         return file.length();
     }
+
+    public static boolean isFileExist(String filePath) {
+        if (StringUtils.isBlank(filePath)) {
+            return false;
+        }
+        File file = new File(filePath);
+        if (file.isFile()) {
+            return true;
+        }
+        return false;
+    }
 }

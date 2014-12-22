@@ -10,10 +10,12 @@ package org.dlut.mycloudserver.service.vmmanage.convent;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.client.common.vmmanage.ShowTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
 import org.dlut.mycloudserver.dal.dataobject.VmDO;
+import org.mycloudserver.common.constants.StoreConstants;
 
 /**
  * 类VmConvent.java的实现描述：TODO 类实现描述
@@ -32,19 +34,20 @@ public class VmConvent {
         vmDTO.setHostId(vmDO.getHostId());
         vmDTO.setImageUuid(vmDO.getImageUuid());
         vmDTO.setVmMemory(vmDO.getVmMemory());
-        if (vmDO.getVmStatus() != null) {
-            vmDTO.setVmStatus(VmStatusEnum.getVmStatusByStatus(vmDO.getVmStatus()));
-        }
+        vmDTO.setVmStatus(VmStatusEnum.getVmStatusByStatus(vmDO.getVmStatus()));
         vmDTO.setVmUuid(vmDO.getVmUuid());
         vmDTO.setVmVcpu(vmDO.getVmVcpu());
         vmDTO.setUserAccount(vmDO.getUserAccount());
         vmDTO.setClassId(vmDO.getClassId());
-        if (vmDO.getShowType() != null) {
-            vmDTO.setShowType(ShowTypeEnum.getShowTypeByValue(vmDO.getShowType()));
-        }
+        vmDTO.setShowType(ShowTypeEnum.getShowTypeByValue(vmDO.getShowType()));
         vmDTO.setShowPort(vmDO.getShowPort());
         vmDTO.setShowPassword(vmDO.getShowPassword());
         vmDTO.setVmName(vmDO.getVmName());
+        vmDTO.setImageTotalSize(vmDO.getImageTotalSize());
+        vmDTO.setImageFormat(StoreFormat.getStoreFormatByValue(vmDO.getImageFormat()));
+        vmDTO.setImagePath(StoreConstants.IMAGE_POOL_PATH + vmDO.getImageUuid());
+        vmDTO.setParentVmUuid(vmDO.getParentVmUuid());
+        vmDTO.setIsTemplateVm(vmDO.getIsTemplateVm());
 
         return vmDTO;
     }
@@ -72,6 +75,12 @@ public class VmConvent {
         vmDO.setShowPort(vmDTO.getShowPort());
         vmDO.setShowPassword(vmDTO.getShowPassword());
         vmDO.setVmName(vmDTO.getVmName());
+        vmDO.setImageTotalSize(vmDTO.getImageTotalSize());
+        if (vmDTO.getImageFormat() != null) {
+            vmDO.setImageFormat(vmDTO.getImageFormat().getValue());
+        }
+        vmDO.setParentVmUuid(vmDTO.getParentVmUuid());
+        vmDO.setIsTemplateVm(vmDTO.getIsTemplateVm());
 
         return vmDO;
     }
