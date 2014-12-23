@@ -21,8 +21,8 @@
 		<disk type='file' device='disk'>
 			<driver name='qemu' type='qcow2' />
 			<source file='$imagePath' />
-			<target dev='hda' bus='ide' />
-			<address type='drive' controller='0' bus='0' target='0' unit='0' />
+			<target dev='hda' bus='virtio' />
+			<!-- <address type='drive' controller='0' bus='0' target='0' unit='0' /> -->
 		</disk>
 		<controller type='usb' index='0'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x01'
@@ -39,7 +39,7 @@
 		</controller>
 		<interface type='network'>
 			<source network='default' />
-			<model type='rtl8139' />
+			<model type='virtio' />
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x03'
 				function='0x0' />
 		</interface>

@@ -95,6 +95,11 @@ public class VmDO extends BaseDO {
     private Boolean isTemplateVm;
 
     /**
+     * 如果虚拟机是模板虚拟机，则标示是否是共有的
+     */
+    private Boolean isPublicTemplate;
+
+    /**
      * 描述
      */
     private String  desc;
@@ -233,6 +238,14 @@ public class VmDO extends BaseDO {
 
     public void setIsTemplateVm(Boolean isTemplateVm) {
         this.isTemplateVm = isTemplateVm;
+    }
+
+    public Boolean getIsPublicTemplate() {
+        return isPublicTemplate;
+    }
+
+    public void setIsPublicTemplate(Boolean isPublicTemplate) {
+        this.isPublicTemplate = isPublicTemplate;
     }
 
 }

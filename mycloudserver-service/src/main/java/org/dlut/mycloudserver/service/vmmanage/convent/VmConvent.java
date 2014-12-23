@@ -48,6 +48,7 @@ public class VmConvent {
         vmDTO.setImagePath(StoreConstants.IMAGE_POOL_PATH + vmDO.getImageUuid());
         vmDTO.setParentVmUuid(vmDO.getParentVmUuid());
         vmDTO.setIsTemplateVm(vmDO.getIsTemplateVm());
+        vmDTO.setIsPublicTemplate(vmDO.getIsPublicTemplate());
 
         return vmDTO;
     }
@@ -81,6 +82,7 @@ public class VmConvent {
         }
         vmDO.setParentVmUuid(vmDTO.getParentVmUuid());
         vmDO.setIsTemplateVm(vmDTO.getIsTemplateVm());
+        vmDO.setIsPublicTemplate(vmDTO.getIsPublicTemplate());
 
         return vmDO;
     }

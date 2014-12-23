@@ -80,7 +80,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testStartVm() throws InterruptedException {
         Thread.sleep(10000);
-        String vmUuid = "1d3526dc-8942-42c9-8b6d-86c2bf08e329";
+        String vmUuid = "e254dbd7-db71-444f-a870-0383d5b09952";
         MyCloudResult<Boolean> result = vmManageService.startVm(vmUuid);
         printObject(result);
     }
@@ -120,9 +120,9 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void testCloneVm() {
-        String srcVmUuid = "e6d75325-1631-47cf-8dfc-352cf14e1952";
+        String srcVmUuid = "3d6e4424-1d9e-43c7-8c3c-e2f3a0e39ffa";
         VmDTO destVmDTO = new VmDTO();
-        destVmDTO.setVmName("win7_has_driver_clone3");
+        destVmDTO.setVmName("xp_has_driver_clone5_clone2");
         destVmDTO.setVmVcpu(2);
         destVmDTO.setVmMemory(2147483648L);
         destVmDTO.setUserAccount("teacher");
@@ -137,8 +137,8 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testAttachDisk() throws InterruptedException {
         Thread.sleep(10000);
-        String vmUuid = "e0e04ed6-1658-4a92-a5b1-e0307c972612";
-        String diskUuid = "d5317b5d-50f6-4465-9537-672a3259d025";
+        String vmUuid = "e254dbd7-db71-444f-a870-0383d5b09952";
+        String diskUuid = "7a4800ef-881c-45d0-b4c2-3dcc94756e7c";
         MyCloudResult<Boolean> result = vmManageService.attachDisk(vmUuid, diskUuid);
         printObject(result);
     }
@@ -146,8 +146,23 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testDetachDisk() throws InterruptedException {
         Thread.sleep(10000);
-        String diskUuid = "7a4800ef-881c-45d0-b4c2-3dcc94756e7c";
+        String diskUuid = "617c574c-ed8e-4acc-8b29-98a2f921f2b6";
         MyCloudResult<Boolean> result = vmManageService.detachDisk(diskUuid);
+        printObject(result);
+    }
+
+    @Test
+    public void testChangeToTempalteVm() {
+        String vmUuid = "e254dbd7-db71-444f-a870-0383d5b09952";
+        MyCloudResult<Boolean> result = vmManageService.changeToTemplateVm(vmUuid);
+        printObject(result);
+    }
+
+    @Test
+    public void testChangeToNonTempalteVm() throws InterruptedException {
+        Thread.sleep(10000);
+        String vmUuid = "e254dbd7-db71-444f-a870-0383d5b09952";
+        MyCloudResult<Boolean> result = vmManageService.changeToNonTempalteVm(vmUuid);
         printObject(result);
     }
 

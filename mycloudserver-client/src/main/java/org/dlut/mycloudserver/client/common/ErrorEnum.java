@@ -47,6 +47,7 @@ public enum ErrorEnum {
     VM_DELETE_FAIL("2006", "删除虚拟机失败"),
     VM_TEMPLATE_CAN_NOT_START("2007", "模板虚拟机不能启动"),
     VM_ONLY_CLONE_FROM_TEMPLATE("2008", "只能从模板虚拟机中克隆虚拟机"),
+    VM_RUNNING_CAN_NOT_CHANGE_TO_TEMPLATE("2009", "运行中的虚拟机不能转化为模板虚拟机"),
 
     HOST_NOT_EXIST("3000", "物理机不存在"),
     HOST_DELETE_FAIL("3001", "删除物理机失败"),

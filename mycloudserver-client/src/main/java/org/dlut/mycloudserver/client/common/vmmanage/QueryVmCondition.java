@@ -73,6 +73,11 @@ public class QueryVmCondition implements Serializable {
      */
     private Boolean           isTemplateVm;
 
+    /**
+     * 是否是共有的模板虚拟机
+     */
+    private Boolean           isPublicTemplate;
+
     private int               offset           = 0;
 
     private int               limit            = 10;
@@ -179,6 +184,14 @@ public class QueryVmCondition implements Serializable {
 
     public void setIsTemplateVm(Boolean isTemplateVm) {
         this.isTemplateVm = isTemplateVm;
+    }
+
+    public Boolean getIsPublicTemplate() {
+        return isPublicTemplate;
+    }
+
+    public void setIsPublicTemplate(Boolean isPublicTemplate) {
+        this.isPublicTemplate = isPublicTemplate;
     }
 
 }

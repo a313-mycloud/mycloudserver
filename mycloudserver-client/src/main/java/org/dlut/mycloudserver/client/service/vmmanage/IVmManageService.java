@@ -112,4 +112,20 @@ public interface IVmManageService {
      * @return
      */
     public MyCloudResult<Boolean> detachDisk(String diskUuid);
+
+    /**
+     * 将虚拟机转化为模板虚拟机
+     * 
+     * @param vmUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> changeToTemplateVm(String vmUuid);
+
+    /**
+     * 将模板虚拟机变为非模板虚拟机，此接口会将所有从该模板虚拟机克隆的虚拟机全部删除
+     * 
+     * @param templateVmUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> changeToNonTempalteVm(String templateVmUuid);
 }

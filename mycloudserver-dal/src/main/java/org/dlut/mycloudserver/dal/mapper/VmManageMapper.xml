@@ -18,6 +18,7 @@
 		<result property="showPassword" column="show_password" />
 		<result property="parentVmUuid" column="parent_vm_uuid" />
 		<result property="isTemplateVm" column="is_template_vm" />
+		<result property="isPublicTemplate" column="is_public_template" />
 		<result property="desc" column="vm_desc" />
 		<result property="gmtCreate" column="gmt_create" />
 		<result property="gmtModified" column="gmt_modified" />
@@ -29,7 +30,7 @@
 		vm_status, host_id, user_account,
 		class_id, show_type, show_port,
 		show_password, parent_vm_uuid,
-		is_template_vm, vm_desc, gmt_create, gmt_modified
+		is_template_vm, is_public_template, vm_desc, gmt_create, gmt_modified
 	</sql>
 
 	<sql id="page-limit">
@@ -70,6 +71,9 @@
 		<if test="isTemplateVm!=null">
 			AND is_template_vm=#{isTemplateVm}
 		</if>
+		<if test="isPublicTemplate!=null">
+			AND is_public_template=#{isPublicTemplate}
+		</if>
 	</sql>
 
 	<select id="getVmByUuid" resultMap="RM-VmDO">
@@ -85,7 +89,7 @@
 		host_id, user_account, class_id,
 		show_type,
 		show_port, show_password,
-		parent_vm_uuid, is_template_vm,
+		parent_vm_uuid, is_template_vm, is_public_template
 		vm_desc,
 		gmt_create, gmt_modified)
 		VALUES(#{vmName}, #{vmUuid}, #{vmVcpu},
@@ -97,7 +101,7 @@
 		#{showType},
 		#{showPort},
 		#{showPassword},
-		#{parentVmUuid}, #{isTemplateVm},
+		#{parentVmUuid}, #{isTemplateVm},#{isPublicTemplate},
 		#{desc}, now(), now())
 	</insert>
 
@@ -139,6 +143,9 @@
 			</if>
 			<if test="isTemplateVm!=null">
 				is_template_vm=#{isTemplateVm},
+			</if>
+			<if test="isPublicTemplate!=null">
+				is_public_template=#{isPublicTemplate},
 			</if>
 			gmt_modified=now()
 		</set>

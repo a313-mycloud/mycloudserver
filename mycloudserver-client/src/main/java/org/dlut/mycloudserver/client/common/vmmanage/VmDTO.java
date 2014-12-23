@@ -105,6 +105,11 @@ public class VmDTO extends BaseDTO {
     private Boolean           isTemplateVm;
 
     /**
+     * 是否是共有的模板虚拟机
+     */
+    private Boolean           isPublicTemplate;
+
+    /**
      * 描述
      */
     private String            desc;
@@ -251,6 +256,14 @@ public class VmDTO extends BaseDTO {
 
     public void setIsTemplateVm(Boolean isTemplateVm) {
         this.isTemplateVm = isTemplateVm;
+    }
+
+    public Boolean getIsPublicTemplate() {
+        return isPublicTemplate;
+    }
+
+    public void setIsPublicTemplate(Boolean isPublicTemplate) {
+        this.isPublicTemplate = isPublicTemplate;
     }
 
 }

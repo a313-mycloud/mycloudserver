@@ -38,6 +38,7 @@ import org.dlut.mycloudserver.service.vmmanage.convent.VmConvent;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.libvirt.StoragePool;
+import org.libvirt.StorageVol;
 import org.mycloudserver.common.constants.StoreConstants;
 import org.mycloudserver.common.constants.VmConstants;
 import org.mycloudserver.common.util.CommonUtil;
@@ -154,48 +155,6 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.VM_CREATE_FAIL);
         }
         return MyCloudResult.successResult(vmUuid);
-
-        //        String vmUuid = CommonUtil.createUuid();
-        //        vmDTO.setVmUuid(vmUuid);
-        //        VmDO vmDO = VmConvent.conventToVmDO(vmDTO);
-        //        if (vmDO == null) {
-        //            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
-        //        }
-        //        
-        //        // 验证镜像是否存在
-        //        String imagePath = StoreConstants.IMAGE_POOL_PATH + vmD
-        //        
-        //        
-        //        // 验证镜像是否存在
-        //        MyCloudResult<ImageDTO> imageResult = imageManageService.getImageByUuid(vmDTO.getImageUuid(), false);
-        //        if (!imageResult.isSuccess()) {
-        //            log.warn("虚拟机镜像 " + vmDTO.getImageUuid() + "不存在");
-        //            return MyCloudResult.failedResult(ErrorEnum.IMAGE_NOT_EXIST);
-        //        }
-        //        // 验证镜像是否已近和其他虚拟机绑定
-        //        if (isImageBindVm(vmDTO.getImageUuid())) {
-        //            log.warn("镜像" + vmDTO.getImageUuid() + "已近和其他虚拟机绑定");
-        //            return MyCloudResult.failedResult(ErrorEnum.IMAGE_HAS_BIND_VM);
-        //        }
-        //
-        //        MyCloudResult<UserDTO> userResult = userManageService.getUserByAccount(vmDTO.getUserAccount());
-        //        if (!userResult.isSuccess()) {
-        //            log.warn("用户 " + vmDTO.getUserAccount() + " 不存在");
-        //            return MyCloudResult.failedResult(ErrorEnum.USER_NOT_EXIST);
-        //        }
-        //        if (vmDTO.getClassId() != 0) {
-        //            MyCloudResult<ClassDTO> classResult = classManageService.getClassById(vmDTO.getClassId());
-        //            if (!classResult.isSuccess()) {
-        //                log.warn("课程 " + vmDTO.getClassId() + "不存在");
-        //                return MyCloudResult.failedResult(ErrorEnum.CLASS_NOT_EXIST);
-        //            }
-        //        }
-        //        vmDO.setVmStatus(VmStatusEnum.CLOSED.getStatus());
-        //        if (!vmManage.createVm(vmDO)) {
-        //            log.error("创建虚拟机 " + vmDO + "失败");
-        //            return MyCloudResult.failedResult(ErrorEnum.VM_CREATE_FAIL);
-        //        }
-        //        return MyCloudResult.successResult(vmUuid);
     }
 
     /**
@@ -455,26 +414,93 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
         }
         // TODO
-        return MyCloudResult.failedResult(ErrorEnum.VM_DELETE_FAIL);
+        MyCloudResult<VmDTO> result = getVmByUuid(vmUuid);
+        if (!result.isSuccess()) {
+            log.error("虚拟机" + vmUuid + "不存在");
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
+        }
+        if (!deleteVmByVmDTO(result.getModel())) {
+            log.error("删除虚拟机失败");
+            return MyCloudResult.failedResult(ErrorEnum.VM_DELETE_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
 
-        //        if (StringUtils.isBlank(vmUuid)) {
-        //            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
-        //        }
-        //        MyCloudResult<VmDTO> result = getVmByUuid(vmUuid);
-        //        if (!result.isSuccess()) {
-        //            log.warn("虚拟机" + vmUuid + "不存在");
-        //            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
-        //        }
-        //        VmDTO vmDTO = result.getModel();
-        //        MyCloudResult<Boolean> deleteImageResult = imageManageService.deleteImageByUuid(vmDTO.getImageUuid());
-        //        if (!deleteImageResult.isSuccess()) {
-        //            log.error("删除虚拟机镜像" + vmDTO.getImageUuid() + "失败，原因：" + deleteImageResult.getMsgInfo());
-        //            return MyCloudResult.failedResult(deleteImageResult.getMsgCode(), deleteImageResult.getMsgInfo());
-        //        }
-        //        if (!vmManage.deleteVmByUuid(vmUuid)) {
-        //            return MyCloudResult.failedResult(ErrorEnum.VM_DELETE_FAIL);
-        //        }
-        //        return MyCloudResult.successResult(Boolean.TRUE);
+    /**
+     * 删除被templateVmUuid克隆出来的所有虚拟机
+     * 
+     * @param templateVmUuid
+     * @return
+     */
+    private boolean deleteVmCloneByTemplateVm(VmDTO templateVmDTO) {
+        QueryVmCondition queryVmCondition = new QueryVmCondition();
+        queryVmCondition.setParentVmUuid(templateVmDTO.getVmUuid());
+        queryVmCondition.setOffset(0);
+        queryVmCondition.setLimit(500);
+        MyCloudResult<Pagination<VmDTO>> result = query(queryVmCondition);
+        if (!result.isSuccess()) {
+            log.error("获取虚拟机列表失败，原因：" + result.getMsgInfo());
+            return false;
+        }
+        for (VmDTO vmDTO : result.getModel().getList()) {
+            if (!deleteVmByVmDTO(vmDTO)) {
+                log.error("删除虚拟机" + vmDTO.getVmUuid() + "失败");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 删除虚拟机，如果该虚拟机为模板虚拟机，则会将从该模板虚拟机克隆出来的虚拟机全部删除
+     * 
+     * @param vmUuid
+     * @return
+     */
+    private boolean deleteVmByVmDTO(VmDTO deleteVmDTO) {
+        if (deleteVmDTO == null) {
+            return false;
+        }
+        if (deleteVmDTO.getIsTemplateVm()) {
+            // 如果是模板虚拟机，则需要将从该模板虚拟机克隆出来的虚拟机全部删除
+            if (!deleteVmCloneByTemplateVm(deleteVmDTO)) {
+                return false;
+            }
+        }
+        // 如果虚拟机还在运行，则先强制关闭虚拟机
+        if (deleteVmDTO.getVmStatus() == VmStatusEnum.RUNNING) {
+            forceShutDownVm(deleteVmDTO.getVmUuid());
+        }
+        // 在数据库中删除虚拟机
+        if (!vmManage.deleteVmByUuid(deleteVmDTO.getVmUuid())) {
+            return false;
+        }
+        // 物理删除虚拟机镜像
+        return physicalDeleteImageByLibvirt(deleteVmDTO.getImageUuid());
+    }
+
+    private boolean physicalDeleteImageByLibvirt(String imageUuid) {
+        Connection conn = mutilHostConnPool.getLocalConn();
+        if (conn == null) {
+            log.error("获取本地libvirt失败");
+            return false;
+        }
+        try {
+            StoragePool pool = conn.getStoragePoolByName(StoreConstants.IMAGE_POOL_NAME);
+            pool.refresh(0);
+            StorageVol vol = pool.storageVolLookupByName(imageUuid);
+            vol.delete(0);
+        } catch (LibvirtException e) {
+            log.error("删除卷" + imageUuid + "失败", e);
+            return false;
+        } finally {
+            try {
+                conn.close();
+            } catch (LibvirtException e) {
+                log.error("error message", e);
+            }
+        }
+        return true;
     }
 
     @Override
@@ -588,6 +614,63 @@ public class VmManageServiceImpl implements IVmManageService {
                     log.error("error message", e);
                 }
             }
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    /**
+     * 将虚拟机转化为模板虚拟机
+     */
+    @Override
+    public MyCloudResult<Boolean> changeToTemplateVm(String vmUuid) {
+        if (StringUtils.isBlank(vmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        MyCloudResult<VmDTO> result = getVmByUuid(vmUuid);
+        if (!result.isSuccess()) {
+            log.warn("虚拟机" + vmUuid + "不存在");
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
+        }
+        VmDTO vmDTO = result.getModel();
+        if (vmDTO.getIsTemplateVm()) {
+            return MyCloudResult.successResult(Boolean.TRUE);
+        }
+        // 运行中的虚拟机不能转化为模板虚拟机
+        if (vmDTO.getVmStatus() == VmStatusEnum.RUNNING) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_RUNNING_CAN_NOT_CHANGE_TO_TEMPLATE);
+        }
+        vmDTO.setIsTemplateVm(Boolean.TRUE);
+        if (!updateVmIn(vmDTO)) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    /**
+     * 将模板虚拟机变为非模板虚拟机，此接口会将所有从该模板虚拟机克隆的虚拟机全部删除
+     */
+    @Override
+    public MyCloudResult<Boolean> changeToNonTempalteVm(String templateVmUuid) {
+        if (StringUtils.isBlank(templateVmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        MyCloudResult<VmDTO> result = getVmByUuid(templateVmUuid);
+        if (!result.isSuccess()) {
+            log.warn("虚拟机" + templateVmUuid + "不存在");
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
+        }
+        VmDTO templateVmDTO = result.getModel();
+        if (!templateVmDTO.getIsTemplateVm()) {
+            return MyCloudResult.successResult(Boolean.TRUE);
+        }
+        // 删除从该模板虚拟机克隆出来的所有虚拟机
+        if (!deleteVmCloneByTemplateVm(templateVmDTO)) {
+            log.error("删除模板虚拟机" + templateVmDTO + "下面的所有虚拟机失败");
+            return MyCloudResult.failedResult(ErrorEnum.VM_DELETE_FAIL);
+        }
+        templateVmDTO.setIsTemplateVm(Boolean.FALSE);
+        if (!updateVmIn(templateVmDTO)) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
         }
         return MyCloudResult.successResult(Boolean.TRUE);
     }
