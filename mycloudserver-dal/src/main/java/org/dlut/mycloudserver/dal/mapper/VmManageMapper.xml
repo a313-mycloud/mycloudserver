@@ -89,7 +89,7 @@
 		host_id, user_account, class_id,
 		show_type,
 		show_port, show_password,
-		parent_vm_uuid, is_template_vm, is_public_template
+		parent_vm_uuid, is_template_vm, is_public_template,
 		vm_desc,
 		gmt_create, gmt_modified)
 		VALUES(#{vmName}, #{vmUuid}, #{vmVcpu},

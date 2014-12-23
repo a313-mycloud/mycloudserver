@@ -5,7 +5,6 @@
 		<result property="diskUuid" column="disk_uuid" />
 		<result property="diskName" column="disk_name" />
 		<result property="diskTotalSize" column="disk_total_size" />
-		<result property="diskPath" column="disk_path" />
 		<result property="diskFormat" column="disk_format" />
 		<result property="attachVmUuid" column="attach_vm_uuid" />
 		<result property="userAccount" column="user_account" />
@@ -15,7 +14,7 @@
 	</resultMap>
 
 	<sql id="select-param-column">
-		disk_uuid, disk_name, disk_total_size, disk_path,
+		disk_uuid, disk_name, disk_total_size, 
 		disk_format, attach_vm_uuid, user_account, disk_desc, gmt_create,
 		gmt_modified
 	</sql>
@@ -67,7 +66,7 @@
 		INSERT INTO mycloud_disk(
 		<include refid="select-param-column" />
 		)
-		VALUES(#{diskUuid}, #{diskName}, #{diskTotalSize}, #{diskPath},
+		VALUES(#{diskUuid}, #{diskName}, #{diskTotalSize}, 
 		#{diskFormat}, #{attachVmUuid}, #{userAccount}, #{desc},
 		now(), now())
 	</insert>

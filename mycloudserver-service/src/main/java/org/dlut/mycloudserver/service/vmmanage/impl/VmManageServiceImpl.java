@@ -7,6 +7,7 @@
  */
 package org.dlut.mycloudserver.service.vmmanage.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.classmanage.ClassDTO;
 import org.dlut.mycloudserver.client.common.storemanage.DiskDTO;
+import org.dlut.mycloudserver.client.common.storemanage.QueryDiskCondition;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.client.common.usermanage.UserDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
@@ -33,6 +35,7 @@ import org.dlut.mycloudserver.dal.dataobject.VmDO;
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
 import org.dlut.mycloudserver.service.schedule.IScheduler;
+import org.dlut.mycloudserver.service.storemanage.DiskVO;
 import org.dlut.mycloudserver.service.vmmanage.VmManage;
 import org.dlut.mycloudserver.service.vmmanage.convent.VmConvent;
 import org.libvirt.Domain;
@@ -92,15 +95,16 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 创建新的虚拟机，必须设置vmName, vmVcpu、vmMemory、imageUuid、userAccount、showType、
-     * showPassword，classId(0表示没有课程),parentVmUuid(如果没有，则设为“”),isTemplateVm
-     * 可选：desc
+     * showPassword ，classId(0表示没有课程),parentVmUuid(如果没有，则设为“”),isTemplateVm,
+     * isPublicTemplate 可选：desc
      */
     @Override
     public MyCloudResult<String> createVm(VmDTO vmDTO) {
         if (vmDTO == null || vmDTO.getVmVcpu() == null || vmDTO.getVmMemory() == null
                 || StringUtils.isBlank(vmDTO.getImageUuid()) || StringUtils.isBlank(vmDTO.getUserAccount())
                 || vmDTO.getShowType() == null || StringUtils.isBlank(vmDTO.getShowPassword())
-                || vmDTO.getClassId() == null || vmDTO.getParentVmUuid() == null || vmDTO.getIsTemplateVm() == null) {
+                || vmDTO.getClassId() == null || vmDTO.getParentVmUuid() == null || vmDTO.getIsTemplateVm() == null
+                || vmDTO.getIsPublicTemplate() == null) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
 
@@ -174,6 +178,37 @@ public class VmManageServiceImpl implements IVmManageService {
     }
 
     /**
+     * 获取需要挂载到vmUuid上的所有硬盘列表
+     * 
+     * @param vmUuid
+     * @return
+     */
+    private List<DiskVO> getNeedAttachDiskList(String vmUuid) {
+        List<DiskVO> diskVOList = new ArrayList<DiskVO>();
+        if (StringUtils.isBlank(vmUuid)) {
+            return diskVOList;
+        }
+        QueryDiskCondition queryDiskCondition = new QueryDiskCondition();
+        queryDiskCondition.setAttachVmUuid(vmUuid);
+        queryDiskCondition.setOffset(0);
+        queryDiskCondition.setLimit(100);
+        MyCloudResult<Pagination<DiskDTO>> result = diskManageService.query(queryDiskCondition);
+        if (!result.isSuccess()) {
+            log.error("查询硬盘列表失败，原因：" + result.getMsgInfo());
+            return diskVOList;
+        }
+        List<DiskDTO> diskDTOList = result.getModel().getList();
+        for (int i = 0; i < diskDTOList.size(); i++) {
+            DiskVO diskVO = new DiskVO();
+            diskVO.setDiskDTO(diskDTOList.get(i));
+            char devIndex = (char) ('b' + i);
+            diskVO.setDevName("sd" + devIndex);
+            diskVOList.add(diskVO);
+        }
+        return diskVOList;
+    }
+
+    /**
      * 模板镜像不能启动虚拟机
      */
     @Override
@@ -195,6 +230,9 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.VM_TEMPLATE_CAN_NOT_START);
         }
 
+        // 获取需要挂载的硬盘
+        List<DiskVO> diskVOList = getNeedAttachDiskList(vmUuid);
+
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("vmUuid", vmDTO.getVmUuid());
         // 单位为KB
@@ -203,6 +241,7 @@ public class VmManageServiceImpl implements IVmManageService {
         context.put("imagePath", vmDTO.getImagePath());
         context.put("showType", vmDTO.getShowType());
         context.put("showPassword", vmDTO.getShowPassword());
+        context.put("diskList", diskVOList);
         String xmlDesc = TemplateUtil.renderTemplate(VmConstants.VOLUME_TEMPLATE_PATH, context);
         System.out.println(xmlDesc);
 
@@ -342,7 +381,7 @@ public class VmManageServiceImpl implements IVmManageService {
                 || destVmDTO.getVmVcpu() == null || destVmDTO.getVmMemory() == null
                 || StringUtils.isBlank(destVmDTO.getUserAccount()) || destVmDTO.getShowType() == null
                 || StringUtils.isBlank(destVmDTO.getShowPassword()) || destVmDTO.getClassId() == null
-                || destVmDTO.getIsTemplateVm() == null) {
+                || destVmDTO.getIsTemplateVm() == null || destVmDTO.getIsPublicTemplate() == null) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
 

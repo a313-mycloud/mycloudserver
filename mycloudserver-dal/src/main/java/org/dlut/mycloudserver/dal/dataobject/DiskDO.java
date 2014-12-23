@@ -30,11 +30,6 @@ public class DiskDO extends BaseDO {
     private long   diskTotalSize;
 
     /**
-     * 硬盘路径
-     */
-    private String diskPath;
-
-    /**
      * 硬盘格式
      */
     private String diskFormat;
@@ -76,14 +71,6 @@ public class DiskDO extends BaseDO {
 
     public void setDiskTotalSize(long diskTotalSize) {
         this.diskTotalSize = diskTotalSize;
-    }
-
-    public String getDiskPath() {
-        return diskPath;
-    }
-
-    public void setDiskPath(String diskPath) {
-        this.diskPath = diskPath;
     }
 
     public String getAttachVmUuid() {

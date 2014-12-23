@@ -120,9 +120,9 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void testCloneVm() {
-        String srcVmUuid = "3d6e4424-1d9e-43c7-8c3c-e2f3a0e39ffa";
+        String srcVmUuid = "e254dbd7-db71-444f-a870-0383d5b09952";
         VmDTO destVmDTO = new VmDTO();
-        destVmDTO.setVmName("xp_has_driver_clone5_clone2");
+        destVmDTO.setVmName("test");
         destVmDTO.setVmVcpu(2);
         destVmDTO.setVmMemory(2147483648L);
         destVmDTO.setUserAccount("teacher");
@@ -130,6 +130,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
         destVmDTO.setShowPassword("10041104");
         destVmDTO.setClassId(0);
         destVmDTO.setIsTemplateVm(Boolean.FALSE);
+        destVmDTO.setIsPublicTemplate(Boolean.FALSE);
         MyCloudResult<String> result = vmManageService.cloneVm(destVmDTO, srcVmUuid);
         printObject(result);
     }
@@ -137,7 +138,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testAttachDisk() throws InterruptedException {
         Thread.sleep(10000);
-        String vmUuid = "1d3526dc-8942-42c9-8b6d-86c2bf08e329";
+        String vmUuid = "e6d75325-1631-47cf-8dfc-352cf14e1952";
         String diskUuid = "7a4800ef-881c-45d0-b4c2-3dcc94756e7c";
         MyCloudResult<Boolean> result = vmManageService.attachDisk(vmUuid, diskUuid);
         printObject(result);
