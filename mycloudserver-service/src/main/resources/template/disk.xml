@@ -1,5 +1,5 @@
 <disk type='file' device='disk'>
     <driver name='qemu' type='$!diskFormat'/>
     <source file='$!diskPath'/>
-    <target dev='sdb' bus="virtio"/>
+    <target dev='sdb' bus="usb"/>
 </disk>

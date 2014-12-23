@@ -23,11 +23,15 @@
 			<source file='$imagePath' />
 			<target dev='hda' bus='ide' />
 		</disk>
-		<!-- <controller type='usb' index='0' model='ich9-ehci1'> <address type='pci' 
-			domain='0x0000' bus='0x00' slot='0x07' function='0x7' /> </controller> <controller 
-			type='usb' index='0' model='ich9-uhci1'> <master startport='0' /> <address 
-			type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0' multifunction='on' 
-			/> </controller> -->
+		<controller type='usb' index='0' model='ich9-ehci1'>
+			<address type='pci' domain='0x0000' bus='0x00' slot='0x07'
+				function='0x7' />
+		</controller>
+		<controller type='usb' index='0' model='ich9-uhci1'>
+			<master startport='0' />
+			<address type='pci' domain='0x0000' bus='0x00' slot='0x07'
+				function='0x0' multifunction='on' />
+		</controller>
 		<!-- <controller type='usb' index='0'> <address type='pci' domain='0x0000' 
 			bus='0x00' slot='0x01' function='0x2' /> </controller> -->
 		<!-- <controller type='pci' index='0' model='pci-root' /> -->
