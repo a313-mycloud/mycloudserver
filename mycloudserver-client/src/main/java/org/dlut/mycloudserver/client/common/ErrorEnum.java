@@ -37,6 +37,8 @@ public enum ErrorEnum {
     CLASS_DELETE_FAIL("1004", "删除课程失败"),
     CLASS_ADD_STUDENT_FAIL("1005", "在课程中添加学生失败"),
     CLASS_DELETE_STUDENT_FAIL("1006", "在课程中删除学生失败"),
+    CLASS_ADD_TEMPLATE_VM_FAIL("1007", "课程添加模板虚拟机失败"),
+    CLASS_DELETE_TEMPLATE_VM_FAIL("1008", "在课程中删除模板虚拟机失败"),
 
     VM_NOT_EXIST("2000", "虚拟机不存在"),
     VM_CREATE_FAIL("2001", "创建虚拟机失败"),
@@ -48,6 +50,7 @@ public enum ErrorEnum {
     VM_TEMPLATE_CAN_NOT_START("2007", "模板虚拟机不能启动"),
     VM_ONLY_CLONE_FROM_TEMPLATE("2008", "只能从模板虚拟机中克隆虚拟机"),
     VM_RUNNING_CAN_NOT_CHANGE_TO_TEMPLATE("2009", "运行中的虚拟机不能转化为模板虚拟机"),
+    VM_NOT_TEMPLATE("2010", "不是模板虚拟机"),
 
     HOST_NOT_EXIST("3000", "物理机不存在"),
     HOST_DELETE_FAIL("3001", "删除物理机失败"),

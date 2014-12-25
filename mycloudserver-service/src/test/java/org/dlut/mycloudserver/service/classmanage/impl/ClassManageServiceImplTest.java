@@ -108,4 +108,12 @@ public class ClassManageServiceImplTest extends BaseTestCase {
         MyCloudResult<Pagination<UserDTO>> result = classManageService.getStudentsInOneClass(classId, 0, 10);
         printObject(result);
     }
+
+    @Test
+    public void testAddTemplateVmToClass() {
+        int classId = 5;
+        String templateVmUuid = "1d3526dc-8942-42c9-8b6d-86c2bf08e329";
+        MyCloudResult<Boolean> result = classManageService.addTemplateVmToClass(templateVmUuid, classId);
+        printObject(result);
+    }
 }

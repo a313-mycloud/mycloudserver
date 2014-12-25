@@ -20,14 +20,20 @@ import org.dlut.mycloudserver.client.common.classmanage.ClassDTO;
 import org.dlut.mycloudserver.client.common.classmanage.QueryClassCondition;
 import org.dlut.mycloudserver.client.common.usermanage.RoleEnum;
 import org.dlut.mycloudserver.client.common.usermanage.UserDTO;
+import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.service.classmanage.IClassManageService;
 import org.dlut.mycloudserver.client.service.usermanage.IUserManageService;
+import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.dal.dataobject.ClassDO;
 import org.dlut.mycloudserver.dal.dataobject.StudentClassDO;
 import org.dlut.mycloudserver.dal.dataobject.StudentClassDeleteCondition;
 import org.dlut.mycloudserver.dal.dataobject.StudentClassQueryCondition;
+import org.dlut.mycloudserver.dal.dataobject.TemplateVmClassDO;
+import org.dlut.mycloudserver.dal.dataobject.TemplateVmClassDeleteCondition;
+import org.dlut.mycloudserver.dal.dataobject.TemplateVmClassQueryCondition;
 import org.dlut.mycloudserver.service.classmanage.ClassManage;
 import org.dlut.mycloudserver.service.classmanage.StudentClassManage;
+import org.dlut.mycloudserver.service.classmanage.TemplateVmClassManage;
 import org.dlut.mycloudserver.service.classmanage.convent.ClassConvent;
 import org.springframework.stereotype.Service;
 
@@ -40,13 +46,19 @@ import org.springframework.stereotype.Service;
 public class ClassManageServiceImpl implements IClassManageService {
 
     @Resource
-    private ClassManage        classManage;
+    private ClassManage           classManage;
 
     @Resource
-    private StudentClassManage studentClassManage;
+    private StudentClassManage    studentClassManage;
 
     @Resource(name = "userManageService")
-    private IUserManageService userManageService;
+    private IUserManageService    userManageService;
+
+    @Resource
+    private TemplateVmClassManage templateVmClassManage;
+
+    @Resource(name = "vmManageService")
+    private IVmManageService      vmManageService;
 
     @Override
     public MyCloudResult<ClassDTO> getClassById(int classId) {
@@ -254,6 +266,17 @@ public class ClassManageServiceImpl implements IClassManageService {
         return classList;
     }
 
+    private List<ClassDTO> getClassListByTemplateClassDOList(List<TemplateVmClassDO> templateVmClassDOList) {
+        List<ClassDTO> classList = new ArrayList<ClassDTO>();
+        for (TemplateVmClassDO templateVmClassDO : templateVmClassDOList) {
+            MyCloudResult<ClassDTO> result = getClassById(templateVmClassDO.getClassId());
+            if (result.isSuccess()) {
+                classList.add(result.getModel());
+            }
+        }
+        return classList;
+    }
+
     @Override
     public MyCloudResult<Pagination<UserDTO>> getStudentsInOneClass(int classId, int offset, int limit) {
         if (!isClassExist(classId)) {
@@ -294,4 +317,141 @@ public class ClassManageServiceImpl implements IClassManageService {
         Pagination<ClassDTO> pagination = new Pagination<ClassDTO>(offset, limit, totalCount, classList);
         return MyCloudResult.successResult(pagination);
     }
+
+    /**
+     * 判断是否是模板虚拟机
+     * 
+     * @param templateVmUuid
+     * @return
+     */
+    private boolean isTemplateVmExist(String templateVmUuid) {
+        if (StringUtils.isBlank(templateVmUuid)) {
+            return false;
+        }
+
+        MyCloudResult<VmDTO> result = vmManageService.getVmByUuid(templateVmUuid);
+        if (!result.isSuccess()) {
+            return false;
+        }
+
+        if (!result.getModel().getIsTemplateVm()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public MyCloudResult<Boolean> addTemplateVmToClass(String templateVmUuid, int classId) {
+        if (!isTemplateVmExist(templateVmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_TEMPLATE);
+        }
+        if (!isClassExist(classId)) {
+            return MyCloudResult.failedResult(ErrorEnum.CLASS_NOT_EXIST);
+        }
+
+        if (!templateVmClassManage.addTemplateVmToClass(templateVmUuid, classId)) {
+            return MyCloudResult.failedResult(ErrorEnum.CLASS_ADD_TEMPLATE_VM_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    @Override
+    public MyCloudResult<Boolean> deleteOneTemplateVmInOneClass(String templateVmUuid, int classId) {
+        if (!isTemplateVmExist(templateVmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_TEMPLATE);
+        }
+        if (!isClassExist(classId)) {
+            return MyCloudResult.failedResult(ErrorEnum.CLASS_NOT_EXIST);
+        }
+
+        TemplateVmClassDeleteCondition templateVmClassDeleteCondition = new TemplateVmClassDeleteCondition();
+        templateVmClassDeleteCondition.setClassId(classId);
+        templateVmClassDeleteCondition.setTemplateVmUuid(templateVmUuid);
+        if (!templateVmClassManage.delete(templateVmClassDeleteCondition)) {
+            return MyCloudResult.failedResult(ErrorEnum.CLASS_DELETE_TEMPLATE_VM_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    @Override
+    public MyCloudResult<Boolean> deleteAllTemplateVmInOneClass(int classId) {
+        if (!isClassExist(classId)) {
+            return MyCloudResult.failedResult(ErrorEnum.CLASS_NOT_EXIST);
+        }
+        TemplateVmClassDeleteCondition templateVmClassDeleteCondition = new TemplateVmClassDeleteCondition();
+        templateVmClassDeleteCondition.setClassId(classId);
+        if (!templateVmClassManage.delete(templateVmClassDeleteCondition)) {
+            return MyCloudResult.failedResult(ErrorEnum.CLASS_DELETE_TEMPLATE_VM_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    @Override
+    public MyCloudResult<Boolean> deleteAllClassWithTemplateVm(String templateVmUuid) {
+        if (!isTemplateVmExist(templateVmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_TEMPLATE);
+        }
+
+        TemplateVmClassDeleteCondition templateVmClassDeleteCondition = new TemplateVmClassDeleteCondition();
+        templateVmClassDeleteCondition.setTemplateVmUuid(templateVmUuid);
+        if (!templateVmClassManage.delete(templateVmClassDeleteCondition)) {
+            return MyCloudResult.failedResult(ErrorEnum.CLASS_DELETE_TEMPLATE_VM_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    private List<VmDTO> getTempalteVmListByTemplateVmClassDOList(List<TemplateVmClassDO> templateVmClassDOList) {
+        List<VmDTO> vmDTOList = new ArrayList<VmDTO>();
+        if (templateVmClassDOList == null) {
+            return vmDTOList;
+        }
+        for (TemplateVmClassDO templateVmClassDO : templateVmClassDOList) {
+            MyCloudResult<VmDTO> result = vmManageService.getVmByUuid(templateVmClassDO.getTemplateVmUuid());
+            vmDTOList.add(result.getModel());
+        }
+
+        return vmDTOList;
+    }
+
+    @Override
+    public MyCloudResult<Pagination<VmDTO>> getTemplateVmsInOneClass(int classId, int offset, int limit) {
+        if (!isClassExist(classId)) {
+            return MyCloudResult.failedResult(ErrorEnum.CLASS_NOT_EXIST);
+        }
+        if (offset < 0 || limit <= 0) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
+        }
+
+        TemplateVmClassQueryCondition templateVmClassQueryCondition = new TemplateVmClassQueryCondition();
+        templateVmClassQueryCondition.setClassId(classId);
+        templateVmClassQueryCondition.setOffset(offset);
+        templateVmClassQueryCondition.setLimit(limit);
+        int totalCount = templateVmClassManage.countQuery(templateVmClassQueryCondition);
+        List<TemplateVmClassDO> templateVmClassDOList = templateVmClassManage.query(templateVmClassQueryCondition);
+        List<VmDTO> vmDTOList = getTempalteVmListByTemplateVmClassDOList(templateVmClassDOList);
+        Pagination<VmDTO> pagination = new Pagination<VmDTO>(offset, limit, totalCount, vmDTOList);
+        return MyCloudResult.successResult(pagination);
+    }
+
+    @Override
+    public MyCloudResult<Pagination<ClassDTO>> getClassesWithTemplateVm(String templateVmUuid, int offset, int limit) {
+        if (!isTemplateVmExist(templateVmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_TEMPLATE);
+        }
+        if (offset < 0 || limit <= 0) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
+        }
+
+        TemplateVmClassQueryCondition templateVmClassQueryCondition = new TemplateVmClassQueryCondition();
+        templateVmClassQueryCondition.setTemplateVmUuid(templateVmUuid);
+        templateVmClassQueryCondition.setOffset(offset);
+        templateVmClassQueryCondition.setLimit(limit);
+        int totalCount = templateVmClassManage.countQuery(templateVmClassQueryCondition);
+        List<TemplateVmClassDO> templateVmClassDOList = templateVmClassManage.query(templateVmClassQueryCondition);
+        List<ClassDTO> classDTOList = getClassListByTemplateClassDOList(templateVmClassDOList);
+        Pagination<ClassDTO> pagination = new Pagination<ClassDTO>(offset, limit, totalCount, classDTOList);
+        return MyCloudResult.successResult(pagination);
+    }
+
 }

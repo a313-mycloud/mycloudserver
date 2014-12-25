@@ -12,6 +12,7 @@ import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.classmanage.ClassDTO;
 import org.dlut.mycloudserver.client.common.classmanage.QueryClassCondition;
 import org.dlut.mycloudserver.client.common.usermanage.UserDTO;
+import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 
 /**
  * 类IClassManageService.java的实现描述：TODO 类实现描述
@@ -121,4 +122,59 @@ public interface IClassManageService {
      * @return
      */
     public MyCloudResult<Pagination<ClassDTO>> getClassesOfOneStudent(String studentAccount, int offset, int limit);
+
+    /**
+     * 将虚拟机模板添加到课程中
+     * 
+     * @param templateVmUuid
+     * @param classId
+     * @return
+     */
+    public MyCloudResult<Boolean> addTemplateVmToClass(String templateVmUuid, int classId);
+
+    /**
+     * 删除某个课程下的的某个虚拟机
+     * 
+     * @param classId
+     * @param templateVmUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> deleteOneTemplateVmInOneClass(String templateVmUuid, int classId);
+
+    /**
+     * 删除某个课程下面的所有虚拟机
+     * 
+     * @param classId
+     * @return
+     */
+    public MyCloudResult<Boolean> deleteAllTemplateVmInOneClass(int classId);
+
+    /**
+     * 删除某个虚拟机镜像模板下面的所有虚拟机
+     * 
+     * @param templateVmUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> deleteAllClassWithTemplateVm(String templateVmUuid);
+
+    /**
+     * 获取某个课程下面的所有模板虚拟机
+     * 
+     * @param classId
+     * @param offset
+     * @param limit
+     * @return
+     */
+    public MyCloudResult<Pagination<VmDTO>> getTemplateVmsInOneClass(int classId, int offset, int limit);
+
+    /**
+     * 获取某个虚拟机模板对应的所有课程
+     * 
+     * @param templateVmUuid
+     * @param offset
+     * @param limit
+     * @return
+     */
+    public MyCloudResult<Pagination<ClassDTO>> getClassesWithTemplateVm(String templateVmUuid, int offset, int limit);
+
 }

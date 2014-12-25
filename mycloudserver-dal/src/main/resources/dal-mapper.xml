@@ -58,4 +58,10 @@
 			value="org.dlut.mycloudserver.dal.mapper.DiskManageMapper" />
 	</bean>
 
+	<bean id="templateVmClassMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"
+		parent="mycloudServerBaseMapper">
+		<property name="mapperInterface"
+			value="org.dlut.mycloudserver.dal.mapper.TemplateVmClassMapper" />
+	</bean>
+
 </beans>
