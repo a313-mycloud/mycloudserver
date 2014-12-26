@@ -95,7 +95,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void testDeleteVm() {
-        String vmUuid = "490dd28e-c22e-41cd-9052-a7673f7f8645";
+        String vmUuid = "7a4800ef-881c-45d0-b4c2-3dcc94756e7c";
         MyCloudResult<Boolean> result = vmManageService.deleteVm(vmUuid);
         printObject(result);
     }
@@ -138,8 +138,8 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testAttachDisk() throws InterruptedException {
         Thread.sleep(10000);
-        String vmUuid = "e6d75325-1631-47cf-8dfc-352cf14e1952";
-        String diskUuid = "7a4800ef-881c-45d0-b4c2-3dcc94756e7c";
+        String vmUuid = "62363e21-f8c2-4836-99b3-f2154c38e26d";
+        String diskUuid = "617c574c-ed8e-4acc-8b29-98a2f921f2b6";
         MyCloudResult<Boolean> result = vmManageService.attachDisk(vmUuid, diskUuid);
         printObject(result);
     }

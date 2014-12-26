@@ -7,10 +7,13 @@
  */
 package org.dlut.mycloudserver.service.vmmanage.impl;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -38,6 +41,10 @@ import org.dlut.mycloudserver.service.schedule.IScheduler;
 import org.dlut.mycloudserver.service.storemanage.DiskVO;
 import org.dlut.mycloudserver.service.vmmanage.VmManage;
 import org.dlut.mycloudserver.service.vmmanage.convent.VmConvent;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.libvirt.StoragePool;
@@ -246,6 +253,7 @@ public class VmManageServiceImpl implements IVmManageService {
         System.out.println(xmlDesc);
 
         Integer bestHostId = scheduler.getBestHostId(vmDTO);
+        System.out.println("虚拟机运行在hostId为" + bestHostId + "的主机上");
         if (bestHostId == null) {
             log.error("启动虚拟机" + vmDTO + "时，获取最佳物理机id失败");
             return MyCloudResult.failedResult(ErrorEnum.VM_GET_BEST_HOST_FIAL);
@@ -553,6 +561,40 @@ public class VmManageServiceImpl implements IVmManageService {
         return MyCloudResult.successResult(Boolean.TRUE);
     }
 
+    /**
+     * 根据domainDescXml获取未使用的硬盘设备名称
+     * 
+     * @param domainDescXml
+     * @return
+     */
+    private String getDevNameByDomainDescXml(String domainDescXml) {
+        if (StringUtils.isBlank(domainDescXml)) {
+            return null;
+        }
+
+        SAXReader saxReader = new SAXReader();
+        try {
+            Document document = saxReader.read(new StringReader(domainDescXml));
+            Element root = document.getRootElement();
+            List diskElements = root.element("devices").elements("disk");
+            Set<String> existDevNameSet = new HashSet<String>();
+            for (int i = 0; i < diskElements.size(); i++) {
+                Element diskElement = (Element) diskElements.get(i);
+                existDevNameSet.add(diskElement.element("target").attributeValue("dev"));
+            }
+            for (int i = 0; i < 25; i++) {
+                char charIndex = (char) ('b' + i);
+                String devName = "sd" + charIndex;
+                if (!existDevNameSet.contains(devName)) {
+                    return devName;
+                }
+            }
+        } catch (DocumentException e) {
+            log.error("解析虚拟机描述文件失败", e);
+        }
+        return null;
+    }
+
     @Override
     public MyCloudResult<Boolean> attachDisk(String vmUuid, String diskUuid) {
         MyCloudResult<DiskDTO> diskResult = diskManageService.getDiskByUuid(diskUuid);
@@ -585,9 +627,16 @@ public class VmManageServiceImpl implements IVmManageService {
             }
             try {
                 Domain domain = conn.getDomainByName(vmUuid);
+                String domainDescXml = domain.getXMLDesc(0);
+                String devName = getDevNameByDomainDescXml(domainDescXml);
+                if (StringUtils.isBlank(devName)) {
+                    log.error("没有找到合适的设备名称来为硬盘挂载");
+                    return MyCloudResult.failedResult(ErrorEnum.VM_GET_DEV_NAME_FIAL);
+                }
                 Map<String, Object> context = new HashMap<String, Object>();
                 context.put("diskFormat", diskDTO.getDiskFormat().getValue());
                 context.put("diskPath", diskDTO.getDiskPath());
+                context.put("devName", devName);
                 String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.DISK_TEMPLATE_PATH, context);
                 domain.attachDevice(xmlDesc);
             } catch (LibvirtException e) {
