@@ -567,7 +567,7 @@ public class VmManageServiceImpl implements IVmManageService {
      * @param domainDescXml
      * @return
      */
-    private String getDevNameByDomainDescXml(String domainDescXml) {
+    private String getNewDevNameByDomainDescXml(String domainDescXml) {
         if (StringUtils.isBlank(domainDescXml)) {
             return null;
         }
@@ -576,6 +576,7 @@ public class VmManageServiceImpl implements IVmManageService {
         try {
             Document document = saxReader.read(new StringReader(domainDescXml));
             Element root = document.getRootElement();
+            @SuppressWarnings("rawtypes")
             List diskElements = root.element("devices").elements("disk");
             Set<String> existDevNameSet = new HashSet<String>();
             for (int i = 0; i < diskElements.size(); i++) {
@@ -592,6 +593,38 @@ public class VmManageServiceImpl implements IVmManageService {
         } catch (DocumentException e) {
             log.error("解析虚拟机描述文件失败", e);
         }
+        return null;
+    }
+
+    /**
+     * 根据domainDescXml获取硬盘对应的设备名
+     * 
+     * @param domainDescXml
+     * @param diskDTO
+     * @return
+     */
+    private String getDiskDevNameByDomainDescXml(String domainDescXml, DiskDTO diskDTO) {
+        if (StringUtils.isBlank(domainDescXml)) {
+            return null;
+        }
+
+        SAXReader saxReader = new SAXReader();
+        try {
+            Document document = saxReader.read(new StringReader(domainDescXml));
+            Element root = document.getRootElement();
+            @SuppressWarnings("rawtypes")
+            List diskElements = root.element("devices").elements("disk");
+            for (int i = 0; i < diskElements.size(); i++) {
+                Element diskElement = (Element) diskElements.get(i);
+                String diskPath = diskElement.element("source").attributeValue("file");
+                if (diskPath.equals(diskDTO.getDiskPath())) {
+                    return diskElement.element("target").attributeValue("dev");
+                }
+            }
+        } catch (DocumentException e) {
+            log.error("error message", e);
+        }
+
         return null;
     }
 
@@ -613,25 +646,39 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.DISK_HAS_ATTACH_VM);
         }
         VmDTO vmDTO = vmResult.getModel();
+        if (!attachDiskToVmByLibvirt(vmDTO, diskDTO)) {
+            log.warn("将硬盘" + diskDTO + "挂载到" + vmDTO + "失败");
+            return MyCloudResult.failedResult(ErrorEnum.DISK_ATTACH_FAIL);
+        }
         diskDTO.setAttachVmUuid(vmUuid);
         MyCloudResult<Boolean> updateResult = diskManageService.updateDisk(diskDTO);
         if (!updateResult.isSuccess()) {
             log.error("更新硬盘" + diskDTO + "失败，原因：" + updateResult.getMsgInfo());
             return MyCloudResult.failedResult(updateResult.getMsgCode(), updateResult.getMsgInfo());
         }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    /**
+     * 利用libvirt将硬盘挂载到虚拟机上
+     * 
+     * @param vmDTO
+     * @param diskDTO
+     * @return
+     */
+    private boolean attachDiskToVmByLibvirt(VmDTO vmDTO, DiskDTO diskDTO) {
         if (vmDTO.getVmStatus() == VmStatusEnum.RUNNING) {
             Connection conn = mutilHostConnPool.getConnByHostId(vmDTO.getHostId());
             if (conn == null) {
-                log.error("获取libvirt连接失败");
-                return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
+                return false;
             }
             try {
-                Domain domain = conn.getDomainByName(vmUuid);
+                Domain domain = conn.getDomainByName(vmDTO.getVmUuid());
                 String domainDescXml = domain.getXMLDesc(0);
-                String devName = getDevNameByDomainDescXml(domainDescXml);
+                String devName = getNewDevNameByDomainDescXml(domainDescXml);
                 if (StringUtils.isBlank(devName)) {
                     log.error("没有找到合适的设备名称来为硬盘挂载");
-                    return MyCloudResult.failedResult(ErrorEnum.VM_GET_DEV_NAME_FIAL);
+                    return false;
                 }
                 Map<String, Object> context = new HashMap<String, Object>();
                 context.put("diskFormat", diskDTO.getDiskFormat().getValue());
@@ -640,8 +687,8 @@ public class VmManageServiceImpl implements IVmManageService {
                 String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.DISK_TEMPLATE_PATH, context);
                 domain.attachDevice(xmlDesc);
             } catch (LibvirtException e) {
-                log.error("硬盘" + diskUuid + "挂载到虚拟机" + vmUuid + "失败", e);
-                return MyCloudResult.failedResult(ErrorEnum.DISK_ATTACH_FAIL);
+                log.error("硬盘" + diskDTO.getDiskUuid() + "挂载到虚拟机" + vmDTO.getVmUuid() + "失败", e);
+                return false;
             } finally {
                 try {
                     conn.close();
@@ -650,7 +697,45 @@ public class VmManageServiceImpl implements IVmManageService {
                 }
             }
         }
-        return MyCloudResult.successResult(Boolean.TRUE);
+        return true;
+    }
+
+    /**
+     * 利用libvirt将硬盘从虚拟机中卸载
+     * 
+     * @param vmDTO
+     * @param diskDTO
+     * @return
+     */
+    private boolean detachDiskFromVmByLibvirt(VmDTO vmDTO, DiskDTO diskDTO) {
+        if (vmDTO.getVmStatus() == VmStatusEnum.RUNNING) {
+            Connection conn = mutilHostConnPool.getConnByHostId(vmDTO.getHostId());
+            if (conn == null) {
+                log.error("获取本地失败");
+                return false;
+            }
+            try {
+                Domain domain = conn.getDomainByName(vmDTO.getVmUuid());
+                String domainDescXml = domain.getXMLDesc(0);
+                String devName = getDiskDevNameByDomainDescXml(domainDescXml, diskDTO);
+                Map<String, Object> context = new HashMap<String, Object>();
+                context.put("diskFormat", diskDTO.getDiskFormat().getValue());
+                context.put("diskPath", diskDTO.getDiskPath());
+                context.put("devName", devName);
+                String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.DISK_TEMPLATE_PATH, context);
+                domain.detachDevice(xmlDesc);
+            } catch (LibvirtException e) {
+                log.error("硬盘" + diskDTO.getDiskUuid() + "从虚拟机" + vmDTO.getVmUuid() + "卸载失败", e);
+                return false;
+            } finally {
+                try {
+                    conn.close();
+                } catch (LibvirtException e) {
+                    log.error("error message", e);
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -668,41 +753,24 @@ public class VmManageServiceImpl implements IVmManageService {
         if (StringUtils.isBlank(vmUuid)) {
             return MyCloudResult.successResult(Boolean.TRUE);
         }
+        MyCloudResult<VmDTO> vmResult = getVmByUuid(vmUuid);
+        if (!vmResult.isSuccess()) {
+            return MyCloudResult.successResult(Boolean.TRUE);
+        }
+        VmDTO vmDTO = vmResult.getModel();
+
+        if (!detachDiskFromVmByLibvirt(vmDTO, diskDTO)) {
+            log.warn("将硬盘" + diskDTO + "从虚拟机" + vmDTO + "中卸载失败");
+            return MyCloudResult.failedResult(ErrorEnum.DISK_DETACH_FAIL);
+        }
+
         diskDTO.setAttachVmUuid("");
         MyCloudResult<Boolean> updateResult = diskManageService.updateDisk(diskDTO);
         if (!updateResult.isSuccess()) {
             log.error("在数据库更新硬盘" + diskDTO + "失败，原因：" + updateResult.getMsgInfo());
             return MyCloudResult.failedResult(ErrorEnum.DISK_UPDATE_FAIL);
         }
-        MyCloudResult<VmDTO> vmResult = getVmByUuid(vmUuid);
-        if (!vmResult.isSuccess()) {
-            return MyCloudResult.successResult(Boolean.TRUE);
-        }
-        VmDTO vmDTO = vmResult.getModel();
-        if (vmDTO.getVmStatus() == VmStatusEnum.RUNNING) {
-            Connection conn = mutilHostConnPool.getConnByHostId(vmDTO.getHostId());
-            if (conn == null) {
-                log.error("获取libvirt连接失败");
-                return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
-            }
-            try {
-                Domain domain = conn.getDomainByName(vmUuid);
-                Map<String, Object> context = new HashMap<String, Object>();
-                context.put("diskFormat", diskDTO.getDiskFormat().getValue());
-                context.put("diskPath", diskDTO.getDiskPath());
-                String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.DISK_TEMPLATE_PATH, context);
-                domain.detachDevice(xmlDesc);
-            } catch (LibvirtException e) {
-                log.error("硬盘" + diskUuid + "从虚拟机" + vmUuid + "卸载失败", e);
-                return MyCloudResult.failedResult(ErrorEnum.DISK_DETACH_FAIL);
-            } finally {
-                try {
-                    conn.close();
-                } catch (LibvirtException e) {
-                    log.error("error message", e);
-                }
-            }
-        }
+
         return MyCloudResult.successResult(Boolean.TRUE);
     }
 

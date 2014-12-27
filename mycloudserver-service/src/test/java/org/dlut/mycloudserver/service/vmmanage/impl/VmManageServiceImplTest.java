@@ -139,7 +139,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
     public void testAttachDisk() throws InterruptedException {
         Thread.sleep(10000);
         String vmUuid = "62363e21-f8c2-4836-99b3-f2154c38e26d";
-        String diskUuid = "617c574c-ed8e-4acc-8b29-98a2f921f2b6";
+        String diskUuid = "7a4800ef-881c-45d0-b4c2-3dcc94756e7c";
         MyCloudResult<Boolean> result = vmManageService.attachDisk(vmUuid, diskUuid);
         printObject(result);
     }
