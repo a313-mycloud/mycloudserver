@@ -81,7 +81,8 @@ public interface IVmManageService {
     public MyCloudResult<Pagination<VmDTO>> query(QueryVmCondition queryVmCondition);
 
     /**
-     * 删除虚拟机
+     * 删除虚拟机，此接口会将虚拟机与硬盘的关系解除，如果此虚拟机为模板虚拟机，此接口还会将模板虚拟机与课程的关系解除，
+     * 同时将所有从此模板虚拟机克隆出来的虚拟机全部删除
      * 
      * @param vmUuid
      * @return
@@ -112,6 +113,14 @@ public interface IVmManageService {
      * @return
      */
     public MyCloudResult<Boolean> detachDisk(String diskUuid);
+
+    /**
+     * 将vmUuid下的所有硬盘卸载
+     * 
+     * @param vmUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> detachAllDiskFromVm(String vmUuid);
 
     /**
      * 将虚拟机转化为模板虚拟机

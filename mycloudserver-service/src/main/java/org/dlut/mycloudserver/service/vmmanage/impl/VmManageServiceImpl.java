@@ -460,7 +460,6 @@ public class VmManageServiceImpl implements IVmManageService {
         if (StringUtils.isBlank(vmUuid)) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
         }
-        // TODO
         MyCloudResult<VmDTO> result = getVmByUuid(vmUuid);
         if (!result.isSuccess()) {
             log.error("虚拟机" + vmUuid + "不存在");
@@ -513,17 +512,37 @@ public class VmManageServiceImpl implements IVmManageService {
             if (!deleteVmCloneByTemplateVm(deleteVmDTO)) {
                 return false;
             }
+            // 刪除模板虚拟机与课程的关系
+            MyCloudResult<Boolean> result = classManageService.deleteAllClassWithTemplateVm(deleteVmDTO.getVmUuid());
+            if (!result.isSuccess()) {
+                log.error("删除模板虚拟机与课程的关系失败，原因：" + result.getMsgInfo());
+                return false;
+            }
+        }
+        // 将虚拟机上的所有硬盘卸载
+        MyCloudResult<Boolean> detachResult = detachAllDiskByVmDTO(deleteVmDTO);
+        if (!detachResult.isSuccess()) {
+            log.error("将所有硬盘从虚拟机" + deleteVmDTO + "上卸载失败，原因：" + detachResult.getMsgInfo());
         }
         // 如果虚拟机还在运行，则先强制关闭虚拟机
         if (deleteVmDTO.getVmStatus() == VmStatusEnum.RUNNING) {
             forceShutDownVm(deleteVmDTO.getVmUuid());
         }
-        // 在数据库中删除虚拟机
-        if (!vmManage.deleteVmByUuid(deleteVmDTO.getVmUuid())) {
+
+        // 物理删除虚拟机镜像
+        if (!physicalDeleteImageByLibvirt(deleteVmDTO.getImageUuid())) {
+            log.error("利用libvirt删除虚拟机" + deleteVmDTO + "失败");
             return false;
         }
-        // 物理删除虚拟机镜像
-        return physicalDeleteImageByLibvirt(deleteVmDTO.getImageUuid());
+
+        // 在数据库中删除虚拟机
+        return vmManage.deleteVmByUuid(deleteVmDTO.getVmUuid());
+
+        //        if (!vmManage.deleteVmByUuid(deleteVmDTO.getVmUuid())) {
+        //            return false;
+        //        }
+        //
+        //        return physicalDeleteImageByLibvirt(deleteVmDTO.getImageUuid());
     }
 
     private boolean physicalDeleteImageByLibvirt(String imageUuid) {
@@ -759,19 +778,24 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         VmDTO vmDTO = vmResult.getModel();
 
+        if (!detachDiskByDiskDTOAndVmDTO(diskDTO, vmDTO)) {
+            return MyCloudResult.failedResult(ErrorEnum.DISK_UPDATE_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    private boolean detachDiskByDiskDTOAndVmDTO(DiskDTO diskDTO, VmDTO vmDTO) {
         if (!detachDiskFromVmByLibvirt(vmDTO, diskDTO)) {
             log.warn("将硬盘" + diskDTO + "从虚拟机" + vmDTO + "中卸载失败");
-            return MyCloudResult.failedResult(ErrorEnum.DISK_DETACH_FAIL);
+            return false;
         }
-
         diskDTO.setAttachVmUuid("");
         MyCloudResult<Boolean> updateResult = diskManageService.updateDisk(diskDTO);
         if (!updateResult.isSuccess()) {
             log.error("在数据库更新硬盘" + diskDTO + "失败，原因：" + updateResult.getMsgInfo());
-            return MyCloudResult.failedResult(ErrorEnum.DISK_UPDATE_FAIL);
+            return false;
         }
-
-        return MyCloudResult.successResult(Boolean.TRUE);
+        return true;
     }
 
     /**
@@ -829,6 +853,33 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
         }
         return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    private MyCloudResult<Boolean> detachAllDiskByVmDTO(VmDTO vmDTO) {
+        QueryDiskCondition queryDiskCondition = new QueryDiskCondition();
+        queryDiskCondition.setAttachVmUuid(vmDTO.getVmUuid());
+        queryDiskCondition.setOffset(0);
+        queryDiskCondition.setLimit(100);
+        MyCloudResult<Pagination<DiskDTO>> result = diskManageService.query(queryDiskCondition);
+        if (!result.isSuccess()) {
+            return MyCloudResult.failedResult(result.getMsgCode(), result.getMsgInfo());
+        }
+        for (DiskDTO diskDTO : result.getModel().getList()) {
+            detachDiskByDiskDTOAndVmDTO(diskDTO, vmDTO);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
+    @Override
+    public MyCloudResult<Boolean> detachAllDiskFromVm(String vmUuid) {
+        if (StringUtils.isBlank(vmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        MyCloudResult<VmDTO> result = getVmByUuid(vmUuid);
+        if (!result.isSuccess()) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
+        }
+        return detachAllDiskByVmDTO(result.getModel());
     }
 
 }
