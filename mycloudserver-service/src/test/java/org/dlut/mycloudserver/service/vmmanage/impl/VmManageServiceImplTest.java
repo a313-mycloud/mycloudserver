@@ -7,8 +7,6 @@
  */
 package org.dlut.mycloudserver.service.vmmanage.impl;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 
 import javax.annotation.Resource;
@@ -44,7 +42,6 @@ public class VmManageServiceImplTest extends BaseTestCase {
      */
     @Test
     public void testGetVmByUuid() {
-        fail("Not yet implemented");
     }
 
     /**
