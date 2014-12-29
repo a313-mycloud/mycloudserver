@@ -60,6 +60,16 @@ public class VmDTO extends BaseDTO {
     private String            imagePath;
 
     /**
+     * 虚拟机的mac地址
+     */
+    private String            vmMacAddress;
+
+    /**
+     * 虚拟机的网络类型
+     */
+    private NetworkTypeEnum   vmNetworkType;
+
+    /**
      * 虚拟机的运行状态
      */
     private VmStatusEnum      vmStatus;
@@ -264,6 +274,22 @@ public class VmDTO extends BaseDTO {
 
     public void setIsPublicTemplate(Boolean isPublicTemplate) {
         this.isPublicTemplate = isPublicTemplate;
+    }
+
+    public String getVmMacAddress() {
+        return vmMacAddress;
+    }
+
+    public void setVmMacAddress(String vmMacAddress) {
+        this.vmMacAddress = vmMacAddress;
+    }
+
+    public NetworkTypeEnum getVmNetworkType() {
+        return vmNetworkType;
+    }
+
+    public void setVmNetworkType(NetworkTypeEnum vmNetworkType) {
+        this.vmNetworkType = vmNetworkType;
     }
 
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
+import org.dlut.mycloudserver.client.common.vmmanage.NetworkTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.ShowTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
@@ -49,6 +50,8 @@ public class VmConvent {
         vmDTO.setParentVmUuid(vmDO.getParentVmUuid());
         vmDTO.setIsTemplateVm(vmDO.getIsTemplateVm());
         vmDTO.setIsPublicTemplate(vmDO.getIsPublicTemplate());
+        vmDTO.setVmMacAddress(vmDO.getVmMacAddress());
+        vmDTO.setVmNetworkType(NetworkTypeEnum.getNetworkTypeByValue(vmDO.getVmNetworkType()));
 
         return vmDTO;
     }
@@ -83,6 +86,10 @@ public class VmConvent {
         vmDO.setParentVmUuid(vmDTO.getParentVmUuid());
         vmDO.setIsTemplateVm(vmDTO.getIsTemplateVm());
         vmDO.setIsPublicTemplate(vmDTO.getIsPublicTemplate());
+        vmDO.setVmMacAddress(vmDTO.getVmMacAddress());
+        if (vmDTO.getVmNetworkType() != null) {
+            vmDO.setVmNetworkType(vmDTO.getVmNetworkType().getValue());
+        }
 
         return vmDO;
     }

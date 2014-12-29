@@ -30,7 +30,7 @@ public interface IVmManageService {
     /**
      * 创建新的虚拟机，必须设置vmName, vmVcpu、vmMemory、imageUuid、userAccount、showType、
      * showPassword ，classId(0表示没有课程),parentVmUuid(如果没有，则设为“”),isTemplateVm,
-     * isPublicTemplate 可选：desc
+     * isPublicTemplate, vmNetworkType 可选：desc
      * 
      * @param vmDTO
      * @return 新创建的vm的uuid
@@ -40,7 +40,7 @@ public interface IVmManageService {
     /**
      * 克隆虚拟机，必须设置vmName,
      * vmVcpu、vmMemory、userAccount、showType、showPassword，classId,
-     * isTemplateVM,isPublicTemplate 可选：desc
+     * isTemplateVM,isPublicTemplate,vmNetworkType 可选：desc
      * 
      * @param destVmDTO
      * @param srcVmUuid

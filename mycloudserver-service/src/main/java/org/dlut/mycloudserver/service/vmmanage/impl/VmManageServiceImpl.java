@@ -111,7 +111,7 @@ public class VmManageServiceImpl implements IVmManageService {
                 || StringUtils.isBlank(vmDTO.getImageUuid()) || StringUtils.isBlank(vmDTO.getUserAccount())
                 || vmDTO.getShowType() == null || StringUtils.isBlank(vmDTO.getShowPassword())
                 || vmDTO.getClassId() == null || vmDTO.getParentVmUuid() == null || vmDTO.getIsTemplateVm() == null
-                || vmDTO.getIsPublicTemplate() == null) {
+                || vmDTO.getIsPublicTemplate() == null || vmDTO.getVmNetworkType() == null) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
 
@@ -159,6 +159,7 @@ public class VmManageServiceImpl implements IVmManageService {
         vmDTO.setVmStatus(VmStatusEnum.CLOSED);
         vmDTO.setImageFormat((StoreFormat) result[0]);
         vmDTO.setImageTotalSize((Long) result[1]);
+        vmDTO.setVmMacAddress(CommonUtil.createMacAddress());
 
         VmDO vmDO = VmConvent.conventToVmDO(vmDTO);
         if (!vmManage.createVm(vmDO)) {
@@ -389,7 +390,8 @@ public class VmManageServiceImpl implements IVmManageService {
                 || destVmDTO.getVmVcpu() == null || destVmDTO.getVmMemory() == null
                 || StringUtils.isBlank(destVmDTO.getUserAccount()) || destVmDTO.getShowType() == null
                 || StringUtils.isBlank(destVmDTO.getShowPassword()) || destVmDTO.getClassId() == null
-                || destVmDTO.getIsTemplateVm() == null || destVmDTO.getIsPublicTemplate() == null) {
+                || destVmDTO.getIsTemplateVm() == null || destVmDTO.getIsPublicTemplate() == null
+                || destVmDTO.getVmNetworkType() == null) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
 

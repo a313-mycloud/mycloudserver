@@ -9,6 +9,8 @@
 		<result property="imageUuid" column="image_uuid" />
 		<result property="imageTotalSize" column="image_total_size" />
 		<result property="imageFormat" column="image_format" />
+		<result property="vmMacAddress" column="vm_mac_address" />
+		<result property="vmNetworkType" column="vm_network_type" />
 		<result property="vmStatus" column="vm_status" />
 		<result property="hostId" column="host_id" />
 		<result property="userAccount" column="user_account" />
@@ -26,7 +28,7 @@
 
 	<sql id="select-param-column">
 		vm_name, vm_uuid, vm_vcpu, vm_memory, image_uuid,
-		image_total_size, image_format,
+		image_total_size, image_format, vm_mac_address, vm_network_type,
 		vm_status, host_id, user_account,
 		class_id, show_type, show_port,
 		show_password, parent_vm_uuid,
@@ -85,7 +87,7 @@
 	<insert id="createVm">
 		INSERT INTO mycloud_vm(vm_name, vm_uuid, vm_vcpu,
 		vm_memory,
-		image_uuid, image_total_size, image_format, vm_status,
+		image_uuid, image_total_size, image_format, vm_mac_address, vm_network_type, vm_status,
 		host_id, user_account, class_id,
 		show_type,
 		show_port, show_password,
@@ -94,7 +96,7 @@
 		gmt_create, gmt_modified)
 		VALUES(#{vmName}, #{vmUuid}, #{vmVcpu},
 		#{vmMemory},
-		#{imageUuid}, #{imageTotalSize}, #{imageFormat},
+		#{imageUuid}, #{imageTotalSize}, #{imageFormat}, #{vmMacAddress}, #{vmNetworkType}, 
 		#{vmStatus},
 		#{hostId}, #{userAccount},
 		#{classId},
@@ -146,6 +148,9 @@
 			</if>
 			<if test="isPublicTemplate!=null">
 				is_public_template=#{isPublicTemplate},
+			</if>
+			<if test="vmNetworkType!=null">
+				vm_network_type=#{vmNetworkType},
 			</if>
 			gmt_modified=now()
 		</set>

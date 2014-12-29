@@ -8,6 +8,7 @@
 package org.mycloudserver.common.util;
 
 import java.io.StringReader;
+import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,10 +28,14 @@ import org.slf4j.LoggerFactory;
  */
 public class CommonUtil {
 
-    private static Logger       log          = LoggerFactory.getLogger(CommonUtil.class);
+    private static Logger       log                  = LoggerFactory.getLogger(CommonUtil.class);
 
-    public static final Pattern UUID_PATTERN = Pattern
-                                                     .compile("[0-9a-z]{8}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{12}");
+    public static final Pattern UUID_PATTERN         = Pattern
+                                                             .compile("[0-9a-z]{8}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{12}");
+
+    private static final int    MAX_MAC_ADDREDD_NUM  = 16777216;
+
+    private static final String MAC_ADDRESS_TEMPLATE = "52:54:00:%s:%s:%s";
 
     public static String createUuid() {
         return UUID.randomUUID().toString();
@@ -72,5 +77,21 @@ public class CommonUtil {
             log.error("vnc端口号不是数字");
             return null;
         }
+    }
+
+    /**
+     * 创建一个mac地址，前三个字节为52:54:00
+     * 
+     * @return
+     */
+    public static String createMacAddress() {
+        Random random = new Random();
+        String randHexString = Integer.toHexString(random.nextInt(MAX_MAC_ADDREDD_NUM));
+        int zeroNum = 6 - randHexString.length();
+        for (int i = 0; i < zeroNum; i++) {
+            randHexString = "0" + randHexString;
+        }
+        return String.format(MAC_ADDRESS_TEMPLATE, randHexString.substring(0, 2), randHexString.substring(2, 4),
+                randHexString.substring(4, 6));
     }
 }

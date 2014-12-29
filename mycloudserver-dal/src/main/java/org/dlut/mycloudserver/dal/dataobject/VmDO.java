@@ -50,6 +50,16 @@ public class VmDO extends BaseDO {
     private String  imageFormat;
 
     /**
+     * 虚拟机mac地址
+     */
+    private String  vmMacAddress;
+
+    /**
+     * 虚拟机网络类型，nat或者桥接
+     */
+    private int     vmNetworkType;
+
+    /**
      * 虚拟机的运行状态
      */
     private Integer vmStatus;
@@ -246,6 +256,22 @@ public class VmDO extends BaseDO {
 
     public void setIsPublicTemplate(Boolean isPublicTemplate) {
         this.isPublicTemplate = isPublicTemplate;
+    }
+
+    public String getVmMacAddress() {
+        return vmMacAddress;
+    }
+
+    public void setVmMacAddress(String vmMacAddress) {
+        this.vmMacAddress = vmMacAddress;
+    }
+
+    public int getVmNetworkType() {
+        return vmNetworkType;
+    }
+
+    public void setVmNetworkType(int vmNetworkType) {
+        this.vmNetworkType = vmNetworkType;
     }
 
 }

@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
+import org.dlut.mycloudserver.client.common.vmmanage.NetworkTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
 import org.dlut.mycloudserver.client.common.vmmanage.ShowTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
@@ -120,7 +121,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
     public void testCloneVm() {
         String srcVmUuid = "e254dbd7-db71-444f-a870-0383d5b09952";
         VmDTO destVmDTO = new VmDTO();
-        destVmDTO.setVmName("test");
+        destVmDTO.setVmName("test_mac");
         destVmDTO.setVmVcpu(2);
         destVmDTO.setVmMemory(2147483648L);
         destVmDTO.setUserAccount("teacher");
@@ -129,6 +130,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
         destVmDTO.setClassId(0);
         destVmDTO.setIsTemplateVm(Boolean.FALSE);
         destVmDTO.setIsPublicTemplate(Boolean.FALSE);
+        destVmDTO.setVmNetworkType(NetworkTypeEnum.NAT);
         MyCloudResult<String> result = vmManageService.cloneVm(destVmDTO, srcVmUuid);
         printObject(result);
     }
@@ -175,6 +177,8 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void test() {
-        printObject(CommonUtil.createUuid());
+        for (int i = 0; i < 100; i++) {
+            printObject(CommonUtil.createMacAddress());
+        }
     }
 }
