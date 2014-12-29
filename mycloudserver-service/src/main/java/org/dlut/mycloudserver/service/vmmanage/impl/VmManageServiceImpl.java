@@ -250,6 +250,8 @@ public class VmManageServiceImpl implements IVmManageService {
         context.put("showType", vmDTO.getShowType());
         context.put("showPassword", vmDTO.getShowPassword());
         context.put("diskList", diskVOList);
+        context.put("vmNetworkType", vmDTO.getVmNetworkType());
+        context.put("vmMacAddress", vmDTO.getVmMacAddress());
         String xmlDesc = TemplateUtil.renderTemplate(VmConstants.VOLUME_TEMPLATE_PATH, context);
         System.out.println(xmlDesc);
 

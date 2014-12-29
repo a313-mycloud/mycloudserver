@@ -78,7 +78,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testStartVm() throws InterruptedException {
         Thread.sleep(10000);
-        String vmUuid = "e6d75325-1631-47cf-8dfc-352cf14e1952";
+        String vmUuid = "af69378a-3676-4b88-97ce-ac16792662ea";
         MyCloudResult<Boolean> result = vmManageService.startVm(vmUuid);
         printObject(result);
     }
