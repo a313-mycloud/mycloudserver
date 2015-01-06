@@ -16,7 +16,7 @@ public enum ShowTypeEnum {
 
     SPICE(1, "spice"),
     VNC(2, "vnc"),
-    WEB(3, "spice-html5");
+    WEB(3, "web");
 
     private int    value;
     private String desc;
