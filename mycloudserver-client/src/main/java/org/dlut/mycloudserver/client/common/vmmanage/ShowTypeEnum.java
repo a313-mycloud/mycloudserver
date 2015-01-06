@@ -15,7 +15,8 @@ package org.dlut.mycloudserver.client.common.vmmanage;
 public enum ShowTypeEnum {
 
     SPICE(1, "spice"),
-    VNC(2, "vnc");
+    VNC(2, "vnc"),
+    WEB(3, "spice-html5");
 
     private int    value;
     private String desc;
