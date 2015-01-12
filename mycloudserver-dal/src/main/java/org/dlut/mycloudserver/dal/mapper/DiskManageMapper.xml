@@ -32,7 +32,7 @@
 				attach_vm_uuid=#{attachVmUuid},
 			</if>
 			<if test="desc!=null">
-				image_desc=#{desc},
+				disk_desc=#{desc},
 			</if>
 			gmt_modified = now(),
 		</set>
