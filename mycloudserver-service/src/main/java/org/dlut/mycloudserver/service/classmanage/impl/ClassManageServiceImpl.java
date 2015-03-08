@@ -454,4 +454,21 @@ public class ClassManageServiceImpl implements IClassManageService {
         return MyCloudResult.successResult(pagination);
     }
 
+    @Override
+    public MyCloudResult<Boolean> isBind(int classId, String templateVmUuid) {
+        if (!isTemplateVmExist(templateVmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_TEMPLATE);
+        }
+        if (!isClassExist(classId)) {
+            return MyCloudResult.failedResult(ErrorEnum.CLASS_NOT_EXIST);
+        }
+        TemplateVmClassQueryCondition templateVmClassQueryCondition = new TemplateVmClassQueryCondition();
+        templateVmClassQueryCondition.setClassId(classId);
+        templateVmClassQueryCondition.setTemplateVmUuid(templateVmUuid);
+        if (templateVmClassManage.countQuery(templateVmClassQueryCondition) <= 0) {
+            return MyCloudResult.successResult(false);
+        }
+        return MyCloudResult.successResult(true);
+    }
+
 }

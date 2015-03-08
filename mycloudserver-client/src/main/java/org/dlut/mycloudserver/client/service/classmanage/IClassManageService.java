@@ -177,4 +177,12 @@ public interface IClassManageService {
      */
     public MyCloudResult<Pagination<ClassDTO>> getClassesWithTemplateVm(String templateVmUuid, int offset, int limit);
 
+    /**
+     * 判断课程与模板虚拟机是否已经关联
+     * 
+     * @param classId
+     * @param templateVmUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> isBind(int classId, String templateVmUuid);
 }
