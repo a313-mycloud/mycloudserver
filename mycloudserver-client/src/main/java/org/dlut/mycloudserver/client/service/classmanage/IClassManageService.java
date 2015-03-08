@@ -184,5 +184,5 @@ public interface IClassManageService {
      * @param templateVmUuid
      * @return
      */
-    //public MyCloudResult<Boolean> isBind(int classId, String templateVmUuid);
+    public MyCloudResult<Boolean> isBind(int classId, String templateVmUuid);
 }
