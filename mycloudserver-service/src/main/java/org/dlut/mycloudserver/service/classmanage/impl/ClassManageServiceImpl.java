@@ -369,7 +369,7 @@ public class ClassManageServiceImpl implements IClassManageService {
         templateVmClassDeleteCondition.setClassId(classId);
         templateVmClassDeleteCondition.setTemplateVmUuid(templateVmUuid);
         if (!templateVmClassManage.delete(templateVmClassDeleteCondition)) {
-            System.out.println("****************************************");
+
             return MyCloudResult.failedResult(ErrorEnum.CLASS_DELETE_TEMPLATE_VM_FAIL);
         }
         return MyCloudResult.successResult(Boolean.TRUE);
