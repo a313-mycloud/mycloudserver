@@ -87,7 +87,7 @@
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x02'
 				function='0x0' />
 		</video>
-		#elseif ($!showType == 2)
+		#elseif ($!showType.value == 2)
 		<graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'
 			passwd='$!showPassword'>
 			<listen type='address' address='0.0.0.0' />
