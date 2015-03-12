@@ -78,8 +78,8 @@
 		<input type='mouse' bus='ps2' />
 		<input type='keyboard' bus='ps2' />
 		#if ($!showType.value == 1)
-		<graphics type='spice' autoport='yes' listen='0.0.0.0'>
-			<!-- passwd='$!showPassword'> -->
+		<graphics type='spice' autoport='yes' listen='0.0.0.0'
+			passwd='$!showPassword'>
 			<listen type='address' address='0.0.0.0' />
 		</graphics>
 		<video>
@@ -97,7 +97,7 @@
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x02'
 				function='0x0' />
 		</video>
-		<input type='tablet' bus='usb'/>
+		<input type='tablet' bus='usb' />
 		#else
 		<graphics type='spice' autoport='yes' listen='0.0.0.0'
 			passwd='$!showPassword'>
