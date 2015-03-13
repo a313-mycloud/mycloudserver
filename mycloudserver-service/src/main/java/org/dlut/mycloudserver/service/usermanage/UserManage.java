@@ -62,4 +62,11 @@ public class UserManage {
         }
         return false;
     }
+
+    public boolean deleteUserByAccount(String account) {
+        if (account == null) {
+            return false;
+        }
+        return this.userManageMapper.deleteUserByAccount(account) == 1;
+    }
 }

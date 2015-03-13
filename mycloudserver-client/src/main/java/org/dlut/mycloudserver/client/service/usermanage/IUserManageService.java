@@ -59,4 +59,12 @@ public interface IUserManageService {
      */
     MyCloudResult<Pagination<UserDTO>> query(QueryUserCondition queryUserCondition);
 
+    /**
+     * 根据account删除用户
+     * 
+     * @param hostId
+     * @return
+     */
+    MyCloudResult<Boolean> deleteUserByAccount(String account);
+
 }

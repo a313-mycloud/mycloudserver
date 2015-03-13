@@ -63,5 +63,11 @@
 		INSERT INTO mycloud_user(account, password, username, role, gmt_create, gmt_modified)
 		VALUES(#{account}, #{password}, #{username}, #{role}, now(), now())
 	</insert>
+	
+	<delete id="deleteUserByAccount">
+		<![CDATA[
+		DELETE FROM mycloud_user WHERE account = #{account}
+		]]>
+	</delete>
 
 </mapper>

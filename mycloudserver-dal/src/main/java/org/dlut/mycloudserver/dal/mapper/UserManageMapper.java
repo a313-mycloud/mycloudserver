@@ -51,4 +51,13 @@ public interface UserManageMapper {
      * @return
      */
     List<UserDO> query(QueryUserCondition queryUserCondition);
+
+    /**
+     * 删除用户
+     * 
+     * @param account
+     * @return
+     */
+    int deleteUserByAccount(@Param("account") String account);
+
 }

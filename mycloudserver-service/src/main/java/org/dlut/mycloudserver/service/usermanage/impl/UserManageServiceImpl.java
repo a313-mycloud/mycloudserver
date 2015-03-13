@@ -110,4 +110,20 @@ public class UserManageServiceImpl implements IUserManageService {
         }
         return MyCloudResult.successResult(Boolean.FALSE);
     }
+
+    @Override
+    public MyCloudResult<Boolean> deleteUserByAccount(String account) {
+        if (account == null) {
+            MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
+        }
+        MyCloudResult<UserDTO> accountResult = this.getUserByAccount(account);
+        if (!accountResult.isSuccess()) {
+            return MyCloudResult.failedResult(ErrorEnum.USER_NOT_EXIST);
+        }
+
+        if (!this.userManage.deleteUserByAccount(account)) {
+            return MyCloudResult.failedResult(ErrorEnum.HOST_DELETE_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
 }
