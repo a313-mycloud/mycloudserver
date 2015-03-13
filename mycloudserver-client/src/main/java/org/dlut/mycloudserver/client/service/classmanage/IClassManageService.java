@@ -150,7 +150,7 @@ public interface IClassManageService {
     public MyCloudResult<Boolean> deleteAllTemplateVmInOneClass(int classId);
 
     /**
-     * 删除某个虚拟机镜像模板下面的所有虚拟机
+     * 操作tvm-class表，删除所有与指定虚拟机id有关的对应关系
      * 
      * @param templateVmUuid
      * @return
