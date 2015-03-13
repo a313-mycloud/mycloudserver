@@ -116,4 +116,11 @@ public class ClassManageServiceImplTest extends BaseTestCase {
         MyCloudResult<Boolean> result = classManageService.addTemplateVmToClass(templateVmUuid, classId);
         printObject(result);
     }
+
+    @Test
+    public void testDeleteAllClassWithTemplateVM() {
+        String vmUuid = "a9256198-dc70-4bec-a81b-77cbe5b363c9";
+        MyCloudResult<Boolean> result = classManageService.deleteAllClassWithTemplateVm(vmUuid);
+        printObject(result);
+    }
 }
