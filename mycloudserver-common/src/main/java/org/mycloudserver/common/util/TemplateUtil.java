@@ -18,7 +18,7 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 /**
- * 类TemplateUtil.java的实现描述：TODO 类实现描述
+ * 类TemplateUtil.java的实现描述：TODO 类实现描述 渲染xml模板
  * 
  * @author luojie 2014年11月23日 下午1:12:14
  */

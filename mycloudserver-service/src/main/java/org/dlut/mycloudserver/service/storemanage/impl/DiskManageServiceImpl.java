@@ -7,6 +7,7 @@
  */
 package org.dlut.mycloudserver.service.storemanage.impl;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +73,7 @@ public class DiskManageServiceImpl implements IDiskManageService {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
         String diskUuid = CommonUtil.createUuid();
-        // 利用libvirt创建一个卷
+        // 利用libvirt创建一个卷并且格式化为ntfs
         if (!physicalCreateDisk(diskUuid, diskDTO.getDiskTotalSize())) {
             return MyCloudResult.failedResult(ErrorEnum.DISK_PHYSICAL_CREATE_FAIL);
         }
@@ -96,7 +97,7 @@ public class DiskManageServiceImpl implements IDiskManageService {
     }
 
     /**
-     * 利用libvirt创建一个卷
+     * 利用libvirt创建一个卷，并且对卷格式化为ntfs
      * 
      * @param diskUuid
      * @param diskTotalSize
@@ -114,9 +115,15 @@ public class DiskManageServiceImpl implements IDiskManageService {
             context.put("name", diskUuid);
             context.put("uuid", diskUuid);
             context.put("diskSize", diskTotalSize);
-            context.put("newDiskPath", StoreConstants.DISK_POOL_PATH + diskUuid);
+            String diskPath = StoreConstants.DISK_POOL_PATH + diskUuid;
+            context.put("newDiskPath", diskPath);
             String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.DISK_VOLUME_TEMPLATE_PATH, context);
             diskPool.storageVolCreateXML(xmlDesc, 0);
+            // 对新创建的卷进行ntfs格式化
+            if (!formatDiskToNtfs(diskPath)) {
+                log.error("硬盘格式化失败");
+                return false;
+            }
         } catch (LibvirtException e) {
             log.error("创建硬盘失败", e);
             return false;
@@ -128,6 +135,26 @@ public class DiskManageServiceImpl implements IDiskManageService {
             }
         }
         return true;
+    }
+
+    /**
+     * 对硬盘进行ntfs格式化
+     * 
+     * @param diskPath
+     * @return
+     */
+    private boolean formatDiskToNtfs(String diskPath) {
+        String command = "virt-format -a " + diskPath + " --filesystem=ntfs";
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec(command);//该语句用于执行linux命令
+            if (process.exitValue() == 0) {
+                return true;
+            }
+        } catch (IOException e) {
+            log.error("error message", e);
+        }
+        return false;
     }
 
     private boolean physicalDeleteDisk(String diskUuid) {
