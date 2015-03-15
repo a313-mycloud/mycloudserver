@@ -148,10 +148,14 @@ public class DiskManageServiceImpl implements IDiskManageService {
         Process process;
         try {
             process = Runtime.getRuntime().exec(command);//该语句用于执行linux命令
+            process.waitFor();
             if (process.exitValue() == 0) {
                 return true;
             }
         } catch (IOException e) {
+            log.error("error message", e);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
             log.error("error message", e);
         }
         return false;
