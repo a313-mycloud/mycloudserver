@@ -144,7 +144,8 @@ public class DiskManageServiceImpl implements IDiskManageService {
      * @return
      */
     private boolean formatDiskToNtfs(String diskPath) {
-        String command = "virt-format -a " + diskPath + " --filesystem=ntfs";
+        //以sudo身份执行命令，该命令需要在后台服务器中需要被配置为可以无密码执行
+        String command = "sudo virt-format -a " + diskPath + " --filesystem=ntfs";
         Process process;
         try {
             process = Runtime.getRuntime().exec(command);//该语句用于执行linux命令
