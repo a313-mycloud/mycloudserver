@@ -49,7 +49,7 @@
 		DELETE FROM mycloud_student_class 
 		<where>
 			<include refid="delete-condition" />
-		</where>>
+		</where>
 	</delete>
 
 	<select id="countQuery" resultType="int">
