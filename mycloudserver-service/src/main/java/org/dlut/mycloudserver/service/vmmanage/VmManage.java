@@ -53,6 +53,14 @@ public class VmManage {
         return vmManageMapper.deleteVmByUuid(vmUuid) == 1 ? true : false;
     }
 
+    public boolean deleteVmByClassId(int classId) {
+        if (classId <= 0) {
+            return false;
+        }
+        return this.vmManageMapper.deleteVmByClassId(classId) == 1 ? true : false;
+
+    }
+
     public boolean updateVm(VmDO vmDO) {
         if (vmDO == null) {
             return false;

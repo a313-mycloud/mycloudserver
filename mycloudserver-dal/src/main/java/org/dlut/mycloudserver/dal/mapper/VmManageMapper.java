@@ -9,6 +9,7 @@ package org.dlut.mycloudserver.dal.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
 import org.dlut.mycloudserver.dal.dataobject.VmDO;
 
@@ -42,6 +43,14 @@ public interface VmManageMapper {
      * @return
      */
     int deleteVmByUuid(String vmUuid);
+
+    /**
+     * 根据classId删除虚拟机
+     * 
+     * @param classId
+     * @return
+     */
+    int deleteVmByClassId(@Param("classId") int classId);
 
     /**
      * 更新虚拟机

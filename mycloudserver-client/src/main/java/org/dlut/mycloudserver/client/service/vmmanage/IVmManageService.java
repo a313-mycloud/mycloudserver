@@ -90,6 +90,14 @@ public interface IVmManageService {
     public MyCloudResult<Boolean> deleteVm(String vmUuid);
 
     /**
+     * 根据课程删除虚拟机
+     * 
+     * @param classId
+     * @return
+     */
+    public MyCloudResult<Boolean> deleteVmByClassId(int classId);
+
+    /**
      * 更新虚拟机
      * 
      * @param vmDTO

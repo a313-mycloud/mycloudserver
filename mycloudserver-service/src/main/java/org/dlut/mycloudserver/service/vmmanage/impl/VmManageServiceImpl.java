@@ -476,6 +476,21 @@ public class VmManageServiceImpl implements IVmManageService {
         return MyCloudResult.successResult(Boolean.TRUE);
     }
 
+    @Override
+    public MyCloudResult<Boolean> deleteVmByClassId(int classId) {
+
+        MyCloudResult<ClassDTO> result = this.classManageService.getClassById(classId);
+        if (!result.isSuccess()) {
+            log.error("课程" + classId + "不存在");
+            return MyCloudResult.failedResult(ErrorEnum.CLASS_NOT_EXIST);
+        }
+        if (this.vmManage.deleteVmByClassId(classId)) {
+            log.error("删除虚拟机失败");
+            return MyCloudResult.failedResult(ErrorEnum.VM_DELETE_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
     /**
      * 删除被templateVmUuid克隆出来的所有虚拟机
      * 
