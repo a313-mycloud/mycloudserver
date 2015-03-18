@@ -181,4 +181,9 @@ public class VmManageServiceImplTest extends BaseTestCase {
             printObject(CommonUtil.createMacAddress());
         }
     }
+
+    @Test
+    public void testCreateUuid() {
+        printObject(CommonUtil.createUuid());
+    }
 }
