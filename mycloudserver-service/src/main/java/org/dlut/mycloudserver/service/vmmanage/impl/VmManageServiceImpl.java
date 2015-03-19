@@ -484,7 +484,7 @@ public class VmManageServiceImpl implements IVmManageService {
             log.error("课程" + classId + "不存在");
             return MyCloudResult.failedResult(ErrorEnum.CLASS_NOT_EXIST);
         }
-        if (this.vmManage.deleteVmByClassId(classId)) {
+        if (!this.vmManage.deleteVmByClassId(classId)) {
             log.error("删除虚拟机失败");
             return MyCloudResult.failedResult(ErrorEnum.VM_DELETE_FAIL);
         }
