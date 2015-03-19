@@ -118,6 +118,12 @@
 		DELETE FROM mycloud_vm WHERE class_id = #{classId}
 		]]>
 	</delete>
+	
+	<delete id="deleteVmByUserAccount">
+		<![CDATA[
+		DELETE FROM mycloud_vm WHERE user_account = #{userAccount}
+		]]>
+	</delete>
 
 	<update id="updateVm">
 		UPDATE mycloud_vm

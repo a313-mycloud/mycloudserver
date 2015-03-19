@@ -98,6 +98,12 @@ public interface IVmManageService {
     public MyCloudResult<Boolean> deleteVmByClassId(int classId);
 
     /**
+     * @param userAccount
+     * @return
+     */
+    public MyCloudResult<Boolean> deleteVmByUserAccount(String userAccount);
+
+    /**
      * 更新虚拟机
      * 
      * @param vmDTO
