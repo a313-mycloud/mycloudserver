@@ -37,7 +37,7 @@ public class StoreConstants {
     /**
      * 镜像存储池的路径
      */
-    public static final String IMAGE_POOL_PATH            = "/home/luojie/mycloud-pool/images/";
+    public static final String IMAGE_POOL_PATH            = "/media/mycloud-pool/images/";
 
     /**
      * 硬盘存储池的名称
@@ -47,5 +47,5 @@ public class StoreConstants {
     /**
      * 硬盘存储池的路径
      */
-    public static final String DISK_POOL_PATH             = "/home/luojie/mycloud-pool/disks/";
+    public static final String DISK_POOL_PATH             = "/media/mycloud-pool/disks/";
 }

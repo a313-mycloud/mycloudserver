@@ -275,7 +275,7 @@ public class VmManageServiceImpl implements IVmManageService {
             String domainXmlDesc = domain.getXMLDesc(0);
             System.out.println(domainXmlDesc);
             Integer showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc);
-            System.out.println("vnc 端口号为：" + showPort);
+            System.out.println("访问端口号为：" + showPort);
 
             // 在数据库中更新虚拟机
             vmDTO.setVmStatus(VmStatusEnum.RUNNING);
