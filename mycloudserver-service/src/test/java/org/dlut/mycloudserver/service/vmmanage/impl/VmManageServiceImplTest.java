@@ -100,6 +100,14 @@ public class VmManageServiceImplTest extends BaseTestCase {
     }
 
     @Test
+    public void testDeleteVmByClassId() throws InterruptedException {
+        Thread.sleep(1000);
+        int classId = 52;
+        MyCloudResult<Boolean> result = vmManageService.deleteVmByClassId(classId);
+        printObject(result);
+    }
+
+    @Test
     public void testDom4j() throws DocumentException {
         SAXReader saxReader = new SAXReader();
         Document document = saxReader.read(new File("src/test/resources/test.xml"));
