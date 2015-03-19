@@ -53,6 +53,14 @@ public interface VmManageMapper {
     int deleteVmByClassId(@Param("classId") int classId);
 
     /**
+     * 根据userAccount删除虚拟机
+     * 
+     * @param classId
+     * @return
+     */
+    int deleteVmByUserAccount(String userAccount);
+
+    /**
      * 更新虚拟机
      * 
      * @param vmDO

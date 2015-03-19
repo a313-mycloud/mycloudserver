@@ -61,6 +61,14 @@ public class VmManage {
 
     }
 
+    public boolean deleteVmByUserAccount(String userAccount) {
+        if (StringUtils.isBlank(userAccount)) {
+            return false;
+        }
+        return this.vmManageMapper.deleteVmByUserAccount(userAccount) == 1 ? true : false;
+
+    }
+
     public boolean updateVm(VmDO vmDO) {
         if (vmDO == null) {
             return false;

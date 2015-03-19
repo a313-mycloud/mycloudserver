@@ -491,6 +491,21 @@ public class VmManageServiceImpl implements IVmManageService {
         return MyCloudResult.successResult(Boolean.TRUE);
     }
 
+    @Override
+    public MyCloudResult<Boolean> deleteVmByUserAccount(String userAccount) {
+
+        MyCloudResult<UserDTO> result = this.userManageService.getUserByAccount(userAccount);
+        if (!result.isSuccess()) {
+            log.error("用户" + userAccount + "不存在");
+            return MyCloudResult.failedResult(ErrorEnum.USER_NOT_EXIST);
+        }
+        if (!this.vmManage.deleteVmByUserAccount(userAccount)) {
+            log.error("删除虚拟机失败");
+            return MyCloudResult.failedResult(ErrorEnum.VM_DELETE_FAIL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
     /**
      * 删除被templateVmUuid克隆出来的所有虚拟机
      * 
