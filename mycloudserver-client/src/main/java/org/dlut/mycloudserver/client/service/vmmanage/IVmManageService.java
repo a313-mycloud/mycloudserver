@@ -9,6 +9,7 @@ package org.dlut.mycloudserver.client.service.vmmanage;
 
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
+import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 
@@ -30,10 +31,7 @@ public interface IVmManageService {
     /**
      * 创建新的虚拟机，必须设置vmName, vmVcpu、vmMemory、imageUuid、userAccount、showType、
      * showPassword ，classId(0表示没有课程),parentVmUuid(如果没有，则设为“”),isTemplateVm,
-     * isPublicTemplate, vmNetworkType 可选：desc
-     * 
-     * @param vmDTO
-     * @return 新创建的vm的uuid
+     * isPublicTemplate 可选：desc
      */
     public MyCloudResult<String> createVm(VmDTO vmDTO);
 
@@ -151,4 +149,6 @@ public interface IVmManageService {
      * @return
      */
     public MyCloudResult<Boolean> changeToNonTempalteVm(String templateVmUuid);
+
+    public MyCloudResult<StoreFormat> getImageFormat(String filePath);
 }

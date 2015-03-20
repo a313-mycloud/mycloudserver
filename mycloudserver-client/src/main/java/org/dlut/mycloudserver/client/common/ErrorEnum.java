@@ -26,6 +26,8 @@ public enum ErrorEnum {
     GET_LOCAL_CONN("10", "获取本地libvirt连接失败"),
     GET_CONN_FAIL("11", "获取连接失败"),
     IMAGE_HAS_BIND_VM("12", "镜像已近和其他虚拟机绑定"),
+    UPLOAD_IMAGE_FORMAT_INVALID("13", "上传镜像格式违法"),
+    UPLOAD_IMAGE_NOT_EXIST("14", "上传镜像不存在"),
 
     USER_NOT_EXIST("0900", "用户不存在"),
     USER_NOT_STUDENT("0901", "用户不是学生"),

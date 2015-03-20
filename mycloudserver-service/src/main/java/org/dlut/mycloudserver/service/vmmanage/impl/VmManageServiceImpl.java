@@ -916,4 +916,14 @@ public class VmManageServiceImpl implements IVmManageService {
         return detachAllDiskByVmDTO(result.getModel());
     }
 
+    @Override
+    public MyCloudResult<StoreFormat> getImageFormat(String filePath) {
+        if (StringUtils.isBlank(filePath))
+            return MyCloudResult.failedResult(ErrorEnum.UPLOAD_IMAGE_NOT_EXIST);
+        Object[] objs = FileUtil.getStoreFormatAndSize(filePath);
+        if (objs == null)
+            return MyCloudResult.failedResult(ErrorEnum.UPLOAD_IMAGE_FORMAT_INVALID);
+        return MyCloudResult.successResult((StoreFormat) objs[0]);
+
+    }
 }
