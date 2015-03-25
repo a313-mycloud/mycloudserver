@@ -65,7 +65,7 @@ public class VmManage {
         if (StringUtils.isBlank(userAccount)) {
             return false;
         }
-        return this.vmManageMapper.deleteVmByUserAccount(userAccount) == 1 ? true : false;
+        return this.vmManageMapper.deleteVmByUserAccount(userAccount) >=1 ? true : false;
 
     }
 
