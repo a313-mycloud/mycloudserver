@@ -8,9 +8,10 @@
 package org.dlut.mycloudserver.service.vmmanage.impl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
-
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.vmmanage.NetworkTypeEnum;

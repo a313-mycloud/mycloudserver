@@ -859,6 +859,36 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         return MyCloudResult.successResult(Boolean.TRUE);
     }
+    
+    /**
+     * 将虚拟机转化为公有模板虚拟机
+     */
+    @Override
+    public MyCloudResult<Boolean> changeToPublicTemplateVm(String vmUuid) {
+        if (StringUtils.isBlank(vmUuid)) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
+        }
+        MyCloudResult<VmDTO> result = getVmByUuid(vmUuid);
+        if (!result.isSuccess()) {
+            log.warn("虚拟机" + vmUuid + "不存在");
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
+        }
+        VmDTO vmDTO = result.getModel();
+        if (vmDTO.getIsTemplateVm()&&vmDTO.getIsPublicTemplate()) {
+            return MyCloudResult.successResult(Boolean.TRUE);
+        }
+        // 运行中的虚拟机不能转化为模板虚拟机
+        if (vmDTO.getVmStatus() == VmStatusEnum.RUNNING) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_RUNNING_CAN_NOT_CHANGE_TO_TEMPLATE);
+        }
+        vmDTO.setIsTemplateVm(Boolean.TRUE);
+        vmDTO.setIsPublicTemplate(Boolean.TRUE);
+        if (!updateVmIn(vmDTO)) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
+        }
+        return MyCloudResult.successResult(Boolean.TRUE);
+    }
+
 
     /**
      * 将模板虚拟机变为非模板虚拟机，此接口会将所有从该模板虚拟机克隆的虚拟机全部删除

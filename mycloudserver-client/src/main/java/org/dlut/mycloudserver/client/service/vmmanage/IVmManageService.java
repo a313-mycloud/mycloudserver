@@ -141,6 +141,14 @@ public interface IVmManageService {
      * @return
      */
     public MyCloudResult<Boolean> changeToTemplateVm(String vmUuid);
+    /**
+     * 将虚拟机转化为公有模板虚拟机
+     * 
+     * @param vmUuid
+     * @return
+     */
+    public MyCloudResult<Boolean> changeToPublicTemplateVm(String vmUuid);
+
 
     /**
      * 将模板虚拟机变为非模板虚拟机，此接口会将所有从该模板虚拟机克隆的虚拟机全部删除
