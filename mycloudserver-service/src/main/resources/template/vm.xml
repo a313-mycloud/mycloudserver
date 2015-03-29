@@ -21,7 +21,8 @@
 		<disk type='file' device='disk'>
 			<driver name='qemu' type='qcow2' />
 			<source file='$imagePath' />
-			<target dev='sda' bus='virtio' />
+			<!--<target dev='sda' bus='virtio' />-->
+			<target dev='sda' bus='scsi' />
 		</disk>
 		#foreach($!disk in $!diskList)
 		<disk type='file' device='disk'>
