@@ -100,6 +100,16 @@ public class VmDO extends BaseDO {
     private String  parentVmUuid;
 
     /**
+     * 主硬盘总线类型
+     */
+    private Integer masterDiskBusType;
+
+    /**
+     * 网卡类型
+     */
+    private Integer interfaceType;
+
+    /**
      * 是否为模板虚拟机
      */
     private Boolean isTemplateVm;
@@ -272,6 +282,22 @@ public class VmDO extends BaseDO {
 
     public void setVmNetworkType(int vmNetworkType) {
         this.vmNetworkType = vmNetworkType;
+    }
+
+    public Integer getMasterDiskBusType() {
+        return masterDiskBusType;
+    }
+
+    public void setMasterDiskBusType(Integer masterDiskBusType) {
+        this.masterDiskBusType = masterDiskBusType;
+    }
+
+    public Integer getInterfaceType() {
+        return interfaceType;
+    }
+
+    public void setInterfaceType(Integer interfaceType) {
+        this.interfaceType = interfaceType;
     }
 
 }

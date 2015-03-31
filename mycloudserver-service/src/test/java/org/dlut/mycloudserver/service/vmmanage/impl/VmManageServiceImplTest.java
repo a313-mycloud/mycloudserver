@@ -8,10 +8,9 @@
 package org.dlut.mycloudserver.service.vmmanage.impl;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
+
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.vmmanage.NetworkTypeEnum;
@@ -41,9 +40,15 @@ public class VmManageServiceImplTest extends BaseTestCase {
      * Test method for
      * {@link org.dlut.mycloudserver.service.vmmanage.impl.VmManageServiceImpl#getVmByUuid(java.lang.String)}
      * .
+     * 
+     * @throws InterruptedException
      */
     @Test
-    public void testGetVmByUuid() {
+    public void testGetVmByUuid() throws InterruptedException {
+        Thread.sleep(10000);
+        String vmUuid = "018dfb90-ae34-4822-a089-6e109b9310b9";
+        MyCloudResult<VmDTO> result = vmManageService.getVmByUuid(vmUuid);
+        printObject(result);
     }
 
     /**
@@ -79,7 +84,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
     @Test
     public void testStartVm() throws InterruptedException {
         Thread.sleep(10000);
-        String vmUuid = "af69378a-3676-4b88-97ce-ac16792662ea";
+        String vmUuid = "9f16c93d-c890-4ffd-b98f-5b0de87578f5";
         MyCloudResult<Boolean> result = vmManageService.startVm(vmUuid);
         printObject(result);
     }
@@ -128,9 +133,9 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     @Test
     public void testCloneVm() {
-        String srcVmUuid = "e254dbd7-db71-444f-a870-0383d5b09952";
+        String srcVmUuid = "018dfb90-ae34-4822-a089-6e109b9310b9";
         VmDTO destVmDTO = new VmDTO();
-        destVmDTO.setVmName("test_mac");
+        destVmDTO.setVmName("test_win2003_clone");
         destVmDTO.setVmVcpu(2);
         destVmDTO.setVmMemory(2147483648L);
         destVmDTO.setUserAccount("teacher");

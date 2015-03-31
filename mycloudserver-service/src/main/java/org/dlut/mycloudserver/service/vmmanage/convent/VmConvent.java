@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
+import org.dlut.mycloudserver.client.common.vmmanage.InterfaceTypeEnum;
+import org.dlut.mycloudserver.client.common.vmmanage.MasterDiskBusTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.NetworkTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.ShowTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
@@ -48,6 +50,8 @@ public class VmConvent {
         vmDTO.setImageFormat(StoreFormat.getStoreFormatByValue(vmDO.getImageFormat()));
         vmDTO.setImagePath(StoreConstants.IMAGE_POOL_PATH + vmDO.getImageUuid());
         vmDTO.setParentVmUuid(vmDO.getParentVmUuid());
+        vmDTO.setMasterDiskBusType(MasterDiskBusTypeEnum.getMasterDiskBusTypeByValue(vmDO.getMasterDiskBusType()));
+        vmDTO.setInterfaceType(InterfaceTypeEnum.getInterfaceTypeByValue(vmDO.getInterfaceType()));
         vmDTO.setIsTemplateVm(vmDO.getIsTemplateVm());
         vmDTO.setIsPublicTemplate(vmDO.getIsPublicTemplate());
         vmDTO.setVmMacAddress(vmDO.getVmMacAddress());
@@ -84,6 +88,12 @@ public class VmConvent {
             vmDO.setImageFormat(vmDTO.getImageFormat().getValue());
         }
         vmDO.setParentVmUuid(vmDTO.getParentVmUuid());
+        if (vmDTO.getMasterDiskBusType() != null) {
+            vmDO.setMasterDiskBusType(vmDTO.getMasterDiskBusType().getValue());
+        }
+        if (vmDTO.getInterfaceType() != null) {
+            vmDO.setInterfaceType(vmDTO.getInterfaceType().getValue());
+        }
         vmDO.setIsTemplateVm(vmDTO.getIsTemplateVm());
         vmDO.setIsPublicTemplate(vmDTO.getIsPublicTemplate());
         vmDO.setVmMacAddress(vmDTO.getVmMacAddress());

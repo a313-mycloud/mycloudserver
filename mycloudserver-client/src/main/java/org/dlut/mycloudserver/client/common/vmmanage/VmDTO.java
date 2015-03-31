@@ -17,112 +17,122 @@ import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
  */
 public class VmDTO extends BaseDTO {
 
-    private static final long serialVersionUID = 1190643482692634742L;
+    private static final long     serialVersionUID = 1190643482692634742L;
 
     /**
      * 虚拟机名称
      */
-    private String            vmName;
+    private String                vmName;
 
     /**
      * 虚拟机uuid
      */
-    private String            vmUuid;
+    private String                vmUuid;
 
     /**
      * 虚拟机cpu数量
      */
-    private Integer           vmVcpu;
+    private Integer               vmVcpu;
 
     /**
      * 虚拟机内存
      */
-    private Long              vmMemory;
+    private Long                  vmMemory;
 
     /**
      * 虚拟机对应的镜像uuid
      */
-    private String            imageUuid;
+    private String                imageUuid;
 
     /**
      * 镜像的总大小
      */
-    private Long              imageTotalSize;
+    private Long                  imageTotalSize;
 
     /**
      * 镜像格式
      */
-    private StoreFormat       imageFormat;
+    private StoreFormat           imageFormat;
 
     /**
      * 镜像的存储路径
      */
-    private String            imagePath;
+    private String                imagePath;
 
     /**
      * 虚拟机的mac地址
      */
-    private String            vmMacAddress;
+    private String                vmMacAddress;
 
     /**
      * 虚拟机的网络类型
      */
-    private NetworkTypeEnum   vmNetworkType;
+    private NetworkTypeEnum       vmNetworkType;
 
     /**
      * 虚拟机的运行状态
      */
-    private VmStatusEnum      vmStatus;
+    private VmStatusEnum          vmStatus;
 
     /**
      * 虚拟机运行所在的物理机id
      */
-    private Integer           hostId;
+    private Integer               hostId;
 
     /**
      * 用户账号
      */
-    private String            userAccount;
+    private String                userAccount;
 
     /**
      * 课程id
      */
-    private Integer           classId;
+    private Integer               classId;
 
     /**
      * 显示的类型
      */
-    private ShowTypeEnum      showType;
+    private ShowTypeEnum          showType;
 
     /**
      * 连接显示的端口号
      */
-    private Integer           showPort;
+    private Integer               showPort;
 
     /**
      * 连接显示的密码
      */
-    private String            showPassword;
+    private String                showPassword;
 
     /**
      * 父虚拟机的uuid
      */
-    private String            parentVmUuid;
+    private String                parentVmUuid;
+
+    /**
+     * 主硬盘的总线类型
+     */
+    private MasterDiskBusTypeEnum masterDiskBusType;
+
+    /**
+     * 网卡类型
+     */
+    private InterfaceTypeEnum     interfaceType;
 
     /**
      * 是否为模板虚拟机
      */
-    private Boolean           isTemplateVm;
+    private Boolean               isTemplateVm;
 
     /**
      * 是否是共有的模板虚拟机
      */
-    private Boolean           isPublicTemplate;
+    private Boolean               isPublicTemplate;
 
     /**
      * 描述
      */
-    private String            desc;
+    private String                desc;
 
     public String getVmName() {
         return vmName;
@@ -290,6 +300,22 @@ public class VmDTO extends BaseDTO {
 
     public void setVmNetworkType(NetworkTypeEnum vmNetworkType) {
         this.vmNetworkType = vmNetworkType;
+    }
+
+    public MasterDiskBusTypeEnum getMasterDiskBusType() {
+        return masterDiskBusType;
+    }
+
+    public void setMasterDiskBusType(MasterDiskBusTypeEnum masterDiskBusType) {
+        this.masterDiskBusType = masterDiskBusType;
+    }
+
+    public InterfaceTypeEnum getInterfaceType() {
+        return interfaceType;
+    }
+
+    public void setInterfaceType(InterfaceTypeEnum interfaceType) {
+        this.interfaceType = interfaceType;
     }
 
 }

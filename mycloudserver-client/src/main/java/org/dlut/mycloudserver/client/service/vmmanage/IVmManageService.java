@@ -31,7 +31,7 @@ public interface IVmManageService {
     /**
      * 创建新的虚拟机，必须设置vmName, vmVcpu、vmMemory、imageUuid、userAccount、showType、
      * showPassword ，classId(0表示没有课程),parentVmUuid(如果没有，则设为“”),isTemplateVm,
-     * isPublicTemplate 可选：desc
+     * isPublicTemplate, masterDiskBusType, interfaceType 可选：desc
      */
     public MyCloudResult<String> createVm(VmDTO vmDTO);
 
@@ -141,6 +141,7 @@ public interface IVmManageService {
      * @return
      */
     public MyCloudResult<Boolean> changeToTemplateVm(String vmUuid);
+
     /**
      * 将虚拟机转化为公有模板虚拟机
      * 
@@ -148,7 +149,6 @@ public interface IVmManageService {
      * @return
      */
     public MyCloudResult<Boolean> changeToPublicTemplateVm(String vmUuid);
-
 
     /**
      * 将模板虚拟机变为非模板虚拟机，此接口会将所有从该模板虚拟机克隆的虚拟机全部删除

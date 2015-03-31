@@ -21,8 +21,15 @@
 		<disk type='file' device='disk'>
 			<driver name='qemu' type='qcow2' />
 			<source file='$imagePath' />
-			<target dev='sda' bus='virtio' />
+			<!-- <target dev='sda' bus='virtio' /> -->
 		<!--	 <target dev='sda' bus='scsi' />   -->
+			#if ($!masterDiskBusType.value == 1)
+			<target dev='sda' bus='virtio' />
+			#elseif ($!masterDiskBusType.value == 2)
+			<target dev='sda' bus='scsi' />
+			#else
+			<target dev='sda' bus='ide' />
+			#end
 		</disk>
 		#foreach($!disk in $!diskList)
 		<disk type='file' device='disk'>
@@ -53,7 +60,12 @@
 		<interface type='network'>
 			<mac address='$!vmMacAddress' />
 			<source network='default' />
+			#if ($!interfaceType == 1)
 			<model type='virtio' />
+			#else
+			<model type='rtl8139' />
+			#end
+			<!-- <model type='virtio' /> -->
 		<!--	<model type='rtl8139' />  -->
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x03'
 				function='0x0' />
@@ -62,8 +74,13 @@
 		<interface type='bridge'>
 			<mac address='$!vmMacAddress' />
 			<source bridge='br0' />
-			<!--<model type='virtio' />-->
+			#if ($!interfaceType == 1)
+			<model type='virtio' />
+			#else
 			<model type='rtl8139' />
+			#end
+			<!--<model type='virtio' />-->
+			<!-- <model type='rtl8139' /> -->
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x03'
 				function='0x0' />
 		</interface>

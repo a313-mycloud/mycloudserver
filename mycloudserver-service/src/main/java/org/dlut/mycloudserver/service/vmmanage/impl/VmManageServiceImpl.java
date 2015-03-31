@@ -103,7 +103,7 @@ public class VmManageServiceImpl implements IVmManageService {
     /**
      * 创建新的虚拟机，必须设置vmName, vmVcpu、vmMemory、imageUuid、userAccount、showType、
      * showPassword ，classId(0表示没有课程),parentVmUuid(如果没有，则设为“”),isTemplateVm,
-     * isPublicTemplate 可选：desc
+     * isPublicTemplate, masterDiskBusType, interfaceType 可选：desc
      */
     @Override
     public MyCloudResult<String> createVm(VmDTO vmDTO) {
@@ -111,7 +111,8 @@ public class VmManageServiceImpl implements IVmManageService {
                 || StringUtils.isBlank(vmDTO.getImageUuid()) || StringUtils.isBlank(vmDTO.getUserAccount())
                 || vmDTO.getShowType() == null || StringUtils.isBlank(vmDTO.getShowPassword())
                 || vmDTO.getClassId() == null || vmDTO.getParentVmUuid() == null || vmDTO.getIsTemplateVm() == null
-                || vmDTO.getIsPublicTemplate() == null || vmDTO.getVmNetworkType() == null) {
+                || vmDTO.getIsPublicTemplate() == null || vmDTO.getVmNetworkType() == null
+                || vmDTO.getMasterDiskBusType() == null || vmDTO.getInterfaceType() == null) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
 
@@ -252,6 +253,8 @@ public class VmManageServiceImpl implements IVmManageService {
         context.put("diskList", diskVOList);
         context.put("vmNetworkType", vmDTO.getVmNetworkType());
         context.put("vmMacAddress", vmDTO.getVmMacAddress());
+        context.put("masterDiskBusType", vmDTO.getMasterDiskBusType());
+        context.put("interfaceType", vmDTO.getInterfaceType());
         String xmlDesc = TemplateUtil.renderTemplate(VmConstants.VOLUME_TEMPLATE_PATH, context);
         System.out.println(xmlDesc);
 
@@ -413,6 +416,9 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         destVmDTO.setImageUuid(newImageUuid);
         destVmDTO.setParentVmUuid(srcVmUuid);
+        // 沿用父虚拟机的主硬盘总线类型和网卡类型
+        destVmDTO.setMasterDiskBusType(srcVmDTO.getMasterDiskBusType());
+        destVmDTO.setInterfaceType(srcVmDTO.getInterfaceType());
         MyCloudResult<String> createResult = this.createVm(destVmDTO);
         if (!createResult.isSuccess()) {
             log.error("创建虚拟机" + destVmDTO + "失败，原因：" + createResult.getMsgInfo());
@@ -859,7 +865,7 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         return MyCloudResult.successResult(Boolean.TRUE);
     }
-    
+
     /**
      * 将虚拟机转化为公有模板虚拟机
      */
@@ -874,7 +880,7 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
         }
         VmDTO vmDTO = result.getModel();
-        if (vmDTO.getIsTemplateVm()&&vmDTO.getIsPublicTemplate()) {
+        if (vmDTO.getIsTemplateVm() && vmDTO.getIsPublicTemplate()) {
             return MyCloudResult.successResult(Boolean.TRUE);
         }
         // 运行中的虚拟机不能转化为模板虚拟机
@@ -888,7 +894,6 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         return MyCloudResult.successResult(Boolean.TRUE);
     }
-
 
     /**
      * 将模板虚拟机变为非模板虚拟机，此接口会将所有从该模板虚拟机克隆的虚拟机全部删除
