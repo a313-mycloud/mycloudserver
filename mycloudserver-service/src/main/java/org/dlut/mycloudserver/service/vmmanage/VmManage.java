@@ -57,7 +57,7 @@ public class VmManage {
         if (classId < 0) {
             return false;
         }
-        return this.vmManageMapper.deleteVmByClassId(classId) == 1 ? true : false;
+        return this.vmManageMapper.deleteVmByClassId(classId) >= 1 ? true : false;
 
     }
 
