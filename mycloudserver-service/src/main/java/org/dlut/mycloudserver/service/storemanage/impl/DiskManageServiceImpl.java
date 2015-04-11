@@ -69,7 +69,8 @@ public class DiskManageServiceImpl implements IDiskManageService {
     @Override
     public MyCloudResult<String> createDisk(DiskDTO diskDTO) {
         if (diskDTO == null || StringUtils.isBlank(diskDTO.getDiskName())
-                || StringUtils.isBlank(diskDTO.getUserAccount()) || diskDTO.getDiskTotalSize() == null) {
+                || StringUtils.isBlank(diskDTO.getUserAccount()) || diskDTO.getDiskTotalSize() == null
+                || diskDTO.getDiskBusType() == null) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
         String diskUuid = CommonUtil.createUuid();
