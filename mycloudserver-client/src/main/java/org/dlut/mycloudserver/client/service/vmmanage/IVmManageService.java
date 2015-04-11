@@ -88,7 +88,7 @@ public interface IVmManageService {
     public MyCloudResult<Boolean> deleteVm(String vmUuid);
 
     /**
-     * 根据课程删除虚拟机
+     * 此接口功能有问题，不能使用
      * 
      * @param classId
      * @return
@@ -96,6 +96,8 @@ public interface IVmManageService {
     public MyCloudResult<Boolean> deleteVmByClassId(int classId);
 
     /**
+     * 此接口功能有问题，不能使用
+     * 
      * @param userAccount
      * @return
      */
