@@ -17,37 +17,42 @@ public class DiskDO extends BaseDO {
     /**
      * 硬盘的uuid
      */
-    private String diskUuid;
+    private String  diskUuid;
 
     /**
      * 硬盘名称
      */
-    private String diskName;
+    private String  diskName;
 
     /**
      * 硬盘总大小，单位为字节
      */
-    private long   diskTotalSize;
+    private long    diskTotalSize;
 
     /**
      * 硬盘格式
      */
-    private String diskFormat;
+    private String  diskFormat;
+
+    /**
+     * 硬盘的总线格式
+     */
+    private Integer diskBusType;
 
     /**
      * 挂载所在的虚拟机
      */
-    private String attachVmUuid;
+    private String  attachVmUuid;
 
     /**
      * 所属的用户
      */
-    private String userAccount;
+    private String  userAccount;
 
     /**
      * 硬盘描述
      */
-    private String desc;
+    private String  desc;
 
     public String getDiskUuid() {
         return diskUuid;
@@ -103,6 +108,14 @@ public class DiskDO extends BaseDO {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public Integer getDiskBusType() {
+        return diskBusType;
+    }
+
+    public void setDiskBusType(Integer diskBusType) {
+        this.diskBusType = diskBusType;
     }
 
 }

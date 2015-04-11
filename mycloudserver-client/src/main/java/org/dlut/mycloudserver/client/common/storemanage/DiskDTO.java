@@ -8,6 +8,7 @@
 package org.dlut.mycloudserver.client.common.storemanage;
 
 import org.dlut.mycloudserver.client.common.BaseDTO;
+import org.dlut.mycloudserver.client.common.vmmanage.MasterDiskBusTypeEnum;
 
 /**
  * 类DiskDTO.java的实现描述：TODO 类实现描述
@@ -16,49 +17,54 @@ import org.dlut.mycloudserver.client.common.BaseDTO;
  */
 public class DiskDTO extends BaseDTO {
 
-    private static final long serialVersionUID = -7441605909076566787L;
+    private static final long     serialVersionUID = -7441605909076566787L;
 
     /**
      * 硬盘uuid
      */
-    private String            diskUuid;
+    private String                diskUuid;
 
     /**
      * 硬盘名称
      */
-    private String            diskName;
+    private String                diskName;
 
     /**
      * 硬盘的总大小
      */
-    private Long              diskTotalSize;
+    private Long                  diskTotalSize;
 
     /**
      * 硬盘已使用的大小
      */
-    private Long              diskUsedSize;
+    private Long                  diskUsedSize;
 
     /**
      * 硬盘路径
      */
-    private String            diskPath;
+    private String                diskPath;
+
+    /**
+     * 硬盘总线格式
+     */
+    private MasterDiskBusTypeEnum diskBusType;
 
     /**
      * 硬盘镜像格式
      */
-    private StoreFormat       diskFormat;
+    private StoreFormat           diskFormat;
 
     /**
      * 所挂载的虚拟机uuid
      */
-    private String            attachVmUuid;
+    private String                attachVmUuid;
 
     /**
      * 所属用户的账号
      */
-    private String            userAccount;
+    private String                userAccount;
 
-    private String            desc;
+    private String                desc;
 
     public String getDiskUuid() {
         return diskUuid;
@@ -130,6 +136,14 @@ public class DiskDTO extends BaseDTO {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public MasterDiskBusTypeEnum getDiskBusType() {
+        return diskBusType;
+    }
+
+    public void setDiskBusType(MasterDiskBusTypeEnum diskBusType) {
+        this.diskBusType = diskBusType;
     }
 
 }

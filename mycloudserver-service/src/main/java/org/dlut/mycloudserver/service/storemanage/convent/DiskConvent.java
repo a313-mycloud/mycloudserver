@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.dlut.mycloudserver.client.common.storemanage.DiskDTO;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
+import org.dlut.mycloudserver.client.common.vmmanage.MasterDiskBusTypeEnum;
 import org.dlut.mycloudserver.dal.dataobject.DiskDO;
 import org.mycloudserver.common.constants.StoreConstants;
 import org.mycloudserver.common.util.FileUtil;
@@ -38,6 +39,7 @@ public class DiskConvent {
         diskDTO.setDiskUsedSize(FileUtil.getFileSize(diskDTO.getDiskPath()));
         diskDTO.setDiskUuid(diskDO.getDiskUuid());
         diskDTO.setUserAccount(diskDO.getUserAccount());
+        diskDTO.setDiskBusType(MasterDiskBusTypeEnum.getMasterDiskBusTypeByValue(diskDO.getDiskBusType()));
 
         return diskDTO;
     }
@@ -57,6 +59,9 @@ public class DiskConvent {
         diskDO.setDiskTotalSize(diskDTO.getDiskTotalSize());
         diskDO.setDiskUuid(diskDTO.getDiskUuid());
         diskDO.setUserAccount(diskDTO.getUserAccount());
+        if (diskDTO.getDiskBusType() != null) {
+            diskDO.setDiskBusType(diskDTO.getDiskBusType().getValue());
+        }
 
         return diskDO;
     }

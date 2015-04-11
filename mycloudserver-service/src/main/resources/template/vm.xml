@@ -35,7 +35,15 @@
 		<disk type='file' device='disk'>
 			<driver name='qemu' type='$!disk.diskDTO.diskFormat.value' />
 			<source file='$!disk.diskDTO.diskPath' />
+			#if ($!disk.diskDTO.diskBusType.value == 1)
+			<target dev='$!disk.devName' bus='virtio' />
+			#elseif ($!disk.diskDTO.diskBusType.value == 2)
+			<target dev='$!disk.devName' bus='scsi' />
+			#elseif ($!disk.diskDTO.diskBusType.value == 3)
+			<target dev='$!disk.devName' bus='ide' />
+			#else
 			<target dev='$!disk.devName' bus='usb' />
+			#end
 		</disk>
 		#end
 		<controller type='usb' index='0' model='ich9-ehci1'>

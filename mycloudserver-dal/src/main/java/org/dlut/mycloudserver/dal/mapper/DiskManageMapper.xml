@@ -6,6 +6,7 @@
 		<result property="diskName" column="disk_name" />
 		<result property="diskTotalSize" column="disk_total_size" />
 		<result property="diskFormat" column="disk_format" />
+		<result property="diskBusType" column="disk_bus_type" />
 		<result property="attachVmUuid" column="attach_vm_uuid" />
 		<result property="userAccount" column="user_account" />
 		<result property="desc" column="disk_desc" />
@@ -15,7 +16,7 @@
 
 	<sql id="select-param-column">
 		disk_uuid, disk_name, disk_total_size, 
-		disk_format, attach_vm_uuid, user_account, disk_desc, gmt_create,
+		disk_format, disk_bus_type, attach_vm_uuid, user_account, disk_desc, gmt_create,
 		gmt_modified
 	</sql>
 
@@ -67,7 +68,7 @@
 		<include refid="select-param-column" />
 		)
 		VALUES(#{diskUuid}, #{diskName}, #{diskTotalSize}, 
-		#{diskFormat}, #{attachVmUuid}, #{userAccount}, #{desc},
+		#{diskFormat}, #{diskBusType}, #{attachVmUuid}, #{userAccount}, #{desc},
 		now(), now())
 	</insert>
 

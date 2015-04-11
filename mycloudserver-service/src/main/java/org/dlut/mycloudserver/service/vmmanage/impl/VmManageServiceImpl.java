@@ -741,6 +741,7 @@ public class VmManageServiceImpl implements IVmManageService {
                 }
                 Map<String, Object> context = new HashMap<String, Object>();
                 context.put("diskFormat", diskDTO.getDiskFormat().getValue());
+                context.put("diskBusType", diskDTO.getDiskBusType());
                 context.put("diskPath", diskDTO.getDiskPath());
                 context.put("devName", devName);
                 String xmlDesc = TemplateUtil.renderTemplate(StoreConstants.DISK_TEMPLATE_PATH, context);

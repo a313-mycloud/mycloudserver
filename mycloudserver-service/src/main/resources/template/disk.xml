@@ -1,6 +1,14 @@
 <disk type='file' device='disk'>
     <driver name='qemu' type='$!diskFormat'/>
     <source file='$!diskPath'/>
+    #if ($!diskBusType.value == 1)
     <target dev='$!devName' bus="virtio"/>  
+    #elseif ($!diskBusType.value == 2)
+    <target dev='$!devName' bus="scsi"/>  
+    #elseif ($!diskBusType.value == 3)
+    <target dev='$!devName' bus='ide' />
+    #else
+    <target dev='$!devName' bus='usb' />
+    #end
    <!-- <target dev='$!devName' bus="usb"/> -->  
 </disk>

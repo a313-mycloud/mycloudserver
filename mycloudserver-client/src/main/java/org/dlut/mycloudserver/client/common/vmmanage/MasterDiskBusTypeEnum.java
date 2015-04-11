@@ -16,7 +16,8 @@ public enum MasterDiskBusTypeEnum {
 
     VIRTIO(1, "virtio"),
     SCSI(2, "scsi"),
-    IED(3, "ide");
+    IED(3, "ide"),
+    USB(4, "usb");
 
     private int    value;
     private String desc;
