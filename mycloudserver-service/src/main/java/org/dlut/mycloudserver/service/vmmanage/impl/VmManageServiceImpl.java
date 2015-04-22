@@ -256,14 +256,13 @@ public class VmManageServiceImpl implements IVmManageService {
         context.put("masterDiskBusType", vmDTO.getMasterDiskBusType());
         context.put("interfaceType", vmDTO.getInterfaceType());
         String xmlDesc = TemplateUtil.renderTemplate(VmConstants.VOLUME_TEMPLATE_PATH, context);
-        System.out.println(xmlDesc);
 
         Integer bestHostId = scheduler.getBestHostId(vmDTO);
-        System.out.println("虚拟机运行在hostId为" + bestHostId + "的主机上");
         if (bestHostId == null) {
             log.error("启动虚拟机" + vmDTO + "时，获取最佳物理机id失败");
             return MyCloudResult.failedResult(ErrorEnum.VM_GET_BEST_HOST_FIAL);
         }
+        log.info("虚拟机运行在hostId为" + bestHostId + "的主机上");
         Connection conn = mutilHostConnPool.getConnByHostId(bestHostId);
         if (conn == null) {
             log.error("获取连接失败");
@@ -276,9 +275,8 @@ public class VmManageServiceImpl implements IVmManageService {
                 return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
             }
             String domainXmlDesc = domain.getXMLDesc(0);
-            System.out.println(domainXmlDesc);
+            log.info("新启动的虚拟机配置信息为：" + "\n" + domainXmlDesc);
             Integer showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc);
-            System.out.println("访问端口号为：" + showPort);
 
             // 在数据库中更新虚拟机
             vmDTO.setVmStatus(VmStatusEnum.RUNNING);
