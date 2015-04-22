@@ -36,7 +36,7 @@
     </appender>  
     
     <appender name="mycloudserver" class="org.apache.log4j.DailyRollingFileAppender">  
-        <param name="File" value="/var/log/mycloud/mycloudserver.log" />   
+        <param name="File" value="mycloudserver.log" />   
         <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />   
         <layout class="org.apache.log4j.PatternLayout">  
          <param name="ConversionPattern"   
