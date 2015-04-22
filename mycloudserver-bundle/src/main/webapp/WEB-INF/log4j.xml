@@ -44,7 +44,7 @@
         </layout>   
     </appender>  
     
-    <logger name="com.dlut.mycloudserver">
+    <logger name="org.dlut.mycloudserver">
 		<level value="info" />
 		<appender-ref ref="mycloudserver" />
 	</logger>
