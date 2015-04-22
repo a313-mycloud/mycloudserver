@@ -44,10 +44,15 @@
         </layout>   
     </appender>  
     
+    <logger name="com.dlut.mycloudserver">
+		<level value="info" />
+		<appender-ref ref="mycloudserver" />
+	</logger>
+    
+    
     <!-- 根logger的设置-->  
     <root>  
         <priority value ="info"/>  
         <appender-ref ref="myConsole"/>  
-        <appender-ref ref="mycloudserver"/>    
     </root>  
 </log4j:configuration>  
