@@ -275,7 +275,7 @@ public class VmManageServiceImpl implements IVmManageService {
                 return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
             }
             String domainXmlDesc = domain.getXMLDesc(0);
-            log.info("新启动的虚拟机配置信息为：" + "\n" + domainXmlDesc);
+            log.info("新启动的虚拟机" + vmUuid + "配置信息为：" + "\n" + domainXmlDesc);
             Integer showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc);
 
             // 在数据库中更新虚拟机
