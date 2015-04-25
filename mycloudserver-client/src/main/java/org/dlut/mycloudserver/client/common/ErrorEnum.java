@@ -68,6 +68,11 @@ public enum ErrorEnum {
     DISK_ATTACH_FAIL("4007", "硬盘挂载失败"),
     DISK_DETACH_FAIL("4008", "硬盘卸载失败"),
 
+    PERFORMANCE_NOT_EXIST("5000", "性能监控的主机没有注册"),
+    PERFORMANCE_CREATE_FAIL("5001", "性能监控创建失败"),
+    PERFORMANCE_UPDATE_FAIL("5002", "更新性能监控失败"),
+    PERFORMANCE_DELETE_FAIL("5003", "删除性能监控主机失败"),
+
     PARAM_IS_INVAILD("9999", "参数非法");
 
     private String errCode;

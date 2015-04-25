@@ -64,4 +64,10 @@
 			value="org.dlut.mycloudserver.dal.mapper.TemplateVmClassMapper" />
 	</bean>
 
+	<bean id="performanceMonitorMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"
+		parent="mycloudServerBaseMapper">
+		<property name="mapperInterface"
+			value="org.dlut.mycloudserver.dal.mapper.PerformanceMonitorMapper" />
+	</bean>
+
 </beans>

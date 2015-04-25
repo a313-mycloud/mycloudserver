@@ -47,7 +47,7 @@ public class HostManageServiceImplTest extends BaseTestCase {
      */
     @Test
     public void testGetHostById() {
-        MyCloudResult<HostDTO> result = hostManageService.getHostById(1);
+        MyCloudResult<HostDTO> result = hostManageService.getHostById(38);
         printObject(result);
     }
 

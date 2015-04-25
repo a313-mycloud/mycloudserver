@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dlut.mycloudserver.dal.mapper.PerformanceMonitorMapper">
+	<resultMap id="RM-PerformanceMonitorDO" type="PerformanceMonitorDO">
+		<result property="id" column="id" />
+		<result property="aliaseName" column="aliase_name" />
+		<result property="ip" column="ip" />
+		<result property="interfaceName" column="interface_name" />
+		<result property="sshUserName" column="ssh_username" />
+		<result property="sshPassword" column="ssh_password" />
+		<result property="performanceMonitorStatus" column="performance_monitor_status" />
+		<result property="cores" column="cores" />
+		<result property="totalMem" column="total_mem" />
+		<result property="usedMem" column="used_mem" />
+		<result property="loadAverage" column="load_average" />
+		<result property="sendRate" column="send_rate" />
+		<result property="receiveRate" column="receive_rate" />
+		<result property="userUsage" column="user_usage" />
+		<result property="systemUsage" column="system_Usage" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+	</resultMap>
+
+	<sql id="select-param-column">
+		id, aliase_name, ip, interface_name, ssh_username, ssh_password, performance_monitor_status, cores, total_mem, used_mem,
+		load_average, send_rate, receive_rate, user_usage, system_usage, gmt_create,
+		gmt_modified
+	</sql>
+
+	<sql id="page-limit">
+		LIMIT #{offset}, #{limit}
+	</sql>
+	
+	<sql id="query-condition">
+		<if test="id!=null">
+			id=#{id}
+		</if>
+		<if test="performanceMonitorStatus!=null">
+			AND performance_monitor_status=#{performanceMonitorStatus.status}
+		</if>
+	</sql>
+
+	<select id="getPerformanceMonitorById" resultMap="RM-PerformanceMonitorDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_performance_monitor where id=#{id}
+	</select>
+
+	<insert id="createPerformanceMonitor">
+		INSERT INTO mycloud_performance_monitor(aliase_name, ip,
+		interface_name, ssh_username, ssh_password, gmt_create,
+		gmt_modified)
+		VALUES(#{aliaseName}, #{ip},
+		#{interfaceName}, #{sshUserName}, #{sshPassword}, now(), now())
+		<selectKey resultType="int" keyProperty="id">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<delete id="deletePerformanceMonitor">
+		<![CDATA[
+		DELETE FROM mycloud_performance_monitor WHERE id = #{id}
+		]]>
+	</delete>
+
+	<update id="updatePerformanceMonitor">
+		UPDATE mycloud_performance_monitor
+		<set>
+			<if test="aliaseName!=null">
+				aliase_name=#{aliaseName},
+			</if>
+			<if test="interfaceName!=null">
+				interface_name=#{interfaceName},
+			</if>
+			<if test="sshUserName!=null">
+				ssh_username=#{sshUserName},
+			</if>
+			<if test="sshPassword!=null">
+				ssh_password=#{sshPassword},
+			</if>
+			<if test="performanceMonitorStatus!=null">
+				performance_monitor_status=#{performanceMonitorStatus},
+			</if>
+			<if test="cores!=null">
+				cores=#{cores},
+			</if>
+			<if test="totalMem!=null">
+				total_mem=#{totalMem},
+			</if>
+			<if test="usedMem!=null">
+				used_mem=#{usedMem},
+			</if>
+			<if test="loadAverage!=null">
+				load_average=#{loadAverage},
+			</if>
+			<if test="sendRate!=null">
+				send_rate=#{sendRate},
+			</if>
+			<if test="receiveRate!=null">
+				receive_rate=#{receiveRate},
+			</if>
+			<if test="userUsage!=null">
+				user_usage=#{userUsage},
+			</if>
+			<if test="systemUsage!=null">
+				system_usage=#{systemUsage},
+			</if>
+			gmt_modified=now()
+		</set>
+		WHERE id=#{id}
+	</update>
+
+	<select id="countQuery" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		mycloud_performance_monitor
+		<where>
+			<include refid="query-condition" />
+		</where>
+	</select>
+
+	<select id="query" resultMap="RM-PerformanceMonitorDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_performance_monitor
+		<where>
+			<include refid="query-condition" />
+		</where>
+		<include refid="page-limit" />
+	</select>
+
+</mapper>
