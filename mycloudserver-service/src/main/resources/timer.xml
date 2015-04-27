@@ -11,6 +11,7 @@
 				<ref bean="hostListenerTrigger" />
 				<ref bean="simpleConnPoolListenerTrigger"/>
 				<ref bean="vmListenerTrigger"/>
+				<ref bean="performanceMonitorTrigger"/>
 			</list>
 		</property>
 	</bean>
@@ -63,6 +64,25 @@
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
 			<ref bean="vmListener" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+	</bean>
+	
+	<bean id="performanceMonitorTrigger"
+		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+		<property name="jobDetail" ref="performanceMonitorJobDetail" />
+		<property name="startDelay" value="1000" />
+		<property name="repeatInterval" value="2000" />
+		<property name="repeatCount" value="0" />
+	</bean>
+
+	<!-- 性能监控 -->
+	<bean id="performanceMonitorJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="performanceListener" />
 		</property>
 		<property name="targetMethod">
 			<value>execute</value>

@@ -16,6 +16,7 @@ import org.dlut.mycloudserver.client.common.performancemonitor.PerformanceMonito
 import org.dlut.mycloudserver.client.common.performancemonitor.PerformanceMonitorStatusEnum;
 import org.dlut.mycloudserver.client.service.performancemonitor.IPerformanceMonitorService;
 import org.dlut.mycloudserver.service.BaseTestCase;
+import org.dlut.mycloudserver.service.performancemonitor.PerformanceListener;
 import org.junit.Test;
 
 /**
@@ -27,6 +28,9 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
 
     @Resource(name = "performanceMonitorService")
     private IPerformanceMonitorService performanceMonitorService;
+
+    @Resource
+    private PerformanceListener        performanceListener;
 
     /**
      * Test method for
@@ -47,9 +51,9 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
     @Test
     public void testCreatePerformanceMonitor() {
         PerformanceMonitorDTO performanceMonitorDTO = new PerformanceMonitorDTO();
-        performanceMonitorDTO.setAliaseName("test");
+        performanceMonitorDTO.setAliaseName("node12");
         performanceMonitorDTO.setInterfaceName("eth0");
-        performanceMonitorDTO.setIp("127.0.0.1");
+        performanceMonitorDTO.setIp("192.168.0.22");
         performanceMonitorDTO.setSshUserName("luojie");
         performanceMonitorDTO.setSshPassword("10041104");
         MyCloudResult<Integer> res = performanceMonitorService.createPerformanceMonitor(performanceMonitorDTO);
@@ -83,7 +87,7 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
      */
     @Test
     public void testDeletePerformanceMonitor() {
-        MyCloudResult<Boolean> res = performanceMonitorService.deletePerformanceMonitor(1);
+        MyCloudResult<Boolean> res = performanceMonitorService.deletePerformanceMonitor(2);
         printObject(res);
     }
 
@@ -105,6 +109,16 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
     @Test
     public void testQuery() {
         fail("Not yet implemented");
+    }
+
+    @Test
+    public void testPerformanceMonitorListener() {
+        try {
+            Thread.sleep(100000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
 }

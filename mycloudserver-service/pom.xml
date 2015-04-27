@@ -58,5 +58,11 @@
 			<artifactId>jna</artifactId>
 		</dependency>
 
+		<!-- ssh远程连接相关库 -->
+		<dependency>
+			<groupId>ch.ethz.ganymed</groupId>
+			<artifactId>ganymed-ssh2</artifactId>
+		</dependency>
+
 	</dependencies>
 </project>

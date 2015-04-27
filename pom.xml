@@ -326,12 +326,12 @@
 				<groupId>org.libvirt</groupId>
 				<artifactId>libvirt</artifactId>
 				<version>0.5.1</version>
-			<!-- 	<version>0.4.7</version> -->
+				<!-- <version>0.4.7</version> -->
 			</dependency>
 			<dependency>
 				<groupId>net.java.dev.jna</groupId>
 				<artifactId>jna</artifactId>
-			<!-- 	<version>3.0.9</version> -->
+				<!-- <version>3.0.9</version> -->
 				<version>4.1.0</version>
 			</dependency>
 
@@ -340,6 +340,13 @@
 				<groupId>dom4j</groupId>
 				<artifactId>dom4j</artifactId>
 				<version>1.6.1</version>
+			</dependency>
+
+			<!-- ssh远程连接相关库 -->
+			<dependency>
+				<groupId>ch.ethz.ganymed</groupId>
+				<artifactId>ganymed-ssh2</artifactId>
+				<version>build210</version>
 			</dependency>
 
 		</dependencies>

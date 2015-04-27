@@ -82,12 +82,12 @@ public class PerformanceMonitorDO extends BaseDO {
     /**
      * 用户空间的cpu使用率
      */
-    private Double  userUsage;
+    private Double  userUsage   = 0.0;
 
     /**
      * 内核空间的cpu使用率
      */
-    private Double  systemUsage;
+    private Double  systemUsage = 0.0;
 
     public Integer getId() {
         return id;
