@@ -14,6 +14,9 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -69,6 +72,7 @@ public class PerformanceListener implements Runnable {
         while (true) {
             try {
                 monitor();
+                Thread.sleep(1000);
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
@@ -83,9 +87,41 @@ public class PerformanceListener implements Runnable {
         refreshMonitorConnMap();
 
         // 采集每个主机的性能数据
+        ExecutorService executorService = Executors.newFixedThreadPool(monitorConnMap.size());
         for (Integer id : monitorConnMap.keySet()) {
-            monitorForOne(id, monitorConnMap.get(id), monitorDTOMap.get(id));
+            executorService.execute(new MonitorForOneTask(id, monitorConnMap.get(id), monitorDTOMap.get(id)));
         }
+        executorService.shutdown();
+
+        try {
+            boolean end = true;
+            do {
+                end = executorService.awaitTermination(10, TimeUnit.SECONDS);
+            } while (!end);
+        } catch (InterruptedException e) {
+            log.error("error message", e);
+        }
+    }
+
+    private class MonitorForOneTask implements Runnable {
+
+        private int                   id;
+
+        private Connection            conn;
+
+        private PerformanceMonitorDTO monitorDTO;
+
+        public MonitorForOneTask(int id, Connection conn, PerformanceMonitorDTO monitorDTO) {
+            this.id = id;
+            this.conn = conn;
+            this.monitorDTO = monitorDTO;
+        }
+
+        @Override
+        public void run() {
+            monitorForOne(id, conn, monitorDTO);
+        }
+
     }
 
     /**
