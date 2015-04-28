@@ -51,9 +51,9 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
     @Test
     public void testCreatePerformanceMonitor() {
         PerformanceMonitorDTO performanceMonitorDTO = new PerformanceMonitorDTO();
-        performanceMonitorDTO.setAliaseName("node12");
+        performanceMonitorDTO.setAliaseName("web");
         performanceMonitorDTO.setInterfaceName("eth0");
-        performanceMonitorDTO.setIp("192.168.0.22");
+        performanceMonitorDTO.setIp("192.168.0.82");
         performanceMonitorDTO.setSshUserName("luojie");
         performanceMonitorDTO.setSshPassword("10041104");
         MyCloudResult<Integer> res = performanceMonitorService.createPerformanceMonitor(performanceMonitorDTO);

@@ -72,7 +72,7 @@ public class PerformanceListener implements Runnable {
         while (true) {
             try {
                 monitor();
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
