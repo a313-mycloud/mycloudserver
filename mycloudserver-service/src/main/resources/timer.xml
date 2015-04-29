@@ -11,7 +11,7 @@
 				<ref bean="hostListenerTrigger" />
 				<ref bean="simpleConnPoolListenerTrigger"/>
 				<ref bean="vmListenerTrigger"/>
-				<!-- <ref bean="performanceMonitorTrigger"/> -->
+				<ref bean="performanceMonitorTrigger"/>
 			</list>
 		</property>
 	</bean>

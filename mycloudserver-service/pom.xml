@@ -58,14 +58,9 @@
 			<artifactId>jna</artifactId>
 		</dependency>
 
-		<!-- ssh远程连接相关库 -->
 		<dependency>
-			<groupId>ch.ethz.ganymed</groupId>
-			<artifactId>ganymed-ssh2</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.jcraft</groupId>
-			<artifactId>jsch</artifactId>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
 		</dependency>
 
 	</dependencies>

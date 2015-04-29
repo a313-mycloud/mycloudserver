@@ -15,7 +15,8 @@ package org.dlut.mycloudserver.client.common.performancemonitor;
 public enum PerformanceMonitorStatusEnum {
 
     CLOSED(0, "关闭中"),
-    RUNNING(1, "运行中");
+    RUNNING(1, "运行中"),
+    ERROR(2, "错误");
 
     private int    status;
     private String desc;

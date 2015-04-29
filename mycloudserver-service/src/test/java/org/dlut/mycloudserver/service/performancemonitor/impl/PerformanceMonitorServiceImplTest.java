@@ -114,7 +114,7 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
     @Test
     public void testPerformanceMonitorListener() {
         try {
-            Thread.sleep(100000);
+            Thread.sleep(1000000);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

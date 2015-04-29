@@ -342,16 +342,11 @@
 				<version>1.6.1</version>
 			</dependency>
 
-			<!-- ssh远程连接相关库 -->
+			<!-- json 相关包 -->
 			<dependency>
-				<groupId>ch.ethz.ganymed</groupId>
-				<artifactId>ganymed-ssh2</artifactId>
-				<version>262</version>
-			</dependency>
-			<dependency>
-				<groupId>com.jcraft</groupId>
-				<artifactId>jsch</artifactId>
-				<version>0.1.52</version>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>1.1.41</version>
 			</dependency>
 
 		</dependencies>
