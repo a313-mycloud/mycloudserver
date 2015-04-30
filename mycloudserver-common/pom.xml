@@ -37,6 +37,16 @@
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
 		</dependency>
+		
+		<!-- libvirt相关包 -->
+		<dependency>
+			<groupId>org.libvirt</groupId>
+			<artifactId>libvirt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+		</dependency>
 
 	</dependencies>
 </project>

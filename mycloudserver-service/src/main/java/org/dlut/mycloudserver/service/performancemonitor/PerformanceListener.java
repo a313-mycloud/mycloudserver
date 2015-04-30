@@ -121,7 +121,7 @@ public class PerformanceListener implements Runnable {
             performanceMonitorDTO.setSendRate(sendRate);
             performanceMonitorDTO.setReceiveRate(receiveRate);
         } catch (IOException e) {
-            log.error("error message", e);
+            log.warn("主机：" + performanceMonitorDTO.getIp() + " 断开连接");
             performanceMonitorDTO.setPerformanceMonitorStatus(PerformanceMonitorStatusEnum.CLOSED);
         } finally {
             if (br != null) {

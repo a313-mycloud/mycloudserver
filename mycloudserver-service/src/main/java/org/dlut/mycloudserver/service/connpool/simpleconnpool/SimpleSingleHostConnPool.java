@@ -9,11 +9,13 @@ package org.dlut.mycloudserver.service.connpool.simpleconnpool;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.ISingleHostConnPool;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
+import org.mycloudserver.common.util.LibvirtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +26,12 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleSingleHostConnPool implements ISingleHostConnPool {
 
-    private static Logger    log      = LoggerFactory.getLogger(SimpleSingleHostConnPool.class);
+    private static Logger    log                  = LoggerFactory.getLogger(SimpleSingleHostConnPool.class);
+
+    /**
+     * 创建一个新的连接的超时时间，单位为s
+     */
+    private static final int CREATE_CONN_TIME_OUT = 1;
 
     /**
      * 连接到host的libvirt的url
@@ -34,7 +41,7 @@ public class SimpleSingleHostConnPool implements ISingleHostConnPool {
     /**
      * 存放连接的list
      */
-    private List<Connection> connList = new LinkedList<Connection>();
+    private List<Connection> connList             = new LinkedList<Connection>();
 
     /**
      * 初始化时的连接数
@@ -59,6 +66,8 @@ public class SimpleSingleHostConnPool implements ISingleHostConnPool {
             Connection conn = this.createNewConn();
             if (conn != null) {
                 connList.add(conn);
+            } else {
+                break;
             }
         }
         hasCreatedConnNum = connList.size();
@@ -109,15 +118,13 @@ public class SimpleSingleHostConnPool implements ISingleHostConnPool {
      * @return
      */
     private Connection createNewConn() {
-        try {
-            Connect conn = new Connect(hostConnUrl);
-            if (conn.isConnected()) {
-                return new SimpleConnction(conn, this);
-            }
-            return null;
-        } catch (LibvirtException e) {
-            log.error(hostConnUrl + " 创建新的连接失败，原因：" + e.getMessage());
+        Connect conn = LibvirtUtil.createLibvirtConn(hostConnUrl, CREATE_CONN_TIME_OUT, TimeUnit.SECONDS);
+        if (conn != null) {
+            return new SimpleConnction(conn, this);
+        } else {
+            log.error(hostConnUrl + " 创建新的连接失败");
             return null;
         }
     }
+
 }
