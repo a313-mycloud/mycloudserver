@@ -71,7 +71,7 @@ public class MyTest {
 
     @Test
     public void test() {
-        String url = "qemu+tcp://192.168.0.22/system";
+        String url = "qemu+tcp://192.168.0.20/system";
 
         long t1 = System.currentTimeMillis();
 

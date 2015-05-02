@@ -49,7 +49,7 @@ public class HostListener implements Runnable {
     /**
      * 测试连接的超时时间，单位s
      */
-    private static final int   TEST_TIME_OUT                  = 1;
+    private static final int   TEST_TIME_OUT                  = 3;
 
     @Resource(name = "hostManageService")
     private IHostManageService hostManageService;
@@ -101,7 +101,7 @@ public class HostListener implements Runnable {
                     future.get(TEST_TIME_OUT, TimeUnit.SECONDS);
                 } catch (Exception e) {
                     // 超时
-                    log.warn("物理机 " + hostDTO.getHostIp() + " 连接失败，原因：" + e);
+                    log.warn("futer.get() 物理机 " + hostDTO.getHostIp() + " 连接失败，原因：" + e);
                     updateHostStatusToDB(hostDTO.getHostId(), HostStatusEnum.CLOSED);
                 }
             }
