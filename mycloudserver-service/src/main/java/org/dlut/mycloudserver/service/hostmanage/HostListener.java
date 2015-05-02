@@ -44,7 +44,7 @@ public class HostListener implements Runnable {
     /**
      * 设置检测的周期，单位为ms
      */
-    private static final int   CYCLE_TIME                     = 5000;
+    private static final int   CYCLE_TIME                     = 2000;
 
     /**
      * 测试连接的超时时间，单位s
