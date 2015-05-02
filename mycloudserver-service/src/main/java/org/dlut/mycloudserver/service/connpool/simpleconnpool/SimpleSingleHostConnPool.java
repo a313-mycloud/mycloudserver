@@ -71,6 +71,7 @@ public class SimpleSingleHostConnPool implements ISingleHostConnPool {
             }
         }
         hasCreatedConnNum = connList.size();
+        log.info(hostConnUrl + "的连接池初始化成功，初始化的连接数为：" + hasCreatedConnNum);
     }
 
     @Override

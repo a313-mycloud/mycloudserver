@@ -8,10 +8,12 @@
 package org.dlut.mycloudserver.service;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
+import org.mycloudserver.common.util.LibvirtUtil;
 
 /**
  * 类MyTest.java的实现描述：TODO 类实现描述
@@ -72,29 +74,44 @@ public class MyTest {
     @Test
     public void test() {
         String url = "qemu+tcp://192.168.0.18/system";
+        //
+        //        long t1 = System.currentTimeMillis();
+        //
+        //        Connect conn = null;
+        //        try {
+        //            conn = new Connect(url);
+        //            System.out.println(conn.isConnected());
+        //        } catch (LibvirtException e) {
+        //            // TODO Auto-generated catch block
+        //            e.printStackTrace();
+        //        } finally {
+        //            if (conn != null) {
+        //                try {
+        //                    conn.close();
+        //                } catch (LibvirtException e) {
+        //                    // TODO Auto-generated catch block
+        //                    e.printStackTrace();
+        //                }
+        //            }
+        //        }
+        //
+        //        long t2 = System.currentTimeMillis();
+        //        System.out.println((t2 - t1) + "ms");
 
-        long t1 = System.currentTimeMillis();
-
-        Connect conn = null;
-        try {
-            conn = new Connect(url);
-            System.out.println(conn.isConnected());
-        } catch (LibvirtException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (LibvirtException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+        Connect[] conns = new Connect[21];
+        for (int i = 0; i < conns.length; i++) {
+            conns[i] = LibvirtUtil.createLibvirtConn(url, 2, TimeUnit.SECONDS);
+            if (conns[i] == null) {
+                System.out.println((i + 1) + " 连接失败");
+            } else {
+                System.out.println((i + 1) + " 连接成功");
+            }
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-
-        long t2 = System.currentTimeMillis();
-        System.out.println((t2 - t1) + "ms");
 
         //        ExecutorService executorService = Executors.newCachedThreadPool();
         //        while (true) {
