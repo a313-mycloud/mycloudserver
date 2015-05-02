@@ -103,9 +103,11 @@ public class SimpleSingleHostConnPool implements ISingleHostConnPool {
                 if (simpleConnction.getLibvirtConn().isConnected()) {
                     connList.add(conn);
                     return;
+                } else {
+                    log.info(hostConnUrl + "putConn中放入的连接失效");
+                    // 如果未连接，则hasCreatedConnNum减一
+                    hasCreatedConnNum--;
                 }
-                // 如果未连接，则hasCreatedConnNum减一
-                hasCreatedConnNum--;
             } catch (LibvirtException e) {
                 log.error("error message", e);
                 hasCreatedConnNum--;

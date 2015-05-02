@@ -14,6 +14,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.libvirt.Connect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 类LibvirtUtil.java的实现描述：TODO 类实现描述
@@ -21,6 +23,8 @@ import org.libvirt.Connect;
  * @author luojie 2015年4月30日 下午6:00:13
  */
 public class LibvirtUtil {
+
+    private static Logger log = LoggerFactory.getLogger(LibvirtUtil.class);
 
     public static Connect createLibvirtConn(final String url, int timeOut, TimeUnit timeUnit) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -30,8 +34,10 @@ public class LibvirtUtil {
             public Connect call() throws Exception {
                 Connect conn = new Connect(url);
                 if (conn.isConnected()) {
+                    log.info(url + " 创建连接成功");
                     return conn;
                 }
+                log.info(url + " 创建连接失败");
                 return null;
             }
 
