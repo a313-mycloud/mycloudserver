@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dlut.mycloudserver.client.common.performancemonitor.QueryPerformanceMonitorCondition;
 import org.dlut.mycloudserver.dal.dataobject.PerformanceMonitorDO;
 import org.dlut.mycloudserver.dal.mapper.PerformanceMonitorMapper;
@@ -34,6 +35,14 @@ public class PerformanceMonitor {
         }
 
         return performanceMonitorMapper.getPerformanceMonitorById(id);
+    }
+
+    public PerformanceMonitorDO getPerformanceMonitorByIp(String ip) {
+        if (StringUtils.isBlank(ip)) {
+            return null;
+        }
+
+        return performanceMonitorMapper.getPerformanceMonitorByIp(ip);
     }
 
     public int createPerformanceMonitor(PerformanceMonitorDO performanceMonitorDO) {

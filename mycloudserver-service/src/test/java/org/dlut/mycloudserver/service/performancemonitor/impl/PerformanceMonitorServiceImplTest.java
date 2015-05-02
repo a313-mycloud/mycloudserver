@@ -43,6 +43,12 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
         printObject(res);
     }
 
+    @Test
+    public void testGetPerformanceMonitorByIp() {
+        MyCloudResult<PerformanceMonitorDTO> res = performanceMonitorService.getPerformanceMonitorByIp("192.168.0.17");
+        printObject(res);
+    }
+
     /**
      * Test method for
      * {@link org.dlut.mycloudserver.service.performancemonitor.impl.PerformanceMonitorServiceImpl#createPerformanceMonitor(org.dlut.mycloudserver.client.common.performancemonitor.PerformanceMonitorDTO)}

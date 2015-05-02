@@ -45,6 +45,12 @@
 		<include refid="select-param-column" />
 		FROM mycloud_performance_monitor where id=#{id}
 	</select>
+	
+	<select id="getPerformanceMonitorByIp" resultMap="RM-PerformanceMonitorDO">
+		SELECT
+		<include refid="select-param-column" />
+		FROM mycloud_performance_monitor where ip=#{ip}
+	</select>
 
 	<insert id="createPerformanceMonitor">
 		INSERT INTO mycloud_performance_monitor(aliase_name, ip,

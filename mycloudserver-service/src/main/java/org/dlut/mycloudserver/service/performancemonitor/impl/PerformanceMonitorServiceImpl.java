@@ -54,6 +54,22 @@ public class PerformanceMonitorServiceImpl implements IPerformanceMonitorService
         return MyCloudResult.successResult(performanceMonitorDTO);
     }
 
+    @Override
+    public MyCloudResult<PerformanceMonitorDTO> getPerformanceMonitorByIp(String ip) {
+        if (StringUtils.isBlank(ip)) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
+        }
+        PerformanceMonitorDO performanceMonitorDO = performanceMonitor.getPerformanceMonitorByIp(ip);
+        PerformanceMonitorDTO performanceMonitorDTO = PerformanceMonitorConvent
+                .conventToPerformanceMonitorDTO(performanceMonitorDO);
+        if (performanceMonitorDTO == null) {
+            log.warn("性能监控ip：" + ip + " 不存在");
+            return MyCloudResult.failedResult(ErrorEnum.PERFORMANCE_NOT_EXIST);
+        }
+
+        return MyCloudResult.successResult(performanceMonitorDTO);
+    }
+
     /**
      * 必须设置：aliaseName，ip，interfaceName，sshUserName，sshPassword
      */
