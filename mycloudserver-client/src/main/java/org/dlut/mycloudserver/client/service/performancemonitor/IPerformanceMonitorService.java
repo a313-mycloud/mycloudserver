@@ -60,6 +60,14 @@ public interface IPerformanceMonitorService {
     public MyCloudResult<Boolean> deletePerformanceMonitor(int id);
 
     /**
+     * 根据ip删除对一个主机的性能监控
+     * 
+     * @param ip
+     * @return
+     */
+    public MyCloudResult<Boolean> deletePerformanceMonitorByIp(String ip);
+
+    /**
      * 根据添加查询数量
      * 
      * @param queryPerformanceMonitorCondition

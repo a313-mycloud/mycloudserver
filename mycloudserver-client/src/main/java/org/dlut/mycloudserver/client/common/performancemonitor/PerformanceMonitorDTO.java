@@ -34,21 +34,6 @@ public class PerformanceMonitorDTO extends BaseDTO {
     private String                       ip;
 
     /**
-     * 网卡设备名称
-     */
-    private String                       interfaceName;
-
-    /**
-     * ssh登陆的用户名
-     */
-    private String                       sshUserName;
-
-    /**
-     * ssh登陆的密码
-     */
-    private String                       sshPassword;
-
-    /**
      * 主机运行状态
      */
     private PerformanceMonitorStatusEnum performanceMonitorStatus;
@@ -115,14 +100,6 @@ public class PerformanceMonitorDTO extends BaseDTO {
 
     public void setIp(String ip) {
         this.ip = ip;
-    }
-
-    public String getInterfaceName() {
-        return interfaceName;
-    }
-
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
     }
 
     public PerformanceMonitorStatusEnum getPerformanceMonitorStatus() {
@@ -195,22 +172,6 @@ public class PerformanceMonitorDTO extends BaseDTO {
 
     public void setLoadAverage(Double loadAverage) {
         this.loadAverage = loadAverage;
-    }
-
-    public String getSshUserName() {
-        return sshUserName;
-    }
-
-    public void setSshUserName(String sshUserName) {
-        this.sshUserName = sshUserName;
-    }
-
-    public String getSshPassword() {
-        return sshPassword;
-    }
-
-    public void setSshPassword(String sshPassword) {
-        this.sshPassword = sshPassword;
     }
 
 }

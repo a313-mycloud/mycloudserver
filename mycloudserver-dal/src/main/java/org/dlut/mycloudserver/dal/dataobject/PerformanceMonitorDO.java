@@ -30,21 +30,6 @@ public class PerformanceMonitorDO extends BaseDO {
     private String  ip;
 
     /**
-     * 网卡名称
-     */
-    private String  interfaceName;
-
-    /**
-     * ssh登陆的用户名
-     */
-    private String  sshUserName;
-
-    /**
-     * ssh登陆的密码
-     */
-    private String  sshPassword;
-
-    /**
      * 运行状态
      */
     private Integer performanceMonitorStatus;
@@ -103,14 +88,6 @@ public class PerformanceMonitorDO extends BaseDO {
 
     public void setIp(String ip) {
         this.ip = ip;
-    }
-
-    public String getInterfaceName() {
-        return interfaceName;
-    }
-
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
     }
 
     public Integer getCores() {
@@ -191,22 +168,6 @@ public class PerformanceMonitorDO extends BaseDO {
 
     public void setPerformanceMonitorStatus(Integer performanceMonitorStatus) {
         this.performanceMonitorStatus = performanceMonitorStatus;
-    }
-
-    public String getSshUserName() {
-        return sshUserName;
-    }
-
-    public void setSshUserName(String sshUserName) {
-        this.sshUserName = sshUserName;
-    }
-
-    public String getSshPassword() {
-        return sshPassword;
-    }
-
-    public void setSshPassword(String sshPassword) {
-        this.sshPassword = sshPassword;
     }
 
 }

@@ -72,6 +72,14 @@ public class PerformanceMonitor {
         return performanceMonitorMapper.deletePerformanceMonitor(id) == 1 ? true : false;
     }
 
+    public boolean deletePerformanceMonitorByIp(String ip) {
+        if (StringUtils.isBlank(ip)) {
+            return false;
+        }
+
+        return performanceMonitorMapper.deletePerformanceMonitorByIp(ip) == 1 ? true : false;
+    }
+
     public int countQuery(QueryPerformanceMonitorCondition queryPerformanceMonitorCondition) {
         if (queryPerformanceMonitorCondition == null) {
             return 0;

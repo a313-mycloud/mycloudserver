@@ -30,6 +30,8 @@ public interface PerformanceMonitorMapper {
 
     int deletePerformanceMonitor(@Param("id") int id);
 
+    int deletePerformanceMonitorByIp(String ip);
+
     int countQuery(QueryPerformanceMonitorCondition queryPerformanceMonitorCondition);
 
     List<PerformanceMonitorDO> query(QueryPerformanceMonitorCondition queryPerformanceMonitorCondition);

@@ -18,10 +18,12 @@ import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.hostmanage.HostDTO;
 import org.dlut.mycloudserver.client.common.hostmanage.HostStatusEnum;
 import org.dlut.mycloudserver.client.common.hostmanage.QueryHostCondition;
+import org.dlut.mycloudserver.client.common.performancemonitor.PerformanceMonitorDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
 import org.dlut.mycloudserver.client.service.hostmanage.IHostManageService;
+import org.dlut.mycloudserver.client.service.performancemonitor.IPerformanceMonitorService;
 import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.dal.dataobject.HostDO;
 import org.dlut.mycloudserver.service.hostmanage.HostManage;
@@ -38,13 +40,16 @@ import org.springframework.stereotype.Service;
 @Service("hostManageService")
 public class HostManageServiceImpl implements IHostManageService {
 
-    private static Logger    log = LoggerFactory.getLogger(HostManageServiceImpl.class);
+    private static Logger              log = LoggerFactory.getLogger(HostManageServiceImpl.class);
 
     @Resource
-    private HostManage       hostManage;
+    private HostManage                 hostManage;
 
     @Resource(name = "vmManageService")
-    private IVmManageService vmManageService;
+    private IVmManageService           vmManageService;
+
+    @Resource(name = "performanceMonitorService")
+    private IPerformanceMonitorService performanceMonitorService;
 
     /**
      * 根据id获取主机
@@ -64,6 +69,21 @@ public class HostManageServiceImpl implements IHostManageService {
         if (hostDO == null || StringUtils.isBlank(hostDO.getHostName()) || StringUtils.isBlank(hostDO.getHostIp())) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
         }
+
+        // 检测是否对该主机注册了心跳检测，如果没有，则注册
+        MyCloudResult<PerformanceMonitorDTO> res = performanceMonitorService.getPerformanceMonitorByIp(hostDTO
+                .getHostIp());
+        if (!res.isSuccess()) {
+            PerformanceMonitorDTO performanceMonitorDTO = new PerformanceMonitorDTO();
+            performanceMonitorDTO.setAliaseName(hostDO.getHostName());
+            performanceMonitorDTO.setIp(hostDTO.getHostIp());
+            MyCloudResult<Integer> createRes = performanceMonitorService
+                    .createPerformanceMonitor(performanceMonitorDTO);
+            if (!createRes.isSuccess()) {
+                return MyCloudResult.failedResult(createRes.getMsgCode(), createRes.getMsgInfo());
+            }
+        }
+
         return MyCloudResult.successResult(hostManage.createHost(hostDO));
     }
 
@@ -108,6 +128,7 @@ public class HostManageServiceImpl implements IHostManageService {
                 }
             }
         }
+
         if (!hostManage.deleteHostById(hostId)) {
             return MyCloudResult.failedResult(ErrorEnum.HOST_DELETE_FAIL);
         }
