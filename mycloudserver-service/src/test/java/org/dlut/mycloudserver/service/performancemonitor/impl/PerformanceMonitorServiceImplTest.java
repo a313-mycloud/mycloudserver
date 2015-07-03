@@ -43,6 +43,12 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
         printObject(res);
     }
 
+    @Test
+    public void testGetPerformanceMonitorByIp() {
+        MyCloudResult<PerformanceMonitorDTO> res = performanceMonitorService.getPerformanceMonitorByIp("192.168.0.118");
+        printObject(res);
+    }
+
     /**
      * Test method for
      * {@link org.dlut.mycloudserver.service.performancemonitor.impl.PerformanceMonitorServiceImpl#createPerformanceMonitor(org.dlut.mycloudserver.client.common.performancemonitor.PerformanceMonitorDTO)}
@@ -52,10 +58,8 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
     public void testCreatePerformanceMonitor() {
         PerformanceMonitorDTO performanceMonitorDTO = new PerformanceMonitorDTO();
         performanceMonitorDTO.setAliaseName("web");
-        performanceMonitorDTO.setInterfaceName("eth0");
         performanceMonitorDTO.setIp("192.168.0.82");
-        performanceMonitorDTO.setSshUserName("luojie");
-        performanceMonitorDTO.setSshPassword("10041104");
+
         MyCloudResult<Integer> res = performanceMonitorService.createPerformanceMonitor(performanceMonitorDTO);
         printObject(res);
     }
@@ -113,11 +117,14 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
 
     @Test
     public void testPerformanceMonitorListener() {
-        try {
-            Thread.sleep(1000000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        while (true) {
+            //            System.out.println(Thread.activeCount());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

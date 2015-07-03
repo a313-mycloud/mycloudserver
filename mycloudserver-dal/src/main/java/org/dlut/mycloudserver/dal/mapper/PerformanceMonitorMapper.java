@@ -22,11 +22,15 @@ public interface PerformanceMonitorMapper {
 
     PerformanceMonitorDO getPerformanceMonitorById(@Param("id") int id);
 
+    PerformanceMonitorDO getPerformanceMonitorByIp(String ip);
+
     int createPerformanceMonitor(PerformanceMonitorDO performanceMonitorDO);
 
     int updatePerformanceMonitor(PerformanceMonitorDO performanceMonitorDO);
 
     int deletePerformanceMonitor(@Param("id") int id);
+
+    int deletePerformanceMonitorByIp(String ip);
 
     int countQuery(QueryPerformanceMonitorCondition queryPerformanceMonitorCondition);
 

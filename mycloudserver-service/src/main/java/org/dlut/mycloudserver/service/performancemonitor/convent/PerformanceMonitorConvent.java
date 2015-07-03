@@ -30,7 +30,6 @@ public class PerformanceMonitorConvent {
         performanceMonitorDTO.setAliaseName(performanceMonitorDO.getAliaseName());
         performanceMonitorDTO.setCores(performanceMonitorDO.getCores());
         performanceMonitorDTO.setId(performanceMonitorDO.getId());
-        performanceMonitorDTO.setInterfaceName(performanceMonitorDO.getInterfaceName());
         performanceMonitorDTO.setIp(performanceMonitorDO.getIp());
         performanceMonitorDTO.setLoadAverage(performanceMonitorDO.getLoadAverage());
         performanceMonitorDTO.setPerformanceMonitorStatus(PerformanceMonitorStatusEnum
@@ -41,8 +40,6 @@ public class PerformanceMonitorConvent {
         performanceMonitorDTO.setTotalMem(performanceMonitorDO.getTotalMem());
         performanceMonitorDTO.setUsedMem(performanceMonitorDO.getUsedMem());
         performanceMonitorDTO.setUserUsage(performanceMonitorDO.getUserUsage());
-        performanceMonitorDTO.setSshUserName(performanceMonitorDO.getSshUserName());
-        performanceMonitorDTO.setSshPassword(performanceMonitorDO.getSshPassword());
 
         return performanceMonitorDTO;
     }
@@ -56,7 +53,6 @@ public class PerformanceMonitorConvent {
         performanceMonitorDO.setAliaseName(performanceMonitorDTO.getAliaseName());
         performanceMonitorDO.setCores(performanceMonitorDTO.getCores());
         performanceMonitorDO.setId(performanceMonitorDTO.getId());
-        performanceMonitorDO.setInterfaceName(performanceMonitorDTO.getInterfaceName());
         performanceMonitorDO.setIp(performanceMonitorDTO.getIp());
         performanceMonitorDO.setLoadAverage(performanceMonitorDTO.getLoadAverage());
         performanceMonitorDO.setReceiveRate(performanceMonitorDTO.getReceiveRate());
@@ -69,8 +65,6 @@ public class PerformanceMonitorConvent {
         performanceMonitorDO.setTotalMem(performanceMonitorDTO.getTotalMem());
         performanceMonitorDO.setUsedMem(performanceMonitorDTO.getUsedMem());
         performanceMonitorDO.setUserUsage(performanceMonitorDTO.getUserUsage());
-        performanceMonitorDO.setSshUserName(performanceMonitorDTO.getSshUserName());
-        performanceMonitorDO.setSshPassword(performanceMonitorDTO.getSshPassword());
 
         return performanceMonitorDO;
     }
