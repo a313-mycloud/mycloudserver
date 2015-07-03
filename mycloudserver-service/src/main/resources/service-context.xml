@@ -24,7 +24,8 @@
 	</bean>
 
 	<!-- 调度器 -->
-	<bean id="scheduler" class="org.dlut.mycloudserver.service.schedule.AverageScheduler" />
+	<!--<bean id="scheduler" class="org.dlut.mycloudserver.service.schedule.AverageScheduler" />-->
+	<bean id="scheduler" class=" org.dlut.mycloudserver.service.schedule.RandomScheduler" />
 
 	<import resource="dal-context.xml" />
 	<import resource="provider/*.xml" />
