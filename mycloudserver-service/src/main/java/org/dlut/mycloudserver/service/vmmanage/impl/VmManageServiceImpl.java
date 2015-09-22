@@ -104,6 +104,9 @@ public class VmManageServiceImpl implements IVmManageService {
      * 创建新的虚拟机，必须设置vmName, vmVcpu、vmMemory、imageUuid、userAccount、showType、
      * showPassword ，classId(0表示没有课程),parentVmUuid(如果没有，则设为“”),isTemplateVm,
      * isPublicTemplate, masterDiskBusType, interfaceType 可选：desc
+     * isCanRead默认为1
+     *  lastHostId默认为-1
+     *  imageVersion默认为0
      */
     @Override
     public MyCloudResult<String> createVm(VmDTO vmDTO) {
@@ -262,12 +265,20 @@ public class VmManageServiceImpl implements IVmManageService {
             log.error("启动虚拟机" + vmDTO + "时，获取最佳物理机id失败");
             return MyCloudResult.failedResult(ErrorEnum.VM_GET_BEST_HOST_FIAL);
         }
-        log.info("虚拟机运行在hostId为" + bestHostId + "的主机上");
+        log.info("虚拟机调度在hostId为" + bestHostId + "的主机上");
         Connection conn = mutilHostConnPool.getConnByHostId(bestHostId);
         if (conn == null) {
             log.error("获取连接失败");
             return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
         }
+        /**
+         * 将需要的虚拟机镜像拷贝到目标理理机上，这是一个同步线程
+         */
+        /****************************************************/
+        
+        
+        /****************************************************/
+        
         try {
             Domain domain = conn.startVm(xmlDesc);
             if (domain == null) {
