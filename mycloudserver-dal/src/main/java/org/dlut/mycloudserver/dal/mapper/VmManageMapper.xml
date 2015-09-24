@@ -109,7 +109,7 @@
 		parent_vm_uuid, master_disk_bus_type, interface_type,
 		is_template_vm, is_public_template,
 		vm_desc,
-		gmt_create, gmt_modified,canread_status,image_version,last_hostid)
+		gmt_create, gmt_modified)
 		VALUES(#{vmName}, #{vmUuid}, #{vmVcpu},
 		#{vmMemory},
 		#{imageUuid}, #{imageTotalSize}, #{imageFormat}, #{vmMacAddress}, #{vmNetworkType}, 
@@ -121,8 +121,7 @@
 		#{showPassword},
 		#{parentVmUuid}, #{masterDiskBusType}, #{interfaceType},
 		#{isTemplateVm},#{isPublicTemplate},
-		#{desc}, now(), now(),
-		#{isCanRead},#{imageVersion},#{lastHostId})
+		#{desc}, now(), now()
 	</insert>
 
 	<delete id="deleteVmByUuid">
