@@ -82,6 +82,15 @@
 		<if test="isPublicTemplate!=null">
 			AND is_public_template=#{isPublicTemplate}
 		</if>
+			<if test="isCanRead!=null">
+			AND	canread_status=#{isCanRead}
+			</if>
+			<if test="imageVersion!=null">
+			AND	image_version=#{imageVersion}
+			</if>
+			<if test="lastHostId!=null">
+			AND	last_hostid=#{lastHostId}
+			</if>
 	</sql>
 
 	<select id="getVmByUuid" resultMap="RM-VmDO">
