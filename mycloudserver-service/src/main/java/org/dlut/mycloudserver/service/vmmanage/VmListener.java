@@ -7,6 +7,8 @@
  */
 package org.dlut.mycloudserver.service.vmmanage;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +51,8 @@ public class VmListener {
     @Resource(name = "vmManageService")
     private IVmManageService   vmManageService;
 
+    @Resource(name = "vmManage")
+    private VmManage            vmManage;
     @Resource(name = "mutilHostConnPool")
     private IMutilHostConnPool mutilHostConnPool;
 
@@ -161,13 +165,32 @@ public class VmListener {
             log.error("获取虚拟机" + vmUuid + "失败，原因：" + result.getMsgInfo());
         }
         VmDTO vmDTO = result.getModel();
+        int lastHostId=vmDTO.getHostId();
         vmDTO.setVmStatus(VmStatusEnum.CLOSED);
         vmDTO.setHostId(0);
         vmDTO.setShowPort(0);
+        
         MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
         if (!updateResult.isSuccess()) {
             log.error("更新虚拟机" + vmDTO + "失败，原因：" + updateResult.getMsgInfo());
         }
+        /**
+         * 开启异步线程，将镜像上传到主机
+         * 上传完毕后，版本号加1，文件重新设置为可读,更新上一次的hostId
+         * 
+         */
+        /*************start**************************************/
+       try {
+		new Thread(new CopyImageFromHostTask(Runtime.getRuntime(),
+				   this.vmManage, vmUuid, 
+				   InetAddress.getLocalHost().getHostAddress().toString(),
+				   this.log, lastHostId)).start();
+	} catch (UnknownHostException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		log.error("error message",e);
+	}
+        /**************end*************************************/
     }
 
     /**

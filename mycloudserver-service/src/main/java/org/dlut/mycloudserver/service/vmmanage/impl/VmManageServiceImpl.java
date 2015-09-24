@@ -7,13 +7,17 @@
  */
 package org.dlut.mycloudserver.service.vmmanage.impl;
 
+import java.io.IOException;
 import java.io.StringReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -34,11 +38,14 @@ import org.dlut.mycloudserver.client.service.storemanage.IDiskManageService;
 import org.dlut.mycloudserver.client.service.storemanage.IImageManageService;
 import org.dlut.mycloudserver.client.service.usermanage.IUserManageService;
 import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
+import org.dlut.mycloudserver.dal.dataobject.HostDO;
 import org.dlut.mycloudserver.dal.dataobject.VmDO;
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
+import org.dlut.mycloudserver.service.hostmanage.HostManage;
 import org.dlut.mycloudserver.service.schedule.IScheduler;
 import org.dlut.mycloudserver.service.storemanage.DiskVO;
+import org.dlut.mycloudserver.service.vmmanage.CopyImageFromHostTask;
 import org.dlut.mycloudserver.service.vmmanage.VmManage;
 import org.dlut.mycloudserver.service.vmmanage.convent.VmConvent;
 import org.dom4j.Document;
@@ -52,6 +59,7 @@ import org.libvirt.StorageVol;
 import org.mycloudserver.common.constants.StoreConstants;
 import org.mycloudserver.common.constants.VmConstants;
 import org.mycloudserver.common.util.CommonUtil;
+import org.mycloudserver.common.util.CopyImageFileUtils;
 import org.mycloudserver.common.util.FileUtil;
 import org.mycloudserver.common.util.TemplateUtil;
 import org.slf4j.Logger;
@@ -59,7 +67,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * 类VmManageServiceImpl.java的实现描述：TODO 类实现描述
+ * 类VmManageServiceImpl.java的实现描述：
  * 
  * @author luojie 2014年12月1日 下午1:01:27
  */
@@ -70,6 +78,9 @@ public class VmManageServiceImpl implements IVmManageService {
 
     @Resource(name = "vmManage")
     private VmManage            vmManage;
+    
+    @Resource(name="hostManage")
+    private HostManage    hostManage;
 
     @Resource(name = "userManageService")
     private IUserManageService  userManageService;
@@ -82,7 +93,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     @Resource(name = "mutilHostConnPool")
     private IMutilHostConnPool  mutilHostConnPool;
-
+    
     @Resource(name = "scheduler")
     private IScheduler          scheduler;
 
@@ -271,13 +282,40 @@ public class VmManageServiceImpl implements IVmManageService {
             log.error("获取连接失败");
             return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
         }
+        
         /**
-         * 将需要的虚拟机镜像拷贝到目标理理机上，这是一个同步线程
+         * 如果此次调度产生的主机与上一次运行的主机相同，那么不需要镜像传输过程
+         * 否则需要传输镜像在bestHostId
          */
-        /****************************************************/
-        
-        
-        /****************************************************/
+        VmDO vmDO=this.vmManage.getVmByUuid(vmUuid);
+       
+        if(vmDO.getLastHostId()!=bestHostId){
+        	/**
+             * 将需要的虚拟机镜像拷贝到目标理理机上，这是一个同步线程
+             */
+            /****************************************************/
+        	boolean canRead=(vmDO.getIsCanRead()==1?true:false);
+            while(!canRead){//只要不可读，一直等待到可读
+            	canRead=(vmDO.getIsCanRead()==1?true:false);
+            }
+            HostDO hostDO= this.hostManage.getHostById(bestHostId);
+			boolean result=false;
+			try {
+				result = CopyImageFileUtils.copyImageToHost(Runtime.getRuntime(),
+							vmDO.getImageUuid(), hostDO.getHostIp() );
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
+			}
+			if(!result){
+					 return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
+			}
+        }
         
         try {
             Domain domain = conn.startVm(xmlDesc);
@@ -309,6 +347,7 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         return MyCloudResult.successResult(Boolean.TRUE);
     }
+    
 
     /**
      * 强制关闭虚拟机
@@ -324,9 +363,13 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
         }
         VmDTO vmDTO = result.getModel();
+        
         if (vmDTO.getVmStatus() == VmStatusEnum.CLOSED) {
             return MyCloudResult.successResult(Boolean.TRUE);
         }
+      //在关闭之前记得他的hostId，方便在异步线程中使用
+        int lastHostId=vmDTO.getHostId();
+        
         Connection conn = mutilHostConnPool.getConnByHostId(vmDTO.getHostId());
         if (conn == null) {
             log.error("获取连接失败");
@@ -336,6 +379,7 @@ public class VmManageServiceImpl implements IVmManageService {
             if (!conn.destroyVm(vmUuid)) {
                 return MyCloudResult.failedResult(ErrorEnum.VM_DESTROY_FAIL);
             }
+            
             // 在数据库中更新虚拟机状态
             vmDTO.setVmStatus(VmStatusEnum.CLOSED);
             vmDTO.setHostId(0);
@@ -344,6 +388,24 @@ public class VmManageServiceImpl implements IVmManageService {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
             }
+            /**
+             * 开启异步线程，将镜像上传到主机
+             * 上传完毕后，版本号加1，文件重新设置为可读,更新上一次的hostId
+             * 
+             */
+            /*************start**************************************/
+           try {
+			new Thread(new CopyImageFromHostTask(Runtime.getRuntime(),
+					   this.vmManage, vmUuid, 
+					   InetAddress.getLocalHost().getHostAddress().toString(),
+					   this.log, lastHostId)).start();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			log.error("error message",e);
+		}
+            /**************end*************************************/
+            
             return MyCloudResult.successResult(Boolean.TRUE);
         } catch (LibvirtException e) {
             log.error("error message", e);
@@ -355,6 +417,8 @@ public class VmManageServiceImpl implements IVmManageService {
                 log.error("error message", e);
             }
         }
+   
+
     }
 
     /**
