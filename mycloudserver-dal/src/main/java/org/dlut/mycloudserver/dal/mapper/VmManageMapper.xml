@@ -121,7 +121,7 @@
 		#{showPassword},
 		#{parentVmUuid}, #{masterDiskBusType}, #{interfaceType},
 		#{isTemplateVm},#{isPublicTemplate},
-		#{desc}, now(), now()
+		#{desc}, now(), now())
 	</insert>
 
 	<delete id="deleteVmByUuid">
