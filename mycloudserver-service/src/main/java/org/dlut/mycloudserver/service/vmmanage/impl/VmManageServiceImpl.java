@@ -306,14 +306,14 @@ public class VmManageServiceImpl implements IVmManageService {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
+				return MyCloudResult.failedResult(ErrorEnum.VM_TRANSFER_FIAL);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
+				return MyCloudResult.failedResult(ErrorEnum.VM_TRANSFER_FIAL);
 			}
 			if(!result){
-					 return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
+					 return MyCloudResult.failedResult(ErrorEnum.VM_TRANSFER_FIAL);
 			}
         }
         
