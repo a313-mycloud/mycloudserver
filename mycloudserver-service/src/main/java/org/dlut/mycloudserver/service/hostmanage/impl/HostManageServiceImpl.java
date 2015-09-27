@@ -70,20 +70,6 @@ public class HostManageServiceImpl implements IHostManageService {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
         }
 
-        // 检测是否对该主机注册了心跳检测，如果没有，则注册
-        MyCloudResult<PerformanceMonitorDTO> res = performanceMonitorService.getPerformanceMonitorByIp(hostDTO
-                .getHostIp());
-        if (!res.isSuccess()) {
-            PerformanceMonitorDTO performanceMonitorDTO = new PerformanceMonitorDTO();
-            performanceMonitorDTO.setAliaseName(hostDO.getHostName());
-            performanceMonitorDTO.setIp(hostDTO.getHostIp());
-            MyCloudResult<Integer> createRes = performanceMonitorService
-                    .createPerformanceMonitor(performanceMonitorDTO);
-            if (!createRes.isSuccess()) {
-                return MyCloudResult.failedResult(createRes.getMsgCode(), createRes.getMsgInfo());
-            }
-        }
-
         return MyCloudResult.successResult(hostManage.createHost(hostDO));
     }
 

@@ -28,14 +28,6 @@ public interface IPerformanceMonitorService {
     public MyCloudResult<PerformanceMonitorDTO> getPerformanceMonitorById(int id);
 
     /**
-     * 根据ip获取性能监控信息
-     * 
-     * @param ip
-     * @return
-     */
-    public MyCloudResult<PerformanceMonitorDTO> getPerformanceMonitorByIp(String ip);
-
-    /**
      * 创建一个对某个主机的性能监控 必须设置：aliaseName，ip，interfaceName
      * 
      * @param performanceMonitorDTO

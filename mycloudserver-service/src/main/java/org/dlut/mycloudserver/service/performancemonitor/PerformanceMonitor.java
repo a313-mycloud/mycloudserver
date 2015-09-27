@@ -37,13 +37,7 @@ public class PerformanceMonitor {
         return performanceMonitorMapper.getPerformanceMonitorById(id);
     }
 
-    public PerformanceMonitorDO getPerformanceMonitorByIp(String ip) {
-        if (StringUtils.isBlank(ip)) {
-            return null;
-        }
-
-        return performanceMonitorMapper.getPerformanceMonitorByIp(ip);
-    }
+  
 
     public int createPerformanceMonitor(PerformanceMonitorDO performanceMonitorDO) {
         if (performanceMonitorDO == null) {

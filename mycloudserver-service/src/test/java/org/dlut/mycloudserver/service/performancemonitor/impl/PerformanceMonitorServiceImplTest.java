@@ -43,11 +43,7 @@ public class PerformanceMonitorServiceImplTest extends BaseTestCase {
         printObject(res);
     }
 
-    @Test
-    public void testGetPerformanceMonitorByIp() {
-        MyCloudResult<PerformanceMonitorDTO> res = performanceMonitorService.getPerformanceMonitorByIp("192.168.0.118");
-        printObject(res);
-    }
+    
 
     /**
      * Test method for
