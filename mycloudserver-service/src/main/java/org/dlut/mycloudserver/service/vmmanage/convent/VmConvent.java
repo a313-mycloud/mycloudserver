@@ -100,7 +100,15 @@ public class VmConvent {
         if (vmDTO.getVmNetworkType() != null) {
             vmDO.setVmNetworkType(vmDTO.getVmNetworkType().getValue());
         }
-
+        if (vmDTO.getLastHostId() != null) {
+            vmDO.setLastHostId(vmDTO.getLastHostId());
+        }
+        if (vmDTO.getIsCanRead() != null) {
+            vmDO.setIsCanRead(vmDTO.getIsCanRead());
+        }
+        if (vmDTO.getImageVersion() != null) {
+            vmDO.setImageVersion(vmDTO.getImageVersion());
+        }
         return vmDO;
     }
 

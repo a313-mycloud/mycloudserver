@@ -7,12 +7,12 @@
  */
 package org.dlut.mycloudserver.service.vmmanage;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
@@ -28,6 +28,7 @@ import org.dlut.mycloudserver.client.service.hostmanage.IHostManageService;
 import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
+import org.dlut.mycloudserver.service.hostmanage.HostManage;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.mycloudserver.common.util.CommonUtil;
@@ -43,7 +44,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class VmListener {
 
-    private static Logger      log = LoggerFactory.getLogger(VmListener.class);
+    private static Logger      log             = LoggerFactory.getLogger(VmListener.class);
 
     @Resource(name = "hostManageService")
     private IHostManageService hostManageService;
@@ -52,9 +53,14 @@ public class VmListener {
     private IVmManageService   vmManageService;
 
     @Resource(name = "vmManage")
-    private VmManage            vmManage;
+    private VmManage           vmManage;
+
+    @Resource(name = "hostManage")
+    private HostManage         hostManage;
     @Resource(name = "mutilHostConnPool")
     private IMutilHostConnPool mutilHostConnPool;
+
+    private ExecutorService    executorService = Executors.newCachedThreadPool();
 
     /**
      * 每隔一段时间检测虚拟机
@@ -165,32 +171,22 @@ public class VmListener {
             log.error("获取虚拟机" + vmUuid + "失败，原因：" + result.getMsgInfo());
         }
         VmDTO vmDTO = result.getModel();
-        int lastHostId=vmDTO.getHostId();
+        String lastHostIp = this.hostManage.getHostById(vmDTO.getHostId()).getHostIp();
+
         vmDTO.setVmStatus(VmStatusEnum.CLOSED);
+        vmDTO.setLastHostId(vmDTO.getHostId());
         vmDTO.setHostId(0);
         vmDTO.setShowPort(0);
-        
         MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
         if (!updateResult.isSuccess()) {
             log.error("更新虚拟机" + vmDTO + "失败，原因：" + updateResult.getMsgInfo());
         }
         /**
-         * 开启异步线程，将镜像上传到主机
-         * 上传完毕后，版本号加1，文件重新设置为可读,更新上一次的hostId
-         * 
+         * 开启异步线程，将镜像上传到主机 上传完毕后，版本号加1，文件重新设置为可读
          */
-        /*************start**************************************/
-       try {
-		new Thread(new CopyImageFromHostTask(Runtime.getRuntime(),
-				   this.vmManage, vmUuid, 
-				   InetAddress.getLocalHost().getHostAddress().toString(),
-				   this.log, lastHostId)).start();
-	} catch (UnknownHostException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		log.error("error message",e);
-	}
-        /**************end*************************************/
+        /************* start **************************************/
+        executorService.submit(new CopyImageFromHostTask(vmUuid, lastHostIp, this.vmManage));
+        /************** end *************************************/
     }
 
     /**
