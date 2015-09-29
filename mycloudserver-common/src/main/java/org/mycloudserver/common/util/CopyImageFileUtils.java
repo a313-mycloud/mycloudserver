@@ -6,9 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.mycloudserver.common.constants.StoreConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CopyImageFileUtils
 {
+	  private static Logger       log                  = LoggerFactory.getLogger(CopyImageFileUtils.class);
 	public static final String PATH=StoreConstants.IMAGE_POOL_PATH;
 	public static final String PASS=StoreConstants.SCP_COMMAND_PASSWORD;
 	/**
@@ -23,8 +26,9 @@ public class CopyImageFileUtils
 	 */
 	public static boolean copyImageToHost(Runtime rt,String fileName,String destIP) 
 		throws IOException, InterruptedException{
-		String command="sshpass  -p "+ PASS+"   scp  -o StrictHostKeyChecking=no  "+PATH+ fileName	
-				+"  luojie@"+destIP.trim()+":"+PATH;
+		String command="sshpass  -p "+ PASS+"   scp  -o StrictHostKeyChecking=no  -p "+PATH+ fileName	
+				+"  root@"+destIP.trim()+":"+PATH;
+		System.out.println("执行命令"+command);
 		Process process = rt.exec(command);
 		InputStream stderr = process.getErrorStream();
 		InputStreamReader isr = new InputStreamReader(stderr);
@@ -53,8 +57,9 @@ public class CopyImageFileUtils
 	 */
 	public static boolean copyImageFromHost(Runtime rt,String fileName,String srcIP) 
 			throws IOException, InterruptedException{
-		String command="sshpass   -p  "+PASS+"    scp  -o StrictHostKeyChecking=no   luojie@"+srcIP.trim()+":"+PATH+fileName
+		String command="sshpass   -p  "+PASS+"  sudo   scp  -o StrictHostKeyChecking=no  -p   root@"+srcIP.trim()+":"+PATH+fileName
 				+"  "+PATH;  
+		System.out.println("执行命令"+command);
 		Process process = rt.exec(command);
 		InputStream stderr = process.getErrorStream();
 		InputStreamReader isr = new InputStreamReader(stderr);

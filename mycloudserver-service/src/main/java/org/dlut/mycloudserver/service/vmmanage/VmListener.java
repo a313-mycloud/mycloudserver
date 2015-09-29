@@ -76,7 +76,7 @@ public class VmListener {
         QueryHostCondition queryHostCondition = new QueryHostCondition();
         queryHostCondition.setHostStatusEnum(HostStatusEnum.RUNNING);
         queryHostCondition.setOffset(0);
-        queryHostCondition.setLimit(100);
+        queryHostCondition.setLimit(1000);
         MyCloudResult<Pagination<HostDTO>> result = hostManageService.query(queryHostCondition);
         if (!result.isSuccess()) {
             log.error("在数据库中获取在线的物理机列表失败，原因：" + result.getMsgInfo());
@@ -122,7 +122,8 @@ public class VmListener {
         }
 
         for (String vmUuid : runningVmUuidFromDB) {
-            setVmIsClose(vmUuid);
+            if (this.vmManage.getVmByUuid(vmUuid).getVmStatus() == VmStatusEnum.RUNNING.getStatus())
+                setVmIsClose(vmUuid);
         }
     }
 

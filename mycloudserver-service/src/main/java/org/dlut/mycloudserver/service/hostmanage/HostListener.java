@@ -9,11 +9,8 @@ package org.dlut.mycloudserver.service.hostmanage;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -67,7 +64,6 @@ public class HostListener {
         setAllHostClosed();
         while (true) {
             try {
-                System.out.println("心跳......." + sdf.format(new Date()));
                 testAllHostConnectionOnce();
                 Thread.sleep(CYCLE_TIME);
             } catch (Exception e) {
@@ -81,30 +77,32 @@ public class HostListener {
      */
     private void testAllHostConnectionOnce() {
         List<HostDTO> hostList = getHostListFromDB();
-        Map<HostDTO, Future> results = new HashMap<HostDTO, Future>();
+        //        Map<HostDTO, Future> results = new HashMap<HostDTO, Future>();
         for (HostDTO hostDTO : hostList) {
             Future<HostDTO> future = null;
             synchronized (runningTestConnectionHostIdSet) {
                 if (!runningTestConnectionHostIdSet.contains(hostDTO.getHostId())) {
-                    //futures.add(executorService.submit(new TestOneHostConnectionTask(hostDTO)));
-                    results.put(hostDTO, executorService.submit(new TestOneHostConnectionTask(hostDTO)));
+                    future = executorService.submit(new TestOneHostConnectionTask(hostDTO));
+                    //                    results.put(hostDTO, executorService.submit(new TestOneHostConnectionTask(hostDTO)));
                     runningTestConnectionHostIdSet.add(hostDTO.getHostId());
                 }
             }
-        }
-        Future future = null;
-        for (HostDTO key : results.keySet()) {
-            //System.out.println("key= "+ key + " and value= " + map.get(key));
-            future = results.get(key);
+            //        }
+            //        Future future = null;
+            //        for (HostDTO key : results.keySet()) {
+            //            //System.out.println("key= "+ key + " and value= " + map.get(key));
+            //            future = results.get(key);
             // 如果当前处于运行状态，则需要快速判断是否断开连接
-            //               if (hostDTO.getHostStatusEnum() == HostStatusEnum.RUNNING && future != null) {
-            if (future != null) {
+            if (hostDTO.getHostStatusEnum() == HostStatusEnum.RUNNING && future != null) {
+                //            if (future != null) {
                 try {
                     future.get(TEST_TIME_OUT, TimeUnit.SECONDS);
                 } catch (Exception e) {
                     // 超时
-                    log.warn("futer.get() 物理机 " + key.getHostIp() + " 连接失败，原因：" + e);
-                    updateHostStatusToDB(key.getHostId(), HostStatusEnum.CLOSED);
+                    log.warn("futer.get() 物理机 " + hostDTO.getHostIp() + " 连接失败，原因：" + e);
+                    updateHostStatusToDB(hostDTO.getHostId(), HostStatusEnum.CLOSED);
+                    //                    log.warn("futer.get() 物理机 " + key.getHostIp() + " 连接失败，原因：" + e);
+                    //                    updateHostStatusToDB(key.getHostId(), HostStatusEnum.CLOSED);
                 }
             }
         }
