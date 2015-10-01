@@ -71,6 +71,8 @@
 		</property>
 	</bean>
 	
+	
+	<!--
 	<bean id="performanceMonitorTrigger"
 		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<property name="jobDetail" ref="performanceMonitorJobDetail" />
@@ -79,7 +81,7 @@
 		<property name="repeatCount" value="0" />
 	</bean>
 
-	<!-- 性能监控 -->
+
 	<bean id="performanceMonitorJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
@@ -89,5 +91,5 @@
 			<value>execute</value>
 		</property>
 	</bean>
-	
+	-->
 </beans>

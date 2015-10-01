@@ -910,6 +910,13 @@ public class VmManageServiceImpl implements IVmManageService {
         if (vmDTO.getVmStatus() == VmStatusEnum.RUNNING) {
             return MyCloudResult.failedResult(ErrorEnum.VM_RUNNING_CAN_NOT_CHANGE_TO_TEMPLATE);
         }
+
+        /**
+         * 模板虚拟机需要作为模板使用，因此需要在每个节点上都有该模板虚拟机
+         */
+        /*********************** start ****************************/
+
+        /************************ end ***************************/
         vmDTO.setIsTemplateVm(Boolean.TRUE);
         if (!updateVmIn(vmDTO)) {
             return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
