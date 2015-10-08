@@ -17,6 +17,7 @@ import org.dlut.mycloudserver.client.common.ErrorEnum;
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.classmanage.ClassDTO;
+import org.dlut.mycloudserver.client.common.hostmanage.QueryHostCondition;
 import org.dlut.mycloudserver.client.common.storemanage.DiskDTO;
 import org.dlut.mycloudserver.client.common.storemanage.QueryDiskCondition;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
@@ -1069,5 +1070,29 @@ public class VmManageServiceImpl implements IVmManageService {
             }
         }
 
+    }
+
+    @Override
+    public MyCloudResult<Boolean> isCanDelete(String ipAddress, String imageUuid) {
+        QueryHostCondition queryHostCondition = new QueryHostCondition();
+        queryHostCondition.setHostIp(ipAddress);
+        if (this.hostManage.countQuery(queryHostCondition) <= 0) {
+            //return MyCloudResult.failedResult(ErrorEnum.HOST_NOT_EXIST);
+            //代表数据库中肯定没有这条记录,可以删除
+            return MyCloudResult.successResult(Boolean.TRUE);
+        }
+        //获取当前ipAddress对应的hostId
+        int hostId = this.hostManage.query(queryHostCondition).get(0).getHostId();
+        QueryVmCondition queryVmCondition = new QueryVmCondition();
+        queryVmCondition.setLastHostId(hostId);
+        queryVmCondition.setImageUuid(imageUuid);
+        int count = this.vmManage.countQuery(queryVmCondition);
+        //如果数据库中存在一条该镜像上次调度在ipAddress上的记录
+        //则该ipAddress机器节点上的该镜像有价值,不应该删除,返回false
+        if (count > 0) {
+            return MyCloudResult.successResult(Boolean.FALSE);
+        } else {
+            return MyCloudResult.successResult(Boolean.TRUE);
+        }
     }
 }
