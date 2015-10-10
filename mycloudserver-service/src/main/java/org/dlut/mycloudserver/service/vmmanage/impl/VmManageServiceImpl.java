@@ -1083,16 +1083,19 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         //获取当前ipAddress对应的hostId
         int hostId = this.hostManage.query(queryHostCondition).get(0).getHostId();
+
         QueryVmCondition queryVmCondition = new QueryVmCondition();
-        queryVmCondition.setLastHostId(hostId);
         queryVmCondition.setImageUuid(imageUuid);
         int count = this.vmManage.countQuery(queryVmCondition);
-        //如果数据库中存在一条该镜像上次调度在ipAddress上的记录
-        //则该ipAddress机器节点上的该镜像有价值,不应该删除,返回false
-        if (count > 0) {
-            return MyCloudResult.successResult(Boolean.FALSE);
-        } else {
+        //系统中不存在该镜像,可以删除
+        if (count <= 0)
+            return MyCloudResult.successResult(Boolean.TRUE);
+        VmDO vmDO = this.vmManage.query(queryVmCondition).get(0);
+        if (!vmDO.getIsPublicTemplate() && !vmDO.getIsTemplateVm() && (vmDO.getLastHostId() != hostId)) {
             return MyCloudResult.successResult(Boolean.TRUE);
         }
+
+        return MyCloudResult.successResult(Boolean.FALSE);
+
     }
 }
