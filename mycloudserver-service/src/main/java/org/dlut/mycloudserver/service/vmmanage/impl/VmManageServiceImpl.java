@@ -1078,8 +1078,8 @@ public class VmManageServiceImpl implements IVmManageService {
         queryHostCondition.setHostIp(ipAddress);
         if (this.hostManage.countQuery(queryHostCondition) <= 0) {
             //return MyCloudResult.failedResult(ErrorEnum.HOST_NOT_EXIST);
-            //代表数据库中肯定没有这条记录,可以删除
-            return MyCloudResult.successResult(Boolean.TRUE);
+            //代表不是系统的物理机节点,不可删除
+            return MyCloudResult.successResult(Boolean.FALSE);
         }
         //获取当前ipAddress对应的hostId
         int hostId = this.hostManage.query(queryHostCondition).get(0).getHostId();
