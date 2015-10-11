@@ -28,15 +28,18 @@ public class CopyImageFileUtils
 		throws IOException, InterruptedException{
 		String command="sshpass  -p "+ PASS+"   scp  -o StrictHostKeyChecking=no  -p "+PATH+ fileName	
 				+"  root@"+destIP.trim()+":"+PATH;
-		System.out.println("执行命令"+command);
+//		System.out.println("执行命令"+command);
+		log.debug("执行命令"+command);
 		Process process = rt.exec(command);
 		InputStream stderr = process.getErrorStream();
 		InputStreamReader isr = new InputStreamReader(stderr);
 		BufferedReader br = new BufferedReader(isr);
 		String line = null;
-		System.out.println("copying imageFile "+fileName+" to "+destIP+" ...");
+//		System.out.println("copying imageFile "+fileName+" to "+destIP+" ...");
+		log.debug("copying imageFile "+fileName+" to "+destIP+" ...");
 		while ( (line = br.readLine()) != null){
-			System.out.println("error message "+line);
+//			System.out.println("error message "+line);
+			log.debug("error message "+line);
 		}
 		int exitVal = process.waitFor();
 		if(exitVal!=0){
@@ -59,15 +62,18 @@ public class CopyImageFileUtils
 			throws IOException, InterruptedException{
 		String command="sshpass   -p  "+PASS+"  sudo   scp  -o StrictHostKeyChecking=no  -p   root@"+srcIP.trim()+":"+PATH+fileName
 				+"  "+PATH;  
-		System.out.println("执行命令"+command);
+//		System.out.println("执行命令"+command);
+		log.debug("执行命令"+command);
 		Process process = rt.exec(command);
 		InputStream stderr = process.getErrorStream();
 		InputStreamReader isr = new InputStreamReader(stderr);
 		BufferedReader br = new BufferedReader(isr);
 		String line = null;
-		System.out.println("copying imageFile "+fileName+" from "+srcIP+" ...");
+//		System.out.println("copying imageFile "+fileName+" from "+srcIP+" ...");
+		log.debug("copying imageFile "+fileName+" from "+srcIP+" ...");
 		while ( (line = br.readLine()) != null){
-			System.out.println("error message "+line);
+//			System.out.println("error message "+line);
+			log.debug("error message "+line);
 		}
 		int exitVal = process.waitFor();
 		if(exitVal!=0){
