@@ -13,6 +13,7 @@ public class CopyImageFileUtils
 {
 	  private static Logger       log                  = LoggerFactory.getLogger(CopyImageFileUtils.class);
 	public static final String PATH=StoreConstants.IMAGE_POOL_PATH;
+	public static final String REMOTEPATH=StoreConstants.IMAGE_POOL_REMOTE_PATH;
 	public static final String PASS=StoreConstants.SCP_COMMAND_PASSWORD;
 	/**
 	 * 讲虚拟机镜像从文件系统拷贝到目标节点
@@ -26,9 +27,18 @@ public class CopyImageFileUtils
 	 */
 	public static boolean copyImageToHost(Runtime rt,String fileName,String destIP) 
 		throws IOException, InterruptedException{
-		String command="sshpass  -p "+ PASS+"   scp  -o StrictHostKeyChecking=no  -p "+PATH+ fileName	
-				+"  root@"+destIP.trim()+":"+PATH;
+		//只有后台节点挂载了文件系统,这个时候,所有的计算机节点文件操作需要通过后台服务器
+		//下面是这种模式下后台需要执行的命令
+//		String command="sshpass  -p "+ PASS+"   scp  -o StrictHostKeyChecking=no  -p "+PATH+ fileName	
+//				+"  root@"+destIP.trim()+":"+PATH;
 //		System.out.println("执行命令"+command);
+		
+		//所有的节点都挂载了文件系统,这个时候,计算节点文件操作仅仅需要从计算节点本地
+		//的一个文件夹拷贝到另一个文件夹,下面是这种模式下后台需要执行的命令
+//		String command="sshpass   -p  "+PASS+"  ssh   luojie@"+destIP.trim()+"   'cp   -p   "
+//				+REMOTEPATH+fileName+"   "+PATH+fileName+"    '";
+		String command="sshpass   -p  "+PASS+"  ssh   luojie@"+destIP.trim()+"   cp   -p   "
+				+REMOTEPATH+fileName+"   "+PATH+fileName+"    ";
 		log.info("执行命令"+command);
 		Process process = rt.exec(command);
 		InputStream stderr = process.getErrorStream();

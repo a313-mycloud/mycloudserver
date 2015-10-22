@@ -38,6 +38,11 @@ public class StoreConstants {
      * 镜像存储池的路径
      */
     public static final String IMAGE_POOL_PATH            = "/media/mycloud-pool/images/";
+    
+    /**
+     * 镜像存储池的远程路径
+     */
+    public static final String IMAGE_POOL_REMOTE_PATH="/media/mycloud-remote/images/";
 
     /**
      * 硬盘存储池的名称
