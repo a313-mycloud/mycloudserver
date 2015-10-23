@@ -70,9 +70,11 @@ public class CopyImageFileUtils
 	 */
 	public static boolean copyImageFromHost(Runtime rt,String fileName,String srcIP) 
 			throws IOException, InterruptedException{
-		String command="sshpass   -p  "+PASS+"  sudo   scp  -o StrictHostKeyChecking=no  -p   root@"+srcIP.trim()+":"+PATH+fileName
-				+"  "+PATH;  
+//		String command="sshpass   -p  "+PASS+"  sudo   scp  -o StrictHostKeyChecking=no  -p   root@"+srcIP.trim()+":"+PATH+fileName
+//				+"  "+PATH;  
 //		System.out.println("执行命令"+command);
+		String command="sshpass   -p  "+PASS+"  ssh    luojie@"+srcIP.trim()+"   sudo    cp   -p   "
+				+PATH+fileName+"   "+REMOTEPATH+fileName+"    ";
 		log.info("执行命令"+command);
 		Process process = rt.exec(command);
 		InputStream stderr = process.getErrorStream();
