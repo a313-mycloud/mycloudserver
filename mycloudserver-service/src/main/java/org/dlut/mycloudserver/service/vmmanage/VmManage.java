@@ -74,7 +74,6 @@ public class VmManage {
             return false;
         }
 
-        System.out.println("在vmmanage中更新" + vmDO);
         return vmManageMapper.updateVm(vmDO) == 1 ? true : false;
     }
 

@@ -13,9 +13,10 @@ package org.dlut.mycloudserver.client.common.vmmanage;
  * @author luojie 2014年12月29日 下午3:27:42
  */
 public enum NetworkTypeEnum {
-
+ 
     NAT(1, "nat"),
-    BRIDGE(2, "桥接");
+    BRIDGE(2, "桥接"),
+    WEB(3,"web");
 
     private int    value;
     private String desc;

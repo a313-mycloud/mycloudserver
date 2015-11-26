@@ -89,11 +89,13 @@ public class CopyImageFromHostTask implements Runnable {
     @Override
     public void run() {
         // TODO Auto-generated method stub
-        VmDO vmDO = new VmDO();
-        vmDO.setVmUuid(vmUuid);
+        VmDO vmDO = this.vmManage.getVmByUuid(vmUuid);
+        //        VmDO vmDO = new VmDO();
+        //        vmDO.setVmUuid(vmUuid);
         vmDO.setIsCanRead(0);
         this.vmManage.updateVm(vmDO);
-        String imageUuid = this.vmManage.getVmByUuid(vmUuid).getImageUuid();
+        //        String imageUuid = this.vmManage.getVmByUuid(vmUuid).getImageUuid();
+        String imageUuid = vmDO.getImageUuid();
         try {
             CopyImageFileUtils.copyImageFromHost(Runtime.getRuntime(), imageUuid, hostIp);
         } catch (Exception e) {
@@ -101,7 +103,8 @@ public class CopyImageFromHostTask implements Runnable {
             e.printStackTrace();
             log.error("从" + this.hostIp + "拷贝镜像" + imageUuid + "到文件系统失败");
         }
-        int version = this.vmManage.getVmByUuid(vmUuid).getImageVersion() + 1;
+        //        int version = this.vmManage.getVmByUuid(vmUuid).getImageVersion() + 1;
+        int version = vmDO.getImageVersion() + 1;
         vmDO.setImageVersion(version);
         vmDO.setIsCanRead(1);
         this.vmManage.updateVm(vmDO);
