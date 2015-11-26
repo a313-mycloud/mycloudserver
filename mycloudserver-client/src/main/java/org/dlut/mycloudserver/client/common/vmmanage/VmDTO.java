@@ -354,6 +354,25 @@ public class VmDTO extends BaseDTO {
 	public void setIsCanRead(Integer isCanRead) {
 		this.isCanRead = isCanRead;
 	}
+
+	@Override
+	public String toString() {
+		return "VmDTO [vmName=" + vmName + ", vmUuid=" + vmUuid + ", vmVcpu="
+				+ vmVcpu + ", vmMemory=" + vmMemory + ", imageUuid="
+				+ imageUuid + ", imageTotalSize=" + imageTotalSize
+				+ ", imageFormat=" + imageFormat + ", imagePath=" + imagePath
+				+ ", vmMacAddress=" + vmMacAddress + ", vmNetworkType="
+				+ vmNetworkType + ", vmStatus=" + vmStatus + ", hostId="
+				+ hostId + ", userAccount=" + userAccount + ", classId="
+				+ classId + ", showType=" + showType + ", showPort=" + showPort
+				+ ", showPassword=" + showPassword + ", parentVmUuid="
+				+ parentVmUuid + ", masterDiskBusType=" + masterDiskBusType
+				+ ", interfaceType=" + interfaceType + ", isTemplateVm="
+				+ isTemplateVm + ", isPublicTemplate=" + isPublicTemplate
+				+ ", desc=" + desc + ", imageVersion=" + imageVersion
+				+ ", lastHostId=" + lastHostId + ", isCanRead=" + isCanRead
+				+ "]";
+	}
     
     
 

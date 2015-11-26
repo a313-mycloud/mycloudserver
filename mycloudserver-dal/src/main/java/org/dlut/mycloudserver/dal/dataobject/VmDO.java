@@ -336,6 +336,25 @@ public class VmDO extends BaseDO {
 	public void setImageVersion(Integer imageVersion) {
 		this.imageVersion = imageVersion;
 	}
+
+	@Override
+	public String toString() {
+		return "VmDO [vmName=" + vmName + ", vmUuid=" + vmUuid + ", vmVcpu="
+				+ vmVcpu + ", vmMemory=" + vmMemory + ", imageUuid="
+				+ imageUuid + ", imageTotalSize=" + imageTotalSize
+				+ ", imageFormat=" + imageFormat + ", vmMacAddress="
+				+ vmMacAddress + ", vmNetworkType=" + vmNetworkType
+				+ ", vmStatus=" + vmStatus + ", hostId=" + hostId
+				+ ", userAccount=" + userAccount + ", classId=" + classId
+				+ ", showType=" + showType + ", showPort=" + showPort
+				+ ", showPassword=" + showPassword + ", parentVmUuid="
+				+ parentVmUuid + ", masterDiskBusType=" + masterDiskBusType
+				+ ", interfaceType=" + interfaceType + ", isTemplateVm="
+				+ isTemplateVm + ", isPublicTemplate=" + isPublicTemplate
+				+ ", imageVersion=" + imageVersion + ", lastHostId="
+				+ lastHostId + ", isCanRead=" + isCanRead + ", desc=" + desc
+				+ "]";
+	}
 	
     
 

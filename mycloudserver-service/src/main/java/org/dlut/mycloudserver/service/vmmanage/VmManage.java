@@ -65,7 +65,7 @@ public class VmManage {
         if (StringUtils.isBlank(userAccount)) {
             return false;
         }
-        return this.vmManageMapper.deleteVmByUserAccount(userAccount) >=1 ? true : false;
+        return this.vmManageMapper.deleteVmByUserAccount(userAccount) >= 1 ? true : false;
 
     }
 
@@ -74,6 +74,7 @@ public class VmManage {
             return false;
         }
 
+        System.out.println("在vmmanage中更新" + vmDO);
         return vmManageMapper.updateVm(vmDO) == 1 ? true : false;
     }
 
