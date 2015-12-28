@@ -37,7 +37,7 @@ public class CopyImageFileUtils
 		//的一个文件夹拷贝到另一个文件夹,下面是这种模式下后台需要执行的命令
 //		String command="sshpass   -p  "+PASS+"  ssh   luojie@"+destIP.trim()+"   'cp   -p   "
 //				+REMOTEPATH+fileName+"   "+PATH+fileName+"    '";
-		String command="sshpass   -p  "+PASS+"  ssh    -o   StrictHostKeyChecking=no    luojie@"+destIP.trim()+" 	 	  cp   -p   "
+		String command="sshpass   -p  "+PASS+"  ssh    -o   StrictHostKeyChecking=no    luojie@"+destIP.trim()+"  	sudo 	   cp   -p   "
 				+REMOTEPATH+fileName+"   "+PATH+fileName+"    ";
 		log.info("执行命令"+command);
 		Process process = rt.exec(command);
@@ -88,6 +88,25 @@ public class CopyImageFileUtils
 			log.info("error message "+line);
 		}
 		int exitVal = process.waitFor();
+		if(exitVal!=0){
+//			System.out.println("copy imageFile "+fileName+" to "+destIP+" failed");
+			return false;
+		}
+		//delete old image file
+		command="sshpass   -p  "+PASS+"  ssh    -o   StrictHostKeyChecking=no     luojie@"+srcIP.trim()+"   sudo    rm  	 "   +PATH+fileName+" 	";
+		log.info("执行命令"+command);
+		process = rt.exec(command);
+		stderr = process.getErrorStream();
+		isr = new InputStreamReader(stderr);
+		br = new BufferedReader(isr);
+		line = null;
+//		System.out.println("copying imageFile "+fileName+" from "+srcIP+" ...");
+		log.info("delete  imageFile "+" in "+srcIP+":"+PATH+fileName);
+		while ( (line = br.readLine()) != null){
+//			System.out.println("error message "+line);
+			log.info("error message "+line);
+		}
+		exitVal = process.waitFor();
 		if(exitVal!=0){
 //			System.out.println("copy imageFile "+fileName+" to "+destIP+" failed");
 			return false;

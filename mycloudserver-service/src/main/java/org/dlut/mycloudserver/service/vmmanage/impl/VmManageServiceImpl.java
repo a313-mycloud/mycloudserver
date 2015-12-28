@@ -287,7 +287,8 @@ public class VmManageServiceImpl implements IVmManageService {
         /****************************************************/
         boolean canRead = (vmDO.getIsCanRead() == 1 ? true : false);
         while (!canRead) {//只要不可读，一直等待到可读
-            canRead = (vmDO.getIsCanRead() == 1 ? true : false);
+        //            canRead = (vmDO.getIsCanRead() == 1 ? true : false);
+            canRead = (this.vmManage.getVmByUuid(vmUuid).getIsCanRead() == 1 ? true : false);
         }
 
         boolean result = false;
