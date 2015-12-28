@@ -280,30 +280,31 @@ public class VmManageServiceImpl implements IVmManageService {
          * 如果此次调度产生的主机与上一次运行的主机相同，那么不需要镜像传输过程 否则需要传输镜像在bestHostId
          */
         VmDO vmDO = this.vmManage.getVmByUuid(vmUuid);
-        //        if (vmDO.getLastHostId() != bestHostId) {
-        /**
-         * 将需要的虚拟机镜像拷贝到目标理理机上，这是一个同步线程
-         */
-        /****************************************************/
-        boolean canRead = (vmDO.getIsCanRead() == 1 ? true : false);
-        while (!canRead) {//只要不可读，一直等待到可读
-        //            canRead = (vmDO.getIsCanRead() == 1 ? true : false);
-            canRead = (this.vmManage.getVmByUuid(vmUuid).getIsCanRead() == 1 ? true : false);
-        }
+        if (vmDO.getLastHostId() != bestHostId) {
+            /**
+             * 将需要的虚拟机镜像拷贝到目标理理机上，这是一个同步线程
+             */
+            /****************************************************/
+            boolean canRead = (vmDO.getIsCanRead() == 1 ? true : false);
+            while (!canRead) {//只要不可读，一直等待到可读
+                //            canRead = (vmDO.getIsCanRead() == 1 ? true : false);  error codding
+                canRead = (this.vmManage.getVmByUuid(vmUuid).getIsCanRead() == 1 ? true : false);
+            }
 
-        boolean result = false;
-        try {
-            result = CopyImageFileUtils.copyImageToHost(Runtime.getRuntime(), vmDO.getImageUuid(), hostDO.getHostIp());
-        } catch (Exception e) {
+            boolean result = false;
+            try {
+                result = CopyImageFileUtils.copyImageToHost(Runtime.getRuntime(), vmDO.getImageUuid(),
+                        hostDO.getHostIp());
+            } catch (Exception e) {
 
-            e.printStackTrace();
-            return MyCloudResult.failedResult(ErrorEnum.VM_TRANSFER_FIAL);
+                e.printStackTrace();
+                return MyCloudResult.failedResult(ErrorEnum.VM_TRANSFER_FIAL);
+            }
+            if (!result) {
+                return MyCloudResult.failedResult(ErrorEnum.VM_TRANSFER_FIAL);
+            }
+            log.info("从文件系统拷贝镜像" + vmDO.getImageUuid() + "到" + hostDO.getHostIp() + "成功");
         }
-        if (!result) {
-            return MyCloudResult.failedResult(ErrorEnum.VM_TRANSFER_FIAL);
-        }
-        log.info("从文件系统拷贝镜像" + vmDO.getImageUuid() + "到" + hostDO.getHostIp() + "成功");
-        //        }
 
         try {
             Domain domain = conn.startVm(xmlDesc);

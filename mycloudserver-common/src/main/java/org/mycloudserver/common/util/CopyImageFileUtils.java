@@ -92,25 +92,25 @@ public class CopyImageFileUtils
 //			System.out.println("copy imageFile "+fileName+" to "+destIP+" failed");
 			return false;
 		}
-		//delete old image file
-		command="sshpass   -p  "+PASS+"  ssh    -o   StrictHostKeyChecking=no     luojie@"+srcIP.trim()+"   sudo    rm  	 "   +PATH+fileName+" 	";
-		log.info("执行命令"+command);
-		process = rt.exec(command);
-		stderr = process.getErrorStream();
-		isr = new InputStreamReader(stderr);
-		br = new BufferedReader(isr);
-		line = null;
-//		System.out.println("copying imageFile "+fileName+" from "+srcIP+" ...");
-		log.info("delete  imageFile "+" in "+srcIP+":"+PATH+fileName);
-		while ( (line = br.readLine()) != null){
-//			System.out.println("error message "+line);
-			log.info("error message "+line);
-		}
-		exitVal = process.waitFor();
-		if(exitVal!=0){
-//			System.out.println("copy imageFile "+fileName+" to "+destIP+" failed");
-			return false;
-		}
+//		//delete old image file
+//		command="sshpass   -p  "+PASS+"  ssh    -o   StrictHostKeyChecking=no     luojie@"+srcIP.trim()+"   sudo    rm  	 "   +PATH+fileName+" 	";
+//		log.info("执行命令"+command);
+//		process = rt.exec(command);
+//		stderr = process.getErrorStream();
+//		isr = new InputStreamReader(stderr);
+//		br = new BufferedReader(isr);
+//		line = null;
+////		System.out.println("copying imageFile "+fileName+" from "+srcIP+" ...");
+//		log.info("delete  imageFile "+" in "+srcIP+":"+PATH+fileName);
+//		while ( (line = br.readLine()) != null){
+////			System.out.println("error message "+line);
+//			log.info("error message "+line);
+//		}
+//		exitVal = process.waitFor();
+//		if(exitVal!=0){
+////			System.out.println("copy imageFile "+fileName+" to "+destIP+" failed");
+//			return false;
+//		}
 		return true;
 	}
 
