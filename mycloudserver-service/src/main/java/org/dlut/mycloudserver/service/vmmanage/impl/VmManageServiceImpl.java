@@ -1091,8 +1091,10 @@ public class VmManageServiceImpl implements IVmManageService {
         //系统中不存在该镜像,可以删除
         if (count <= 0)
             return MyCloudResult.successResult(Boolean.TRUE);
+
         VmDO vmDO = this.vmManage.query(queryVmCondition).get(0);
-        if (!vmDO.getIsPublicTemplate() && !vmDO.getIsTemplateVm() && (vmDO.getLastHostId() != hostId)) {
+        if (!vmDO.getIsPublicTemplate() && !vmDO.getIsTemplateVm() && (vmDO.getLastHostId() != hostId)
+                && (vmDO.getHostId() != hostId)) {
             return MyCloudResult.successResult(Boolean.TRUE);
         }
 
