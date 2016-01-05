@@ -123,7 +123,9 @@ public class VmManageServiceImpl implements IVmManageService {
         }
 
         // 验证镜像是否存在
-        String imagePath = StoreConstants.IMAGE_POOL_PATH + vmDTO.getImageUuid();
+        //modify to  /media/mycloud-remote
+        //        String imagePath = StoreConstants.IMAGE_POOL_PATH + vmDTO.getImageUuid();
+        String imagePath = StoreConstants.IMAGE_POOL_REMOTE_PATH + vmDTO.getImageUuid();
         if (!FileUtil.isFileExist(imagePath)) {
             return MyCloudResult.failedResult(ErrorEnum.IMAGE_NOT_EXIST);
         }
@@ -492,7 +494,8 @@ public class VmManageServiceImpl implements IVmManageService {
             return null;
         }
         String newImageUuid = CommonUtil.createUuid();
-        String newImagePath = StoreConstants.IMAGE_POOL_PATH + newImageUuid;
+        //        String newImagePath = StoreConstants.IMAGE_POOL_PATH + newImageUuid;
+        String newImagePath = StoreConstants.IMAGE_POOL_REMOTE_PATH + newImageUuid;
         try {
             StoragePool pool = conn.getStoragePoolByName(StoreConstants.IMAGE_POOL_NAME);
             Map<String, Object> context = new HashMap<String, Object>();
