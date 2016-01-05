@@ -463,7 +463,9 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.VM_ONLY_CLONE_FROM_TEMPLATE);
         }
         // 利用libvirt创建新的镜像
-        String newImageUuid = cloneImageByLibvirt(srcVmDTO.getImagePath(), srcVmDTO.getImageTotalSize());
+        //        String newImageUuid = cloneImageByLibvirt(srcVmDTO.getImagePath(), srcVmDTO.getImageTotalSize());
+        String newImageUuid = cloneImageByLibvirt(StoreConstants.IMAGE_POOL_REMOTE_PATH + srcVmDTO.getImageUuid(),
+                srcVmDTO.getImageTotalSize());
         if (StringUtils.isBlank(newImageUuid)) {
             return MyCloudResult.failedResult(ErrorEnum.IMAGE_CREATE_FAIL);
         }
