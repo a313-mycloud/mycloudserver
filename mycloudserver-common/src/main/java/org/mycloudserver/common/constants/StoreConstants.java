@@ -52,7 +52,7 @@ public class StoreConstants {
     /**
      * 硬盘存储池的路径
      */
-    public static final String DISK_POOL_PATH             = "/media/mycloud-pool/disks/";
+    public static final String DISK_POOL_PATH             = "/media/mycloud-remote/disks/";
     
     public static final String SCP_COMMAND_PASSWORD="10041104";
 }
