@@ -7,7 +7,9 @@
  */
 package org.dlut.mycloudserver.service.storemanage.impl;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,22 +147,42 @@ public class DiskManageServiceImpl implements IDiskManageService {
      * @return
      */
     private boolean formatDiskToNtfs(String diskPath) {
-        //以sudo身份执行命令，该命令需要在后台服务器中需要被配置为可以无密码执行
-        String command = "sudo virt-format -a " + diskPath + " --filesystem=ntfs";
-        Process process;
         try {
-            process = Runtime.getRuntime().exec(command);//该语句用于执行linux命令
-            process.waitFor();
-            if (process.exitValue() == 0) {
-                return true;
+            //以sudo身份执行命令，该命令需要在后台服务器中需要被配置为可以无密码执行
+            String command = "sudo  virt-format   -a   " + diskPath + "   --filesystem=ntfs  ";
+            log.info("执行命令" + command);
+            Process process = Runtime.getRuntime().exec(command);
+            InputStream stderr = process.getErrorStream();
+            InputStreamReader isr = new InputStreamReader(stderr);
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+            log.info("formating disk  " + diskPath + " ...");
+            while ((line = br.readLine()) != null) {
+                log.info("error message " + line);
             }
-        } catch (IOException e) {
-            log.error("error message", e);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            log.error("error message", e);
+            int exitVal = process.waitFor();
+            if (exitVal != 0) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            log.info("error message " + e.toString());
+            return false;
         }
-        return false;
+        //        Process process;
+        //        try {
+        //            process = Runtime.getRuntime().exec(command);//该语句用于执行linux命令
+        //            process.waitFor();
+        //            if (process.exitValue() == 0) {
+        //                return true;
+        //            }
+        //        } catch (IOException e) {
+        //            log.error("error message", e);
+        //        } catch (InterruptedException e) {
+        //            // TODO Auto-generated catch block
+        //            log.error("error message", e);
+        //        }
+        //        return false;
     }
 
     private boolean physicalDeleteDisk(String diskUuid) {
