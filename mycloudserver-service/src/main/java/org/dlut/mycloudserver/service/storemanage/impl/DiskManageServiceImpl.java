@@ -164,6 +164,7 @@ public class DiskManageServiceImpl implements IDiskManageService {
             if (exitVal != 0) {
                 return false;
             }
+            log.info("success to format disk" + diskPath);
             return true;
         } catch (Exception e) {
             log.info("error message " + e.toString());
