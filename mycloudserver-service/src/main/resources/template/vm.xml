@@ -68,7 +68,7 @@
 		<interface type='network'>
 			<mac address='$!vmMacAddress' />
 			<source network='default' />
-			#if ($!interfaceType == 1)
+			#if ($!interfaceType.value == 1)
 			<model type='virtio' />
 			#else
 			<model type='rtl8139' />
@@ -82,7 +82,7 @@
 		<interface type='bridge'>
 			<mac address='$!vmMacAddress' />
 			<source bridge='br0' />
-			#if ($!interfaceType == 1)
+			#if ($!interfaceType.value == 1)
 			<model type='virtio' />
 			#else
 			<model type='rtl8139' />
