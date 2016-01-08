@@ -108,7 +108,7 @@
 		show_type,
 		show_port, show_password,
 		parent_vm_uuid, master_disk_bus_type, interface_type,
-		is_template_vm, is_public_template,system_type
+		is_template_vm, is_public_template,system_type,
 		vm_desc,
 		gmt_create, gmt_modified)
 		VALUES(#{vmName}, #{vmUuid}, #{vmVcpu},
