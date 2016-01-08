@@ -121,7 +121,7 @@
 		#{showPort},
 		#{showPassword},
 		#{parentVmUuid}, #{masterDiskBusType}, #{interfaceType},
-		#{isTemplateVm},#{isPublicTemplate},#{systemType}
+		#{isTemplateVm},#{isPublicTemplate},#{systemType},
 		#{desc}, now(), now())
 	</insert>
 
