@@ -146,6 +146,11 @@ public class VmDTO extends BaseDTO {
      * 标记当前镜像是否可读，默认为1
      */
     private Integer isCanRead;
+    
+    /*
+     * 用于标记系统的类型
+     */
+    private SystemTypeEnum     systemType;
 
     public String getVmName() {
         return vmName;
@@ -353,6 +358,15 @@ public class VmDTO extends BaseDTO {
 
 	public void setIsCanRead(Integer isCanRead) {
 		this.isCanRead = isCanRead;
+	}
+
+	
+	public SystemTypeEnum getSystemType() {
+		return systemType;
+	}
+
+	public void setSystemType(SystemTypeEnum systemType) {
+		this.systemType = systemType;
 	}
 
 	@Override

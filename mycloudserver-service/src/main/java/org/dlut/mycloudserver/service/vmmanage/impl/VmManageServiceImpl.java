@@ -108,8 +108,8 @@ public class VmManageServiceImpl implements IVmManageService {
     /**
      * 创建新的虚拟机，必须设置vmName, vmVcpu、vmMemory、imageUuid、userAccount、showType、
      * showPassword ，classId(0表示没有课程),parentVmUuid(如果没有，则设为“”),isTemplateVm,
-     * isPublicTemplate, masterDiskBusType, interfaceType 可选：desc isCanRead默认为1
-     * lastHostId默认为-1 imageVersion默认为0
+     * isPublicTemplate, masterDiskBusType, interfaceType,systemType 可选：desc
+     * isCanRead默认为1 lastHostId默认为-1 imageVersion默认为0
      */
     @Override
     public MyCloudResult<String> createVm(VmDTO vmDTO) {
@@ -118,7 +118,8 @@ public class VmManageServiceImpl implements IVmManageService {
                 || vmDTO.getShowType() == null || StringUtils.isBlank(vmDTO.getShowPassword())
                 || vmDTO.getClassId() == null || vmDTO.getParentVmUuid() == null || vmDTO.getIsTemplateVm() == null
                 || vmDTO.getIsPublicTemplate() == null || vmDTO.getVmNetworkType() == null
-                || vmDTO.getMasterDiskBusType() == null || vmDTO.getInterfaceType() == null) {
+                || vmDTO.getMasterDiskBusType() == null || vmDTO.getInterfaceType() == null
+                || vmDTO.getSystemType() == null) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
 
@@ -263,6 +264,7 @@ public class VmManageServiceImpl implements IVmManageService {
         context.put("vmMacAddress", vmDTO.getVmMacAddress());
         context.put("masterDiskBusType", vmDTO.getMasterDiskBusType());
         context.put("interfaceType", vmDTO.getInterfaceType());
+        context.put("systemType", vmDTO.getSystemType());
         String xmlDesc = TemplateUtil.renderTemplate(VmConstants.VOLUME_TEMPLATE_PATH, context);
 
         Integer bestHostId = scheduler.getBestHostId(vmDTO);
@@ -474,6 +476,8 @@ public class VmManageServiceImpl implements IVmManageService {
         // 沿用父虚拟机的主硬盘总线类型和网卡类型
         destVmDTO.setMasterDiskBusType(srcVmDTO.getMasterDiskBusType());
         destVmDTO.setInterfaceType(srcVmDTO.getInterfaceType());
+        destVmDTO.setSystemType(srcVmDTO.getSystemType());
+
         MyCloudResult<String> createResult = this.createVm(destVmDTO);
         if (!createResult.isSuccess()) {
             log.error("创建虚拟机" + destVmDTO + "失败，原因：" + createResult.getMsgInfo());

@@ -15,6 +15,7 @@ import org.dlut.mycloudserver.client.common.vmmanage.InterfaceTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.MasterDiskBusTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.NetworkTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.ShowTypeEnum;
+import org.dlut.mycloudserver.client.common.vmmanage.SystemTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
 import org.dlut.mycloudserver.dal.dataobject.VmDO;
@@ -52,6 +53,7 @@ public class VmConvent {
         vmDTO.setParentVmUuid(vmDO.getParentVmUuid());
         vmDTO.setMasterDiskBusType(MasterDiskBusTypeEnum.getMasterDiskBusTypeByValue(vmDO.getMasterDiskBusType()));
         vmDTO.setInterfaceType(InterfaceTypeEnum.getInterfaceTypeByValue(vmDO.getInterfaceType()));
+        vmDTO.setSystemType(SystemTypeEnum.getSystemTypeByValue(vmDO.getSystemType()));
         vmDTO.setIsTemplateVm(vmDO.getIsTemplateVm());
         vmDTO.setIsPublicTemplate(vmDO.getIsPublicTemplate());
         vmDTO.setVmMacAddress(vmDO.getVmMacAddress());
@@ -94,6 +96,7 @@ public class VmConvent {
         if (vmDTO.getInterfaceType() != null) {
             vmDO.setInterfaceType(vmDTO.getInterfaceType().getValue());
         }
+        vmDO.setSystemType(vmDTO.getSystemType().getValue());
         vmDO.setIsTemplateVm(vmDTO.getIsTemplateVm());
         vmDO.setIsPublicTemplate(vmDTO.getIsPublicTemplate());
         vmDO.setVmMacAddress(vmDTO.getVmMacAddress());

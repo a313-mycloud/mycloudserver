@@ -130,6 +130,10 @@ public class VmDO extends BaseDO {
      * 标记当前镜像是否可读，默认为1
      */
     private Integer isCanRead;
+    /*
+     * 标记系统类型
+     */
+    private Integer systemType;
     
 
     /**
@@ -335,6 +339,15 @@ public class VmDO extends BaseDO {
 
 	public void setImageVersion(Integer imageVersion) {
 		this.imageVersion = imageVersion;
+	}
+
+	
+	public Integer getSystemType() {
+		return systemType;
+	}
+
+	public void setSystemType(Integer systemType) {
+		this.systemType = systemType;
 	}
 
 	@Override

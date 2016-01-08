@@ -29,6 +29,7 @@
 		<result property="isCanRead" column="canread_status"/>
 		<result property="imageVersion" column="image_version"/>
 		<result property="lastHostId" column="last_hostid"/>
+		<result property="systemType" column="system_type"/>
 	</resultMap>
 
 	<sql id="select-param-column">
@@ -38,7 +39,7 @@
 		class_id, show_type, show_port,
 		show_password, parent_vm_uuid, master_disk_bus_type, interface_type,
 		is_template_vm, is_public_template, vm_desc, gmt_create, gmt_modified,
-		canread_status,image_version,last_hostid
+		canread_status,image_version,last_hostid,system_type
 	</sql>
 
 	<sql id="page-limit">
@@ -107,7 +108,7 @@
 		show_type,
 		show_port, show_password,
 		parent_vm_uuid, master_disk_bus_type, interface_type,
-		is_template_vm, is_public_template,
+		is_template_vm, is_public_template,system_type
 		vm_desc,
 		gmt_create, gmt_modified)
 		VALUES(#{vmName}, #{vmUuid}, #{vmVcpu},
@@ -120,7 +121,7 @@
 		#{showPort},
 		#{showPassword},
 		#{parentVmUuid}, #{masterDiskBusType}, #{interfaceType},
-		#{isTemplateVm},#{isPublicTemplate},
+		#{isTemplateVm},#{isPublicTemplate},#{systemType}
 		#{desc}, now(), now())
 	</insert>
 
