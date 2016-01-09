@@ -3,8 +3,9 @@
 	<uuid>$vmUuid</uuid>
 	<memory unit='KiB'>$vmMemory</memory>
 	<!--<vcpu placement='static'>$vmVcpu</vcpu>-->
-	<cpu>
-		<topology sockets='1' threads='1' cores='$vmVcpu'/>
+	<cpu mode='host-model'>
+		<model fallback='forbid'/>
+		<topology sockets='1' threads='$vmVcpu' cores='$vmVcpu'/>
 	</cpu>
 	<os>
 		<type arch='x86_64' machine='pc-i440fx-trusty'>hvm</type>
