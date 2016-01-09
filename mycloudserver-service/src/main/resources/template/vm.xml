@@ -2,7 +2,10 @@
 	<name>$vmUuid</name>
 	<uuid>$vmUuid</uuid>
 	<memory unit='KiB'>$vmMemory</memory>
-	<vcpu placement='static'>$vmVcpu</vcpu>
+	<!--<vcpu placement='static'>$vmVcpu</vcpu>-->
+	<cpu>
+		<topology sockets='1' threads='1' cores='$vmVcpu'/>
+	</cpu>
 	<os>
 		<type arch='x86_64' machine='pc-i440fx-trusty'>hvm</type>
 		<boot dev='hd' />
