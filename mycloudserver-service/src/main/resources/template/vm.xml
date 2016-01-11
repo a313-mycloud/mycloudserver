@@ -56,6 +56,7 @@
 			#end
 		</disk>
 		#end
+		<!--
 		<controller type='usb' index='0' model='ich9-ehci1'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x07'
 				function='0x7' />
@@ -65,6 +66,43 @@
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x07'
 				function='0x0' multifunction='on' />
 		</controller>
+		-->
+		<controller type='usb' index='0' model='ich9-ehci1'>
+	      <alias  name='usb0'/>
+	      <address type='pci'  domain='0x0000' bus='0x00' slot='0x09' function='0x7'/>
+	    </controller>
+	    <controller  type='usb' index='0' model='ich9-uhci1'>
+	      <alias  name='usb0'/>
+	      <master  startport='0'/>
+	      <address type='pci'  domain='0x0000' bus='0x00' slot='0x09' function='0x0' multifunction='on'/>
+	    </controller>
+	    <controller  type='usb' index='0' model='ich9-uhci2'>
+	      <alias  name='usb0'/>
+	      <master  startport='2'/>
+	      <address type='pci'  domain='0x0000' bus='0x00' slot='0x09' function='0x1'/>
+	    </controller>
+	    <controller  type='usb' index='0' model='ich9-uhci3'>
+	      <alias  name='usb0'/>
+	      <master  startport='4'/>
+	      <address type='pci'  domain='0x0000' bus='0x00' slot='0x09' function='0x2'/>
+	    </controller>
+	    <redirdev bus='usb'  type='spicevmc'>
+	      <alias  name='redir0'/>
+	      <address type='usb'  bus='0' port='4'/>
+	    </redirdev>
+	    <redirdev bus='usb'  type='spicevmc'>
+	      <alias  name='redir1'/>
+	      <address type='usb'  bus='0' port='5'/>
+	    </redirdev>
+	    <redirdev bus='usb'  type='spicevmc'>
+	      <alias  name='redir2'/>
+	      <address type='usb'  bus='0' port='6'/>
+	    </redirdev>
+	    <redirdev bus='usb'  type='spicevmc'>
+	      <alias  name='redir3'/>
+	      <address type='usb'  bus='0' port='3'/>
+	    </redirdev>
+		
 		<controller type='pci' index='0' model='pci-root' />
 		<controller type='ide' index='0'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x01'
