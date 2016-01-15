@@ -16,7 +16,7 @@
 		<apic />
 		<pae />
 	</features>
-	<!--
+	
 	#if ($!systemType.value == 1)
 	<clock offset='localtime'>
 		<timer name='rtc' tickpolicy='catchup'/>
@@ -24,10 +24,7 @@
 	#else
 	<clock offset='utc' />
 	#end
-	-->
-	<clock offset='localtime'>
-		<timer name='rtc' tickpolicy='catchup'/>
-	</clock>
+
 	<on_poweroff>destroy</on_poweroff>
 	<on_reboot>restart</on_reboot>
 	<on_crash>restart</on_crash>
