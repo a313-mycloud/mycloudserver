@@ -16,6 +16,7 @@
 		<apic />
 		<pae />
 	</features>
+	<!--
 	#if ($!systemType.value == 1)
 	<clock offset='localtime'>
 		<timer name='rtc' tickpolicy='catchup'/>
@@ -23,6 +24,10 @@
 	#else
 	<clock offset='utc' />
 	#end
+	-->
+	<clock offset='localtime'>
+		<timer name='rtc' tickpolicy='catchup'/>
+	</clock>
 	<on_poweroff>destroy</on_poweroff>
 	<on_reboot>restart</on_reboot>
 	<on_crash>restart</on_crash>
@@ -121,7 +126,7 @@
 		<redirdev bus='usb' type='spicevmc'/>
 -->
         <controller type='usb' index='0' >
-        	<address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x02'/>
+        	<address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x02'/>
         </controller>
 		<redirdev bus='usb' type='spicevmc'/>
 		
