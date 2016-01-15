@@ -104,6 +104,7 @@
 	      <address type='usb'  bus='0' port='3'/>
 	    </redirdev>
 		-->
+		<!--
 		<controller type='usb' index='0' model='ich9-ehci1'/>
 		<controller type='usb' index='0' model='ich9-uhci1'>
 		  <master startport='0'/>
@@ -118,8 +119,12 @@
 		<redirdev bus='usb' type='spicevmc'/>
 		<redirdev bus='usb' type='spicevmc'/>
 		<redirdev bus='usb' type='spicevmc'/>
-
-
+-->
+        <controller type='usb' index='0' >
+        	<address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x02'/>
+        </controller>
+		<redirdev bus='usb' type='spicevmc'/>
+		
 		<controller type='pci' index='0' model='pci-root' />
 		<controller type='ide' index='0'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x01'
