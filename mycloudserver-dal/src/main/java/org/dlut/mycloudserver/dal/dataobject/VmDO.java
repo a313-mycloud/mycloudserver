@@ -87,7 +87,8 @@ public class VmDO extends BaseDO {
     /**
      * 显示的端口号
      */
-    private Integer showPort;
+//    private Integer showPort;
+    private  String showPort;
 
     /**
      * 连接显示的密码
@@ -229,11 +230,11 @@ public class VmDO extends BaseDO {
         this.showType = showType;
     }
 
-    public Integer getShowPort() {
+    public String  getShowPort() {
         return showPort;
     }
 
-    public void setShowPort(Integer showPort) {
+    public void setShowPort(String  showPort) {
         this.showPort = showPort;
     }
 

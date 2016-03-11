@@ -165,7 +165,7 @@ public class VmManageServiceImpl implements IVmManageService {
         String vmUuid = CommonUtil.createUuid();
         vmDTO.setVmUuid(vmUuid);
         vmDTO.setHostId(0);
-        vmDTO.setShowPort(0);
+        vmDTO.setShowPort(0+"");
         vmDTO.setVmStatus(VmStatusEnum.CLOSED);
         vmDTO.setImageFormat((StoreFormat) result[0]);
         vmDTO.setImageTotalSize((Long) result[1]);
@@ -319,7 +319,7 @@ public class VmManageServiceImpl implements IVmManageService {
             String domainXmlDesc = domain.getXMLDesc(0);
             //            log.info("启动虚拟机" + vmUuid + "配置信息为：" + "\n" + domainXmlDesc);
             log.info("启动虚拟机" + vmUuid);
-            Integer showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc);
+            String showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc)+"";
 
             // 在数据库中更新虚拟机
             vmDTO.setVmStatus(VmStatusEnum.RUNNING);
@@ -376,7 +376,7 @@ public class VmManageServiceImpl implements IVmManageService {
             vmDTO.setVmStatus(VmStatusEnum.CLOSED);
             vmDTO.setLastHostId(vmDTO.getHostId());
             vmDTO.setHostId(0);//在设置为0之前,先吧他的值放到lastHostId中去
-            vmDTO.setShowPort(0);
+            vmDTO.setShowPort(0+"");
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
@@ -1063,7 +1063,7 @@ public class VmManageServiceImpl implements IVmManageService {
             vmDTO.setVmStatus(VmStatusEnum.CLOSED);
             vmDTO.setLastHostId(vmDTO.getHostId());
             vmDTO.setHostId(0);//在设置为0之前,先吧他的值放到lastHostId中去
-            vmDTO.setShowPort(0);
+            vmDTO.setShowPort(0+"");
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);

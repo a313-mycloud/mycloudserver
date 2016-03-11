@@ -159,7 +159,7 @@ public class VmListener {
         VmDTO vmDTO = result.getModel();
         vmDTO.setVmStatus(VmStatusEnum.RUNNING);
         vmDTO.setHostId(hostId);
-        vmDTO.setShowPort(CommonUtil.getShowPortFromVmDescXml(vmDescXml));
+        vmDTO.setShowPort(CommonUtil.getShowPortFromVmDescXml(vmDescXml)+"");
         MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
         if (!updateResult.isSuccess()) {
             log.error("更新虚拟机" + vmDTO + "失败，原因：" + updateResult.getMsgInfo());
@@ -177,7 +177,7 @@ public class VmListener {
         vmDTO.setVmStatus(VmStatusEnum.CLOSED);
         vmDTO.setLastHostId(vmDTO.getHostId());
         vmDTO.setHostId(0);
-        vmDTO.setShowPort(0);
+        vmDTO.setShowPort(0+"");
         MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
         if (!updateResult.isSuccess()) {
             log.error("更新虚拟机" + vmDTO + "失败，原因：" + updateResult.getMsgInfo());
