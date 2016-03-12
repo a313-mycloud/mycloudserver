@@ -332,12 +332,15 @@ public class VmManageServiceImpl implements IVmManageService {
             try {
                 result = HttpRequest.post(StoreConstants.GETIPBYSERVERSERVER, params);
             } catch (Exception e) {
+                log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
                 return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
             }
             JSONObject json = JSONObject.parseObject(result);
             String isSuccess = json.getString("isSuccess");
-            if ("0".equals(isSuccess))
+            if ("0".equals(isSuccess)) {
+                log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
                 return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
+            }
             log.info("the LAN IP of vm is " + json.getString("ip"));
             //在网关上做虚拟机地址映射
             params.clear();
@@ -352,12 +355,15 @@ public class VmManageServiceImpl implements IVmManageService {
             try {
                 result = HttpRequest.post(StoreConstants.DOMAPPINGSERVER, params);
             } catch (Exception e) {
+                log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
                 return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
             }
             json = JSONObject.parseObject(result);
             isSuccess = json.getString("isSuccess");
-            if ("0".equals(isSuccess))
+            if ("0".equals(isSuccess)) {
+                log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
                 return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+            }
             log.info("the WAN IP of  vm is " + json.getString("port"));
             // 在数据库中更新虚拟机
             vmDTO.setVmStatus(VmStatusEnum.RUNNING);
