@@ -24,6 +24,7 @@ import org.dlut.mycloudserver.client.common.hostmanage.HostDTO;
 import org.dlut.mycloudserver.client.common.hostmanage.HostStatusEnum;
 import org.dlut.mycloudserver.client.common.hostmanage.QueryHostCondition;
 import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
+import org.dlut.mycloudserver.client.common.vmmanage.SystemTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
 import org.dlut.mycloudserver.client.service.hostmanage.IHostManageService;
@@ -31,6 +32,7 @@ import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
 import org.dlut.mycloudserver.service.hostmanage.HostManage;
+import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.mycloudserver.common.constants.StoreConstants;
 import org.mycloudserver.common.util.CommonUtil;
@@ -138,72 +140,72 @@ public class VmListener {
      * @param hostId
      */
     private void setVmIsRunning(String vmUuid, int hostId) {
-        //        Connection conn = mutilHostConnPool.getConnByHostId(hostId);
-        //        if (conn == null) {
-        //            log.error("从连接池中获取连接失败");
-        //            return;
-        //        }
-        //        String vmDescXml = null;
-        //        try {
-        //            Domain domain = conn.getDomainByName(vmUuid);
-        //            vmDescXml = domain.getXMLDesc(0);
-        //        } catch (LibvirtException e) {
-        //            log.error("error message", e);
-        //            return;
-        //        } finally {
-        //            try {
-        //                conn.close();
-        //            } catch (LibvirtException e) {
-        //                log.error("error message", e);
-        //            }
-        //        }
-        //        MyCloudResult<VmDTO> result = vmManageService.getVmByUuid(vmUuid);
-        //        if (!result.isSuccess()) {
-        //            log.error("获取虚拟机" + vmUuid + "失败，原因：" + result.getMsgInfo());
-        //        }
-        //        VmDTO vmDTO = result.getModel();
-        //        vmDTO.setVmStatus(VmStatusEnum.RUNNING);
-        //        vmDTO.setHostId(hostId);
-        //
-        //        //从DHCP获取虚拟机的IP地址
-        //        HashMap<String, String> params = new HashMap<String, String>();
-        //        params.put("macAddress", vmDTO.getVmMacAddress());
-        //        String result1 = "";
-        //        try {
-        //            result1 = HttpRequest.post(StoreConstants.GETIPBYSERVERSERVER, params);
-        //        } catch (Exception e) {
-        //            log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
-        //        }
-        //        JSONObject json = JSONObject.parseObject(result1);
-        //        String isSuccess = json.getString("isSuccess");
-        //        if ("0".equals(isSuccess))
-        //            log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
-        //        //在网关上做虚拟机地址映射
-        //        params.clear();
-        //        if (vmDTO.getSystemType().getValue() == SystemTypeEnum.WINDOWS.getValue())
-        //            params.put("pri_ipport", json.getString("ip") + ":3389");
-        //        else
-        //            params.put("pri_ipport", json.getString("ip") + ":22");
-        //        params.put("action", "1");
-        //        params.put("pub_port", "");
-        //        try {
-        //            result1 = HttpRequest.post(StoreConstants.DOMAPPINGSERVER, params);
-        //        } catch (Exception e) {
-        //            log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
-        //        }
-        //        json = JSONObject.parseObject(result1);
-        //        isSuccess = json.getString("isSuccess");
-        //        if ("0".equals(isSuccess))
-        //            log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
-        //
-        //        vmDTO.setShowPort(json.getString("port"));
-        //
-        //        //        vmDTO.setShowPort(CommonUtil.getShowPortFromVmDescXml(vmDescXml)+"");
-        //
-        //        MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
-        //        if (!updateResult.isSuccess()) {
-        //            log.error("更新虚拟机" + vmDTO + "失败，原因：" + updateResult.getMsgInfo());
-        //        }
+        Connection conn = mutilHostConnPool.getConnByHostId(hostId);
+        if (conn == null) {
+            log.error("从连接池中获取连接失败");
+            return;
+        }
+        String vmDescXml = null;
+        try {
+            Domain domain = conn.getDomainByName(vmUuid);
+            vmDescXml = domain.getXMLDesc(0);
+        } catch (LibvirtException e) {
+            log.error("error message", e);
+            return;
+        } finally {
+            try {
+                conn.close();
+            } catch (LibvirtException e) {
+                log.error("error message", e);
+            }
+        }
+        MyCloudResult<VmDTO> result = vmManageService.getVmByUuid(vmUuid);
+        if (!result.isSuccess()) {
+            log.error("获取虚拟机" + vmUuid + "失败，原因：" + result.getMsgInfo());
+        }
+        VmDTO vmDTO = result.getModel();
+        vmDTO.setVmStatus(VmStatusEnum.RUNNING);
+        vmDTO.setHostId(hostId);
+
+        //从DHCP获取虚拟机的IP地址
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("macAddress", vmDTO.getVmMacAddress());
+        String result1 = "";
+        try {
+            result1 = HttpRequest.post(StoreConstants.GETIPBYSERVERSERVER, params);
+        } catch (Exception e) {
+            log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
+        }
+        JSONObject json = JSONObject.parseObject(result1);
+        String isSuccess = json.getString("isSuccess");
+        if ("0".equals(isSuccess))
+            log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
+        //在网关上做虚拟机地址映射
+        params.clear();
+        if (vmDTO.getSystemType().getValue() == SystemTypeEnum.WINDOWS.getValue())
+            params.put("pri_ipport", json.getString("ip") + ":3389");
+        else
+            params.put("pri_ipport", json.getString("ip") + ":22");
+        params.put("action", "1");
+        params.put("pub_port", "");
+        try {
+            result1 = HttpRequest.post(StoreConstants.DOMAPPINGSERVER, params);
+        } catch (Exception e) {
+            log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
+        }
+        json = JSONObject.parseObject(result1);
+        isSuccess = json.getString("isSuccess");
+        if ("0".equals(isSuccess))
+            log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
+
+        vmDTO.setShowPort(json.getString("port"));
+
+        //        vmDTO.setShowPort(CommonUtil.getShowPortFromVmDescXml(vmDescXml)+"");
+
+        MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
+        if (!updateResult.isSuccess()) {
+            log.error("更新虚拟机" + vmDTO + "失败，原因：" + updateResult.getMsgInfo());
+        }
     }
 
     private void setVmIsClose(String vmUuid) {
