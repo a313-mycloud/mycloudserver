@@ -326,49 +326,46 @@ public class VmManageServiceImpl implements IVmManageService {
             //String showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc)+"";//这个是spice的端口号，不再使用
 
             //从DHCP获取虚拟机的IP地址
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("macAddress", vmDTO.getVmMacAddress());
-            String result = "";
+            String ip = "";
             try {
-                result = HttpRequest.post(StoreConstants.GETIPBYSERVERSERVER, params);
+                ip = this.waitForIp(vmDTO.getVmMacAddress());
+                if ("0".equals(ip)) {
+                    log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
+                    return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
+                }
+                log.info("the LAN IP of vm is " + ip);
             } catch (Exception e) {
                 log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
                 return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
             }
-            JSONObject json = JSONObject.parseObject(result);
-            String isSuccess = json.getString("isSuccess");
-            if ("0".equals(isSuccess)) {
-                log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
-                return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
-            }
-            log.info("the LAN IP of vm is " + json.getString("ip"));
             //在网关上做虚拟机地址映射
-            params.clear();
+            HashMap<String, String> params = new HashMap<String, String>();
             String pri_ipport = "";
             if (vmDTO.getSystemType().getValue() == SystemTypeEnum.WINDOWS.getValue())
-                pri_ipport = json.getString("ip") + ":3389";
+                pri_ipport = ip + ":3389";
             else
-                pri_ipport = json.getString("ip") + ":22";
+                pri_ipport = ip + ":22";
             params.put("pri_ipport", pri_ipport);
             params.put("action", "1");
             params.put("pub_port", "");
+            String result = "";
             try {
                 result = HttpRequest.post(StoreConstants.DOMAPPINGSERVER, params);
             } catch (Exception e) {
                 log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
                 return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
             }
-            json = JSONObject.parseObject(result);
-            isSuccess = json.getString("isSuccess");
-            if ("0".equals(isSuccess)) {
+
+            if ("0".equals(JSONObject.parseObject(result).getString("isSuccess"))) {
                 log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
                 return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
             }
-            log.info("the WAN IP of  vm is " + json.getString("port"));
+            String port = JSONObject.parseObject(result).getString("port");
+            log.info("the WAN IP of  vm is " + port);
             // 在数据库中更新虚拟机
             vmDTO.setVmStatus(VmStatusEnum.RUNNING);
             vmDTO.setHostId(bestHostId);
-            vmDTO.setShowPort(json.getString("port") + ";" + pri_ipport);
+            vmDTO.setShowPort(port + ";" + pri_ipport);
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
@@ -1206,5 +1203,29 @@ public class VmManageServiceImpl implements IVmManageService {
 
         return MyCloudResult.successResult(Boolean.FALSE);
 
+    }
+
+    /**
+     * @param macAddress
+     * @return
+     * @throws Exception
+     */
+    private String waitForIp(String macAddress) throws Exception {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("macAddress", macAddress);
+        long startTime = System.currentTimeMillis();
+        String isSuccess = "0";
+        String result = "";
+        while (System.currentTimeMillis() - startTime <= 15000) {//15seconds
+            result = HttpRequest.post(StoreConstants.GETIPBYSERVERSERVER, params);
+            isSuccess = JSONObject.parseObject(result).getString("isSuccess");
+            if ("1".equals(isSuccess))
+                break;
+            Thread.sleep(1500);
+        }
+        if ("1".equals(isSuccess))
+            return JSONObject.parseObject(result).getString("ip");
+        else
+            return "0";
     }
 }
