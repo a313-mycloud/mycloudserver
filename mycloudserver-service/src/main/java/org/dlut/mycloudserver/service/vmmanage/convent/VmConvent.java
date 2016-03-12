@@ -96,10 +96,7 @@ public class VmConvent {
         if (vmDTO.getInterfaceType() != null) {
             vmDO.setInterfaceType(vmDTO.getInterfaceType().getValue());
         }
-       //底层默认不新系统型，所以上层没必要传值
-        //vmDO.setSystemType(vmDTO.getSystemType().getValue());
-        vmDO.setSystemType(SystemTypeEnum.LINUX.getValue());//此语句不产生作用
-        
+        vmDO.setSystemType(vmDTO.getSystemType().getValue());
         vmDO.setIsTemplateVm(vmDTO.getIsTemplateVm());
         vmDO.setIsPublicTemplate(vmDTO.getIsPublicTemplate());
         vmDO.setVmMacAddress(vmDTO.getVmMacAddress());
