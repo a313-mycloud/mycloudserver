@@ -38,11 +38,11 @@ public class StoreConstants {
      * 镜像存储池的路径
      */
     public static final String IMAGE_POOL_PATH            = "/media/mycloud-pool/images/";
-    
+
     /**
      * 镜像存储池的远程路径
      */
-    public static final String IMAGE_POOL_REMOTE_PATH="/media/mycloud-remote/images/";
+    public static final String IMAGE_POOL_REMOTE_PATH     = "/media/mycloud-remote/images/";
 
     /**
      * 硬盘存储池的名称
@@ -53,6 +53,8 @@ public class StoreConstants {
      * 硬盘存储池的路径
      */
     public static final String DISK_POOL_PATH             = "/media/mycloud-remote/disks/";
-    
-    public static final String SCP_COMMAND_PASSWORD="10041104";
+
+    public static final String SCP_COMMAND_PASSWORD       = "10041104";
+    public static final String GETIPBYSERVERSERVER        = "http://192.168.1.1:8889";
+    public static final String DOMAPPINGSERVER            = "http://192.168.1.1:8888";
 }

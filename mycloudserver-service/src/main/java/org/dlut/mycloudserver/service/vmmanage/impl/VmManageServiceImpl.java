@@ -23,6 +23,7 @@ import org.dlut.mycloudserver.client.common.storemanage.QueryDiskCondition;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.client.common.usermanage.UserDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
+import org.dlut.mycloudserver.client.common.vmmanage.SystemTypeEnum;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
 import org.dlut.mycloudserver.client.service.classmanage.IClassManageService;
@@ -53,10 +54,13 @@ import org.mycloudserver.common.constants.VmConstants;
 import org.mycloudserver.common.util.CommonUtil;
 import org.mycloudserver.common.util.CopyImageFileUtils;
 import org.mycloudserver.common.util.FileUtil;
+import org.mycloudserver.common.util.HttpRequest;
 import org.mycloudserver.common.util.TemplateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 类VmManageServiceImpl.java的实现描述：
@@ -165,7 +169,7 @@ public class VmManageServiceImpl implements IVmManageService {
         String vmUuid = CommonUtil.createUuid();
         vmDTO.setVmUuid(vmUuid);
         vmDTO.setHostId(0);
-        vmDTO.setShowPort(0+"");
+        vmDTO.setShowPort(0 + "");
         vmDTO.setVmStatus(VmStatusEnum.CLOSED);
         vmDTO.setImageFormat((StoreFormat) result[0]);
         vmDTO.setImageTotalSize((Long) result[1]);
@@ -319,12 +323,44 @@ public class VmManageServiceImpl implements IVmManageService {
             String domainXmlDesc = domain.getXMLDesc(0);
             //            log.info("启动虚拟机" + vmUuid + "配置信息为：" + "\n" + domainXmlDesc);
             log.info("启动虚拟机" + vmUuid);
-            String showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc)+"";
+            //String showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc)+"";//这个是spice的端口号，不再使用
 
+            //从DHCP获取虚拟机的IP地址
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("macAddress", vmDTO.getVmMacAddress());
+            String result = "";
+            try {
+                result = HttpRequest.post(StoreConstants.GETIPBYSERVERSERVER, params);
+            } catch (Exception e) {
+                return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
+            }
+            JSONObject json = JSONObject.parseObject(result);
+            String isSuccess = json.getString("isSuccess");
+            if ("0".equals(isSuccess))
+                return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
+            //在网关上做虚拟机地址映射
+            params.clear();
+            String pri_ipport = "";
+            if (vmDTO.getSystemType().getValue() == SystemTypeEnum.WINDOWS.getValue())
+                pri_ipport = json.getString("ip") + ":3389";
+            else
+                pri_ipport = json.getString("ip") + ":22";
+            params.put("pri_ipport", pri_ipport);
+            params.put("action", "1");
+            params.put("pub_port", "");
+            try {
+                result = HttpRequest.post(StoreConstants.DOMAPPINGSERVER, params);
+            } catch (Exception e) {
+                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+            }
+            json = JSONObject.parseObject(result);
+            isSuccess = json.getString("isSuccess");
+            if ("0".equals(isSuccess))
+                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
             // 在数据库中更新虚拟机
             vmDTO.setVmStatus(VmStatusEnum.RUNNING);
             vmDTO.setHostId(bestHostId);
-            vmDTO.setShowPort(showPort);
+            vmDTO.setShowPort(json.getString("port") + ";" + pri_ipport);
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
@@ -376,7 +412,27 @@ public class VmManageServiceImpl implements IVmManageService {
             vmDTO.setVmStatus(VmStatusEnum.CLOSED);
             vmDTO.setLastHostId(vmDTO.getHostId());
             vmDTO.setHostId(0);//在设置为0之前,先吧他的值放到lastHostId中去
-            vmDTO.setShowPort(0+"");
+            vmDTO.setShowPort(0 + "");
+
+            //从网关上删除虚拟机地址映射
+            String ips = vmDTO.getShowPort(); //外网IP;内网IP
+            String pub_port = ips.split(";")[0].split(":")[1];
+            String pri_ipport = ips.split(";")[1];
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("pub_port", pub_port);
+            params.put("pri_ipport", pri_ipport);
+            params.put("action", "-1");
+            String result1 = "";
+            try {
+                result1 = HttpRequest.post(StoreConstants.DOMAPPINGSERVER, params);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
+                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+            }
+            JSONObject json = JSONObject.parseObject(result1);
+            if ("0".equals(json.getString("isSuccess")))
+                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
@@ -1059,11 +1115,31 @@ public class VmManageServiceImpl implements IVmManageService {
             if (!conn.destroyVm(vmUuid)) {
                 return MyCloudResult.failedResult(ErrorEnum.VM_DESTROY_FAIL);
             }
+
+            //从网关上删除虚拟机地址映射
+            String ips = vmDTO.getShowPort(); //外网IP;内网IP
+            String pub_port = ips.split(";")[0].split(":")[1];
+            String pri_ipport = ips.split(";")[1];
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("pub_port", pub_port);
+            params.put("pri_ipport", pri_ipport);
+            params.put("action", "-1");
+            String result1 = "";
+            try {
+                result1 = HttpRequest.post(StoreConstants.DOMAPPINGSERVER, params);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
+                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+            }
+            JSONObject json = JSONObject.parseObject(result1);
+            if ("0".equals(json.getString("isSuccess")))
+                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
             // 在数据库中更新虚拟机状态
             vmDTO.setVmStatus(VmStatusEnum.CLOSED);
             vmDTO.setLastHostId(vmDTO.getHostId());
             vmDTO.setHostId(0);//在设置为0之前,先吧他的值放到lastHostId中去
-            vmDTO.setShowPort(0+"");
+            vmDTO.setShowPort(0 + "");
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
