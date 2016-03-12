@@ -57,6 +57,7 @@ public enum ErrorEnum {
     VM_TRANSFER_FIAL("2012", "虚拟机传输失败"),
     VM_DHCP_FAIL("2013", "虚拟机从DHCP获取IP地址失败"),
     VM_ADDRESSMAPPING_FAIL("2014", "虚拟机地址映射失败"),
+    VM_SHOWPORT_ILLEGAL("2015", "虚拟机地址不合法"),
 
     HOST_NOT_EXIST("3000", "物理机不存在"),
     HOST_DELETE_FAIL("3001", "删除物理机失败"),

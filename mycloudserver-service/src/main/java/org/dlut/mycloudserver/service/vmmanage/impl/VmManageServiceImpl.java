@@ -322,7 +322,7 @@ public class VmManageServiceImpl implements IVmManageService {
             }
             String domainXmlDesc = domain.getXMLDesc(0);
             //            log.info("启动虚拟机" + vmUuid + "配置信息为：" + "\n" + domainXmlDesc);
-            log.info("启动虚拟机" + vmUuid);
+            log.info("starting vm " + vmUuid);
             //String showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc)+"";//这个是spice的端口号，不再使用
 
             //从DHCP获取虚拟机的IP地址
@@ -338,6 +338,7 @@ public class VmManageServiceImpl implements IVmManageService {
             String isSuccess = json.getString("isSuccess");
             if ("0".equals(isSuccess))
                 return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
+            log.info("the LAN IP of vm is " + json.getString("ip"));
             //在网关上做虚拟机地址映射
             params.clear();
             String pri_ipport = "";
@@ -357,6 +358,7 @@ public class VmManageServiceImpl implements IVmManageService {
             isSuccess = json.getString("isSuccess");
             if ("0".equals(isSuccess))
                 return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+            log.info("the WAN IP of  vm is " + json.getString("port"));
             // 在数据库中更新虚拟机
             vmDTO.setVmStatus(VmStatusEnum.RUNNING);
             vmDTO.setHostId(bestHostId);
@@ -375,7 +377,7 @@ public class VmManageServiceImpl implements IVmManageService {
                 log.error("error message", e);
             }
         }
-
+        log.info(" vm  started ");
         return MyCloudResult.successResult(Boolean.TRUE);
     }
 
@@ -398,24 +400,11 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.successResult(Boolean.TRUE);
         }
 
-        Connection conn = mutilHostConnPool.getConnByHostId(vmDTO.getHostId());
-        if (conn == null) {
-            log.error("获取连接失败");
-            return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
-        }
-        try {
-            if (!conn.destroyVm(vmUuid)) {
-                return MyCloudResult.failedResult(ErrorEnum.VM_DESTROY_FAIL);
-            }
-            String lastHostIp = this.hostManage.getHostById(vmDTO.getHostId()).getHostIp();
-            // 在数据库中更新虚拟机状态
-            vmDTO.setVmStatus(VmStatusEnum.CLOSED);
-            vmDTO.setLastHostId(vmDTO.getHostId());
-            vmDTO.setHostId(0);//在设置为0之前,先吧他的值放到lastHostId中去
-            vmDTO.setShowPort(0 + "");
-
-            //从网关上删除虚拟机地址映射
-            String ips = vmDTO.getShowPort(); //外网IP;内网IP
+        //first----从网关上删除虚拟机地址映射
+        String ips = vmDTO.getShowPort(); //外网IP;内网IP
+        if (ips.split(";").length != 2)
+            log.error(ErrorEnum.VM_SHOWPORT_ILLEGAL.getErrDesc());
+        else {
             String pub_port = ips.split(";")[0].split(":")[1];
             String pri_ipport = ips.split(";")[1];
             HashMap<String, String> params = new HashMap<String, String>();
@@ -433,6 +422,24 @@ public class VmManageServiceImpl implements IVmManageService {
             JSONObject json = JSONObject.parseObject(result1);
             if ("0".equals(json.getString("isSuccess")))
                 return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+        }
+        //--shutdown the vm
+        Connection conn = mutilHostConnPool.getConnByHostId(vmDTO.getHostId());
+        if (conn == null) {
+            log.error("获取连接失败");
+            return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
+        }
+        try {
+            if (!conn.destroyVm(vmUuid)) {
+                return MyCloudResult.failedResult(ErrorEnum.VM_DESTROY_FAIL);
+            }
+            String lastHostIp = this.hostManage.getHostById(vmDTO.getHostId()).getHostIp();
+            // 在数据库中更新虚拟机状态
+            vmDTO.setVmStatus(VmStatusEnum.CLOSED);
+            vmDTO.setLastHostId(vmDTO.getHostId());
+            vmDTO.setHostId(0);//在设置为0之前,先吧他的值放到lastHostId中去
+            vmDTO.setShowPort(0 + "");
+
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
@@ -1106,18 +1113,11 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.successResult(Boolean.TRUE);
         }
 
-        Connection conn = mutilHostConnPool.getConnByHostId(vmDTO.getHostId());
-        if (conn == null) {
-            log.error("获取连接失败");
-            return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
-        }
-        try {
-            if (!conn.destroyVm(vmUuid)) {
-                return MyCloudResult.failedResult(ErrorEnum.VM_DESTROY_FAIL);
-            }
-
-            //从网关上删除虚拟机地址映射
-            String ips = vmDTO.getShowPort(); //外网IP;内网IP
+        //从网关上删除虚拟机地址映射
+        String ips = vmDTO.getShowPort(); //外网IP;内网IP
+        if (ips.split(";").length != 2)
+            log.error(ErrorEnum.VM_SHOWPORT_ILLEGAL.getErrDesc());
+        else {
             String pub_port = ips.split(";")[0].split(":")[1];
             String pri_ipport = ips.split(";")[1];
             HashMap<String, String> params = new HashMap<String, String>();
@@ -1135,6 +1135,19 @@ public class VmManageServiceImpl implements IVmManageService {
             JSONObject json = JSONObject.parseObject(result1);
             if ("0".equals(json.getString("isSuccess")))
                 return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+        }
+
+        //shutdown the vm
+        Connection conn = mutilHostConnPool.getConnByHostId(vmDTO.getHostId());
+        if (conn == null) {
+            log.error("获取连接失败");
+            return MyCloudResult.failedResult(ErrorEnum.GET_CONN_FAIL);
+        }
+        try {
+            if (!conn.destroyVm(vmUuid)) {
+                return MyCloudResult.failedResult(ErrorEnum.VM_DESTROY_FAIL);
+            }
+
             // 在数据库中更新虚拟机状态
             vmDTO.setVmStatus(VmStatusEnum.CLOSED);
             vmDTO.setLastHostId(vmDTO.getHostId());
