@@ -422,6 +422,7 @@ public class VmManageServiceImpl implements IVmManageService {
             JSONObject json = JSONObject.parseObject(result1);
             if ("0".equals(json.getString("isSuccess")))
                 return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+            log.info("cancle gateway mapping for " + ips);
         }
         //--shutdown the vm
         Connection conn = mutilHostConnPool.getConnByHostId(vmDTO.getHostId());
@@ -1135,6 +1136,7 @@ public class VmManageServiceImpl implements IVmManageService {
             JSONObject json = JSONObject.parseObject(result1);
             if ("0".equals(json.getString("isSuccess")))
                 return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+            log.info("cancle gateway mapping for " + ips);
         }
 
         //shutdown the vm

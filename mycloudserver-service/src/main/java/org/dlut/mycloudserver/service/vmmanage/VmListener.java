@@ -235,6 +235,7 @@ public class VmListener {
             JSONObject json = JSONObject.parseObject(result1);
             if ("0".equals(json.getString("isSuccess")))
                 log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
+            log.info("cancle gateway mapping for " + ips);
         }
 
         vmDTO.setVmStatus(VmStatusEnum.CLOSED);
