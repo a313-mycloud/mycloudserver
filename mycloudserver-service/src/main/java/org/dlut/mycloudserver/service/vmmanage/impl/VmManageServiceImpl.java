@@ -1216,7 +1216,7 @@ public class VmManageServiceImpl implements IVmManageService {
         long startTime = System.currentTimeMillis();
         String isSuccess = "0";
         String result = "";
-        while (System.currentTimeMillis() - startTime <= 15000) {//15seconds
+        while (System.currentTimeMillis() - startTime <= 30000) {//15seconds
             result = HttpRequest.post(StoreConstants.GETIPBYSERVERSERVER, params);
             isSuccess = JSONObject.parseObject(result).getString("isSuccess");
             if ("1".equals(isSuccess))
