@@ -183,10 +183,12 @@ public class VmListener {
         else {
             //在网关上做虚拟机地址映射
             params.clear();
+            String pri_ipport = "";
             if (vmDTO.getSystemType().getValue() == SystemTypeEnum.WINDOWS.getValue())
-                params.put("pri_ipport", json.getString("ip") + ":3389");
+                pri_ipport = json.getString("ip") + ":3389";
             else
-                params.put("pri_ipport", json.getString("ip") + ":22");
+                pri_ipport = json.getString("ip") + ":22";
+            params.put("pri_ipport", pri_ipport);
             params.put("action", "1");
             params.put("pub_port", "");
             try {
@@ -194,12 +196,11 @@ public class VmListener {
             } catch (Exception e) {
                 log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
             }
-            String pri_ipport = json.getString("pri_ipport");
             json = JSONObject.parseObject(result1);
             isSuccess = json.getString("isSuccess");
             if ("0".equals(isSuccess))
                 log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
-            vmDTO.setShowPort(json.getString("port") + pri_ipport);
+            vmDTO.setShowPort(json.getString("port") + ";" + pri_ipport);
             //        vmDTO.setShowPort(CommonUtil.getShowPortFromVmDescXml(vmDescXml)+"");
             MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
             if (!updateResult.isSuccess()) {
