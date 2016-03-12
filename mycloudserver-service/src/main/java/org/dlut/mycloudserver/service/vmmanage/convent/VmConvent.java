@@ -96,7 +96,9 @@ public class VmConvent {
         if (vmDTO.getInterfaceType() != null) {
             vmDO.setInterfaceType(vmDTO.getInterfaceType().getValue());
         }
-        vmDO.setSystemType(vmDTO.getSystemType().getValue());
+        if (vmDTO.getSystemType() != null) {
+            vmDO.setSystemType(vmDTO.getSystemType().getValue());
+        }
         vmDO.setIsTemplateVm(vmDTO.getIsTemplateVm());
         vmDO.setIsPublicTemplate(vmDTO.getIsPublicTemplate());
         vmDO.setVmMacAddress(vmDTO.getVmMacAddress());
