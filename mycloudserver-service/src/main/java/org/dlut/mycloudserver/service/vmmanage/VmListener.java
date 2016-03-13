@@ -32,7 +32,6 @@ import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
 import org.dlut.mycloudserver.service.hostmanage.HostManage;
-import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.mycloudserver.common.constants.StoreConstants;
 import org.mycloudserver.common.util.CommonUtil;
@@ -140,25 +139,25 @@ public class VmListener {
      * @param hostId
      */
     private void setVmIsRunning(String vmUuid, int hostId) {
-        Connection conn = mutilHostConnPool.getConnByHostId(hostId);
-        if (conn == null) {
-            log.error("从连接池中获取连接失败");
-            return;
-        }
-        String vmDescXml = null;
-        try {
-            Domain domain = conn.getDomainByName(vmUuid);
-            vmDescXml = domain.getXMLDesc(0);
-        } catch (LibvirtException e) {
-            log.error("error message", e);
-            return;
-        } finally {
-            try {
-                conn.close();
-            } catch (LibvirtException e) {
-                log.error("error message", e);
-            }
-        }
+        //        Connection conn = mutilHostConnPool.getConnByHostId(hostId);
+        //        if (conn == null) {
+        //            log.error("从连接池中获取连接失败");
+        //            return;
+        //        }
+        //        String vmDescXml = null;
+        //        try {
+        //            Domain domain = conn.getDomainByName(vmUuid);
+        //            vmDescXml = domain.getXMLDesc(0);
+        //        } catch (LibvirtException e) {
+        //            log.error("error message", e);
+        //            return;
+        //        } finally {
+        //            try {
+        //                conn.close();
+        //            } catch (LibvirtException e) {
+        //                log.error("error message", e);
+        //            }
+        //        }
         MyCloudResult<VmDTO> result = vmManageService.getVmByUuid(vmUuid);
         if (!result.isSuccess()) {
             log.error("获取虚拟机" + vmUuid + "失败，原因：" + result.getMsgInfo());
@@ -200,11 +199,25 @@ public class VmListener {
             isSuccess = json.getString("isSuccess");
             if ("0".equals(isSuccess))
                 log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
-            vmDTO.setShowPort(json.getString("port") + ";" + pri_ipport);
-            //        vmDTO.setShowPort(CommonUtil.getShowPortFromVmDescXml(vmDescXml)+"");
-            MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
-            if (!updateResult.isSuccess()) {
-                log.error("更新虚拟机" + vmDTO + "失败，原因：" + updateResult.getMsgInfo());
+            if ("0".equals(this.vmManage.getVmByUuid(vmUuid))) {
+                vmDTO.setShowPort(json.getString("port") + ";" + pri_ipport);
+                //        vmDTO.setShowPort(CommonUtil.getShowPortFromVmDescXml(vmDescXml)+"");
+
+                MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
+                if (!updateResult.isSuccess()) {
+                    log.error("更新虚拟机" + vmDTO + "失败，原因：" + updateResult.getMsgInfo());
+                }
+            } else {
+                params.put("action", "-1");
+                try {
+                    result1 = HttpRequest.post(StoreConstants.DOMAPPINGSERVER, params);
+                } catch (Exception e) {
+                    log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
+                }
+                json = JSONObject.parseObject(result1);
+                isSuccess = json.getString("isSuccess");
+                if ("0".equals(isSuccess))
+                    log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
             }
         }
     }

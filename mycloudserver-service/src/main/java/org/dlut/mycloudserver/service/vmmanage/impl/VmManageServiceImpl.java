@@ -320,7 +320,6 @@ public class VmManageServiceImpl implements IVmManageService {
                 log.error("创建虚拟机" + vmUuid + "失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_START_FAIL);
             }
-            String domainXmlDesc = domain.getXMLDesc(0);
             //            log.info("启动虚拟机" + vmUuid + "配置信息为：" + "\n" + domainXmlDesc);
             log.info("starting vm " + vmUuid);
             //String showPort = CommonUtil.getShowPortFromVmDescXml(domainXmlDesc)+"";//这个是spice的端口号，不再使用
