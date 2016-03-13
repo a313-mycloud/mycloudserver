@@ -420,11 +420,13 @@ public class VmManageServiceImpl implements IVmManageService {
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
-                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+                //                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
             }
             JSONObject json = JSONObject.parseObject(result1);
-            if ("0".equals(json.getString("isSuccess")))
-                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+            if ("0".equals(json.getString("isSuccess"))) {
+                log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
+                //                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
+            }
             log.info("cancle gateway mapping for " + ips);
         }
         //--shutdown the vm
