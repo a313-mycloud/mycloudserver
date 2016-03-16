@@ -51,4 +51,27 @@ public class LibvirtUtil {
             executorService.shutdown();
         }
     }
+
+    public static boolean canConnect(final String hostIp, int timeOut, TimeUnit timeUnit) {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<Boolean> future = executorService.submit(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                Connect conn = new Connect("qemu+tcp://" + hostIp + "/system");
+                if (conn.isConnected()) {
+                    conn.close();
+                    return true;
+                }
+                conn.close();
+                return false;
+            }
+        });
+        try {
+            return future.get(timeOut, timeUnit);
+        } catch (Exception e) {
+            return false;
+        } finally {
+            executorService.shutdown();
+        }
+    }
 }

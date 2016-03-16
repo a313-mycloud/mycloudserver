@@ -161,12 +161,15 @@ public interface IVmManageService {
     public MyCloudResult<Boolean> changeToNonTempalteVm(String templateVmUuid);
 
     public MyCloudResult<StoreFormat> getImageFormat(String filePath);
-    
+
     /**
      * 用于判断ip为ipAddress的主机上的imageUuid镜像是否可以被删除
+     * 
      * @param ip
      * @param imageUuid
      * @return
      */
-    public  MyCloudResult<Boolean>  isCanDelete(String ipAddress,String imageUuid);
+    public MyCloudResult<Boolean> isCanDelete(String ipAddress, String imageUuid);
+
+    public MyCloudResult<Boolean> killVmOnHost(String vmUuid, int hostId);
 }
