@@ -40,7 +40,7 @@
 		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<property name="jobDetail" ref="simpleConnPoolJobDetail" />
 		<property name="startDelay" value="2000" />
-		<property name="repeatInterval" value="2000" />
+		<property name="repeatInterval" value="5000" />
 	</bean>
 	
 	<bean id="simpleConnPoolJobDetail"

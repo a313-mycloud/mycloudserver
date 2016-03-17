@@ -1,0 +1,82 @@
+package org.mycloudserver.common.network;
+
+import java.util.Random;
+
+import org.mycloudserver.common.constants.StoreConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 类IpMacPoolUtil.java的实现描述：TODO 类实现描述
+ */
+public class IpMacPoolUtil {
+    private static final String MAC_ADDRESS_TEMPLATE = "52:54:%s:%s:%s:%s";
+    private static Logger       log                  = LoggerFactory.getLogger(IpMacPoolUtil.class);
+
+    /**
+     * the first four numbers of mac address is 52:54 ; the last eight numbers
+     * of mac address is the hex of ip ;if return "0",execute fail
+     * 
+     * @param START_IP_ADDRESS
+     * @param END_IP_ADDRESS
+     */
+    public static String getMacFromPool() {
+        String START_IP_ADDRESS = StoreConstants.DHCP_START_IPADDRESS;
+        String END_IP_ADDRESS = StoreConstants.DHCP_END_IPADDRESS;
+
+        if (START_IP_ADDRESS.split("\\.").length != 4 && END_IP_ADDRESS.split("\\.").length != 4) {
+            log.error("the ip range of dhcp is illegal");
+            return "0";
+        }
+
+        String[] start_ip_address = START_IP_ADDRESS.split("\\.");
+        String[] end_ip_address = END_IP_ADDRESS.split("\\.");
+        long startNum = Long.parseLong(start_ip_address[0]) * 256 * 256 * 256 + Long.parseLong(start_ip_address[1])
+                * 256 * 256 + Long.parseLong(start_ip_address[2]) * 256 + Long.parseLong(start_ip_address[3]);
+        long endNum = Long.parseLong(end_ip_address[0]) * 256 * 256 * 256 + Long.parseLong(end_ip_address[1]) * 256
+                * 256 + Long.parseLong(end_ip_address[2]) * 256 + Long.parseLong(end_ip_address[3]);
+
+        long range = endNum - startNum;
+        if (range > Integer.MAX_VALUE) {
+            log.error("the ip range of dhcp is too large");
+            return "0";
+        }
+        Random random = new Random();
+        int randomVal = random.nextInt((int) (range) + 1);
+        //        System.out.println(randomVal);
+        long newVal = startNum + randomVal;
+        int[] newIp = new int[] { 0, 0, 0, 0 };
+        int index = 3;
+        int tmp = 0;
+        while (newVal != 0) {
+            tmp = (int) (newVal % 256);
+            newIp[index--] = tmp;
+            newVal = (newVal - tmp) / 256;
+        }
+
+        //        String destIp = newIp[0] + "." + newIp[1] + "." + newIp[2] + "." + newIp[3];
+        //        System.out.println(destIp);
+
+        String macAddr = String.format(MAC_ADDRESS_TEMPLATE, getFormatHexString(newIp[0]),
+                getFormatHexString(newIp[1]), getFormatHexString(newIp[2]), getFormatHexString(newIp[3]));
+        //        System.out.println(macAddr);
+        return macAddr;
+    }
+
+    public static String getIpByMac(String macAddr) {
+        String[] macs = macAddr.split(":");
+        int ipOne = Integer.parseInt(macs[2], 16);
+        int ipTwo = Integer.parseInt(macs[3], 16);
+        int ipThree = Integer.parseInt(macs[4], 16);
+        int ipFour = Integer.parseInt(macs[5], 16);
+        return ipOne + "." + ipTwo + "." + ipThree + "." + ipFour;
+    }
+
+    private static String getFormatHexString(int num) {
+        String result = Integer.toHexString(num);
+        if (result.length() < 2) {
+            result = "0" + result;
+        }
+        return result.toUpperCase();
+    }
+}

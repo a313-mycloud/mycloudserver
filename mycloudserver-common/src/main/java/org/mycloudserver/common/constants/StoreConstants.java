@@ -57,5 +57,7 @@ public class StoreConstants {
     public static final String SCP_COMMAND_PASSWORD       = "10041104";
     public static final String GETIPBYSERVERSERVER        = "http://192.168.1.1:8889";
     public static final String DOMAPPINGSERVER            = "http://192.168.1.1:8888";
-    public static final String DHCPTIME                   = "120000";                        //ms
+    public static final String DHCPTIME                   = "120000";                       //ms
+    public static final String DHCP_START_IPADDRESS       = "192.168.1.100";
+    public static final String DHCP_END_IPADDRESS         = "192.168.1.200";
 }

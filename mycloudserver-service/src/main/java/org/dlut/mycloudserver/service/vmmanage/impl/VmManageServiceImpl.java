@@ -51,6 +51,7 @@ import org.libvirt.StoragePool;
 import org.libvirt.StorageVol;
 import org.mycloudserver.common.constants.StoreConstants;
 import org.mycloudserver.common.constants.VmConstants;
+import org.mycloudserver.common.network.IpMacPoolUtil;
 import org.mycloudserver.common.network.NetworkService;
 import org.mycloudserver.common.util.CommonUtil;
 import org.mycloudserver.common.util.CopyImageFileUtils;
@@ -171,7 +172,8 @@ public class VmManageServiceImpl implements IVmManageService {
         vmDTO.setVmStatus(VmStatusEnum.CLOSED);
         vmDTO.setImageFormat((StoreFormat) result[0]);
         vmDTO.setImageTotalSize((Long) result[1]);
-        vmDTO.setVmMacAddress(CommonUtil.createMacAddress());
+        //        vmDTO.setVmMacAddress(CommonUtil.createMacAddress());
+        vmDTO.setVmMacAddress(IpMacPoolUtil.getMacFromPool());
 
         VmDO vmDO = VmConvent.conventToVmDO(vmDTO);
         if (!vmManage.createVm(vmDO)) {
@@ -333,14 +335,16 @@ public class VmManageServiceImpl implements IVmManageService {
         //starting the vm  --end
 
         //从DHCP获取虚拟机的IP地址--start
-        String ip = NetworkService.getIPFromDHCP(vmDTO.getVmMacAddress());
-        if ("0".equals(ip)) {
-            MyCloudResult<Boolean> res = this.killVmOnHost(vmUuid, bestHostId);
-            if (!res.isSuccess())
-                log.warn("调用vmManageService.killVmOnHost()出错，" + res.getMsgCode() + ":" + res.getMsgInfo());
-            log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
-            return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
-        }
+        //        String ip = NetworkService.getIPFromDHCP(vmDTO.getVmMacAddress());
+        //        if ("0".equals(ip)) {
+        //            MyCloudResult<Boolean> res = this.killVmOnHost(vmUuid, bestHostId);
+        //            if (!res.isSuccess())
+        //                log.warn("调用vmManageService.killVmOnHost()出错，" + res.getMsgCode() + ":" + res.getMsgInfo());
+        //            log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
+        //            return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
+        //        }
+        //calculate ip by mac address
+        String ip = IpMacPoolUtil.getIpByMac(vmDTO.getVmMacAddress());
         log.info("the LAN IP of vm is " + ip);
         //从DHCP获取虚拟机的IP地址--end
 
