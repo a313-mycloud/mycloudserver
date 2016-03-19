@@ -103,7 +103,7 @@
 	<select id="getVmByMacAddr" resultMap="RM-VmDO">
 		SELECT
 		<include refid="select-param-column" />
-		FROM mycloud_vm where vm_uuid=#{vmMacAddr}
+		FROM mycloud_vm where vm_mac_address=#{vmMacAddress}
 	</select>
 
 	<insert id="createVm">

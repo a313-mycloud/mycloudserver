@@ -36,6 +36,8 @@ import org.dlut.mycloudserver.dal.dataobject.VmDO;
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
 import org.dlut.mycloudserver.service.hostmanage.HostManage;
+import org.dlut.mycloudserver.service.network.IpMacPool;
+import org.dlut.mycloudserver.service.network.NetworkService;
 import org.dlut.mycloudserver.service.schedule.IScheduler;
 import org.dlut.mycloudserver.service.storemanage.DiskVO;
 import org.dlut.mycloudserver.service.vmmanage.CopyImageFromHostTask;
@@ -51,8 +53,6 @@ import org.libvirt.StoragePool;
 import org.libvirt.StorageVol;
 import org.mycloudserver.common.constants.StoreConstants;
 import org.mycloudserver.common.constants.VmConstants;
-import org.mycloudserver.common.network.IpMacPoolUtil;
-import org.mycloudserver.common.network.NetworkService;
 import org.mycloudserver.common.util.CommonUtil;
 import org.mycloudserver.common.util.CopyImageFileUtils;
 import org.mycloudserver.common.util.FileUtil;
@@ -94,6 +94,9 @@ public class VmManageServiceImpl implements IVmManageService {
 
     @Resource(name = "diskManageService")
     private IDiskManageService  diskManageService;
+
+    @Resource(name = "ipMacPool")
+    private IpMacPool       ipMacPool;
 
     private ExecutorService     executorService = Executors.newCachedThreadPool();
 
@@ -173,8 +176,7 @@ public class VmManageServiceImpl implements IVmManageService {
         vmDTO.setImageFormat((StoreFormat) result[0]);
         vmDTO.setImageTotalSize((Long) result[1]);
         //        vmDTO.setVmMacAddress(CommonUtil.createMacAddress());
-        vmDTO.setVmMacAddress(IpMacPoolUtil.getMacFromPool());
-
+        vmDTO.setVmMacAddress(0 + "");
         VmDO vmDO = VmConvent.conventToVmDO(vmDTO);
         if (!vmManage.createVm(vmDO)) {
             log.error("创建虚拟机 " + vmDO + "失败");
@@ -255,6 +257,7 @@ public class VmManageServiceImpl implements IVmManageService {
         // 获取需要挂载的硬盘
         List<DiskVO> diskVOList = getNeedAttachDiskList(vmUuid);
 
+        String macAddress = this.ipMacPool.getMacFromPool();
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("vmUuid", vmDTO.getVmUuid());
         // 单位为KB
@@ -265,7 +268,7 @@ public class VmManageServiceImpl implements IVmManageService {
         context.put("showPassword", vmDTO.getShowPassword());
         context.put("diskList", diskVOList);
         context.put("vmNetworkType", vmDTO.getVmNetworkType());
-        context.put("vmMacAddress", vmDTO.getVmMacAddress());
+        context.put("vmMacAddress", macAddress);
         context.put("masterDiskBusType", vmDTO.getMasterDiskBusType());
         context.put("interfaceType", vmDTO.getInterfaceType());
         context.put("systemType", vmDTO.getSystemType());
@@ -344,7 +347,7 @@ public class VmManageServiceImpl implements IVmManageService {
         //            return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
         //        }
         //calculate ip by mac address
-        String ip = IpMacPoolUtil.getIpByMac(vmDTO.getVmMacAddress());
+        String ip = this.ipMacPool.getIpByMac(macAddress);
         log.info("the LAN IP of vm is " + ip);
         //从DHCP获取虚拟机的IP地址--end
 
@@ -369,6 +372,7 @@ public class VmManageServiceImpl implements IVmManageService {
         vmDTO.setVmStatus(VmStatusEnum.RUNNING);
         vmDTO.setHostId(bestHostId);
         vmDTO.setShowPort(result + ";" + pri_ipport);
+        vmDTO.setVmMacAddress(macAddress);
         if (!updateVmIn(vmDTO)) {
             log.error("在数据库中更新vm失败");
             return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
@@ -427,6 +431,7 @@ public class VmManageServiceImpl implements IVmManageService {
             vmDTO.setLastHostId(vmDTO.getHostId());
             vmDTO.setHostId(0);//在设置为0之前,先吧他的值放到lastHostId中去
             vmDTO.setShowPort(0 + "");
+            vmDTO.setVmMacAddress(0 + "");
 
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
@@ -1132,6 +1137,7 @@ public class VmManageServiceImpl implements IVmManageService {
             vmDTO.setLastHostId(vmDTO.getHostId());
             vmDTO.setHostId(0);//在设置为0之前,先吧他的值放到lastHostId中去
             vmDTO.setShowPort(0 + "");
+            vmDTO.setVmMacAddress(0 + "");
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);

@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 /**
  * 类IpMacPoolUtil.java的实现描述：TODO 类实现描述
  */
-@Service("ipMacPoolUtil")
-public class IpMacPoolUtil {
+@Service("ipMacPool")
+public class IpMacPool {
     private static final String MAC_ADDRESS_TEMPLATE = "52:54:%s:%s:%s:%s";
-    private static Logger       log                  = LoggerFactory.getLogger(IpMacPoolUtil.class);
+    private static Logger       log                  = LoggerFactory.getLogger(IpMacPool.class);
 
     @Resource(name = "vmManage")
     private VmManage            vmManage;

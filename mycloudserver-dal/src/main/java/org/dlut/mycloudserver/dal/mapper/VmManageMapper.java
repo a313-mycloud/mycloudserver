@@ -28,7 +28,7 @@ public interface VmManageMapper {
      */
     VmDO getVmByUuid(String vmUuid);
 
-    VmDO getVmByMacAddr(String vmMacAddr);
+    VmDO getVmByMacAddr(String vmMacAddress);
 
     /**
      * 创建虚拟机

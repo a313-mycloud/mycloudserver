@@ -41,8 +41,7 @@ public class VmManage {
         if (StringUtils.isBlank(vmMacAddr)) {
             return null;
         }
-
-        return vmManageMapper.getVmByUuid(vmMacAddr);
+        return vmManageMapper.getVmByMacAddr(vmMacAddr);
     }
 
     public boolean createVm(VmDO vmDO) {

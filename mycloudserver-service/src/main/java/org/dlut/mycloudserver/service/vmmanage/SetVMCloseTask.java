@@ -9,7 +9,7 @@ import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
 import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.service.hostmanage.HostManage;
-import org.mycloudserver.common.network.NetworkService;
+import org.dlut.mycloudserver.service.network.NetworkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
