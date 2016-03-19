@@ -1,4 +1,4 @@
-package org.mycloudserver.common.network;
+package org.dlut.mycloudserver.service.network;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

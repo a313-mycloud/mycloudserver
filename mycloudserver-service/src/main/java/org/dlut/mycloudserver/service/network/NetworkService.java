@@ -5,7 +5,7 @@
  * use it only in accordance with the terms of the license agreement you entered
  * into with etao.com .
  */
-package org.mycloudserver.common.network;
+package org.dlut.mycloudserver.service.network;
 
 import java.util.HashMap;
 
