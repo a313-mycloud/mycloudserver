@@ -37,23 +37,19 @@ public class KillVMTask implements Runnable {
     public void run() {
         try {
             Thread.sleep(Long.parseLong(StoreConstants.DHCPTIME));
-        } catch (NumberFormatException e) {
-            // TODO Auto-generated catch block
-            log.error("error message", e);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception e) {
             log.error("error message", e);
         }
         MyCloudResult<VmDTO> result = this.vmManageService.getVmByUuid(vmUuid);
         if (!result.isSuccess()) {
-            log.error("调用vmManageService.getVmByUuid()出错，" + result.getMsgCode() + ":" + result.getMsgInfo());
+            log.info("the vm --" + vmUuid + " running on " + hostId + "already shutdown");
         } else {
             if (result.getModel().getVmStatus().getStatus() == VmStatusEnum.CLOSED.getStatus()) {
                 MyCloudResult<Boolean> result1 = this.vmManageService.killVmOnHost(vmUuid, hostId);
                 if (!result1.isSuccess()) {
                     log.warn("调用vmManageService.forceShutDown()出错，" + result.getMsgCode() + ":" + result.getMsgInfo());
                 }
-                log.info("shutdown the vm --" + vmUuid + " running on " + hostId);
+                log.info("shutdown  the vm --" + vmUuid + " running on " + hostId);
             }
         }
     }

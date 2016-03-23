@@ -191,6 +191,12 @@
 			<if test="vmNetworkType!=null">
 				vm_network_type=#{vmNetworkType},
 			</if>
+			<if test="imageUuid!=null">
+				image_uuid=#{imageUuid},
+			</if>
+			<if test="imageTotalSize!=null">
+		        image_total_size=#{imageTotalSize},
+			</if>
 			<if test="isCanRead!=null">
 				canread_status=#{isCanRead},
 			</if>

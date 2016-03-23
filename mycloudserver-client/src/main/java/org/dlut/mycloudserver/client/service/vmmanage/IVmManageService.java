@@ -35,6 +35,8 @@ public interface IVmManageService {
      */
     public MyCloudResult<String> createVm(VmDTO vmDTO);
 
+    public MyCloudResult<String> createImage(VmDTO vmDTO);
+
     /**
      * 克隆虚拟机，必须设置vmName,
      * vmVcpu、vmMemory、userAccount、showType、showPassword，classId,

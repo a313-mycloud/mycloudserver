@@ -38,7 +38,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     /**
      * Test method for
-     * {@link org.dlut.mycloudserver.service.vmmanage.impl.VmManageServiceImpl#getVmByUuid(java.lang.String)}
+     * {@link org.dlut.mycloudserver.service.vmmanage.impl.VmManageServiceImplBackUp#getVmByUuid(java.lang.String)}
      * .
      * 
      * @throws InterruptedException
@@ -53,7 +53,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     /**
      * Test method for
-     * {@link org.dlut.mycloudserver.service.vmmanage.impl.VmManageServiceImpl#createVm(org.dlut.mycloudserver.client.common.vmmanage.VmDTO)}
+     * {@link org.dlut.mycloudserver.service.vmmanage.impl.VmManageServiceImplBackUp#createVm(org.dlut.mycloudserver.client.common.vmmanage.VmDTO)}
      * .
      */
     @Test
@@ -76,7 +76,7 @@ public class VmManageServiceImplTest extends BaseTestCase {
 
     /**
      * Test method for
-     * {@link org.dlut.mycloudserver.service.vmmanage.impl.VmManageServiceImpl#startVm(java.lang.String)}
+     * {@link org.dlut.mycloudserver.service.vmmanage.impl.VmManageServiceImplBackUp#startVm(java.lang.String)}
      * .
      * 
      * @throws InterruptedException

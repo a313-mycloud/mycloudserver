@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
@@ -40,7 +38,6 @@ import org.dlut.mycloudserver.service.network.IpMacPool;
 import org.dlut.mycloudserver.service.network.NetworkService;
 import org.dlut.mycloudserver.service.schedule.IScheduler;
 import org.dlut.mycloudserver.service.storemanage.DiskVO;
-import org.dlut.mycloudserver.service.vmmanage.CopyImageFromHostTask;
 import org.dlut.mycloudserver.service.vmmanage.VmManage;
 import org.dlut.mycloudserver.service.vmmanage.convent.VmConvent;
 import org.dom4j.Document;
@@ -50,11 +47,9 @@ import org.dom4j.io.SAXReader;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 import org.libvirt.StoragePool;
-import org.libvirt.StorageVol;
 import org.mycloudserver.common.constants.StoreConstants;
 import org.mycloudserver.common.constants.VmConstants;
 import org.mycloudserver.common.util.CommonUtil;
-import org.mycloudserver.common.util.CopyImageFileUtils;
 import org.mycloudserver.common.util.FileUtil;
 import org.mycloudserver.common.util.TemplateUtil;
 import org.slf4j.Logger;
@@ -69,7 +64,7 @@ import org.springframework.stereotype.Service;
 @Service("vmManageService")
 public class VmManageServiceImpl implements IVmManageService {
 
-    private static Logger       log             = LoggerFactory.getLogger(VmManageServiceImpl.class);
+    private static Logger       log = LoggerFactory.getLogger(VmManageServiceImpl.class);
 
     @Resource(name = "vmManage")
     private VmManage            vmManage;
@@ -96,9 +91,7 @@ public class VmManageServiceImpl implements IVmManageService {
     private IDiskManageService  diskManageService;
 
     @Resource(name = "ipMacPool")
-    private IpMacPool       ipMacPool;
-
-    private ExecutorService     executorService = Executors.newCachedThreadPool();
+    private IpMacPool           ipMacPool;
 
     @Override
     public MyCloudResult<VmDTO> getVmByUuid(String vmUuid) {
@@ -129,20 +122,6 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
         }
 
-        // 验证镜像是否存在
-        //modify to  /media/mycloud-remote
-        //        String imagePath = StoreConstants.IMAGE_POOL_PATH + vmDTO.getImageUuid();
-        String imagePath = StoreConstants.IMAGE_POOL_REMOTE_PATH + vmDTO.getImageUuid();
-        if (!FileUtil.isFileExist(imagePath)) {
-            return MyCloudResult.failedResult(ErrorEnum.IMAGE_NOT_EXIST);
-        }
-
-        // 验证镜像是否和其他虚拟机绑定
-        if (isImageBindVm(vmDTO.getImageUuid())) {
-            log.warn("镜像" + vmDTO.getImageUuid() + "已和其他虚拟机绑定");
-            return MyCloudResult.failedResult(ErrorEnum.IMAGE_HAS_BIND_VM);
-        }
-
         //验证课程是否存在
         if (vmDTO.getClassId() != 0) {
             MyCloudResult<ClassDTO> classResult = classManageService.getClassById(vmDTO.getClassId());
@@ -159,23 +138,13 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.USER_NOT_EXIST);
         }
 
-        // 获取镜像的格式和总大小
-        Object[] result = FileUtil.getStoreFormatAndSize(imagePath);
-        if (result == null) {
-            return MyCloudResult.failedResult(ErrorEnum.IMAGE_GET_FORMAT_SIZE_FAIL);
-        }
-        if (result[0] == null) {
-            return MyCloudResult.failedResult(ErrorEnum.IMAGE_FORMAT_UNKNOW);
-        }
-
         String vmUuid = CommonUtil.createUuid();
         vmDTO.setVmUuid(vmUuid);
         vmDTO.setHostId(0);
         vmDTO.setShowPort(0 + "");
         vmDTO.setVmStatus(VmStatusEnum.CLOSED);
-        vmDTO.setImageFormat((StoreFormat) result[0]);
-        vmDTO.setImageTotalSize((Long) result[1]);
-        //        vmDTO.setVmMacAddress(CommonUtil.createMacAddress());
+        vmDTO.setImageFormat(StoreFormat.QCOW2);
+        vmDTO.setImageTotalSize((long) 0);
         vmDTO.setVmMacAddress(0 + "");
         VmDO vmDO = VmConvent.conventToVmDO(vmDTO);
         if (!vmManage.createVm(vmDO)) {
@@ -237,6 +206,7 @@ public class VmManageServiceImpl implements IVmManageService {
      */
     @Override
     public MyCloudResult<Boolean> startVm(String vmUuid) {
+
         if (StringUtils.isBlank(vmUuid)) {
             return MyCloudResult.failedResult(ErrorEnum.PARAM_NULL);
         }
@@ -254,16 +224,32 @@ public class VmManageServiceImpl implements IVmManageService {
             return MyCloudResult.failedResult(ErrorEnum.VM_TEMPLATE_CAN_NOT_START);
         }
 
+        Integer bestHostId = scheduler.getBestHostId(vmDTO);
+        HostDO hostDO = this.hostManage.getHostById(bestHostId);
+        if (bestHostId == null) {
+            log.error("启动虚拟机" + vmDTO + "时，获取最佳物理机id失败");
+            return MyCloudResult.failedResult(ErrorEnum.VM_GET_BEST_HOST_FIAL);
+        }
+        log.info("虚拟机调度在Ip为" + hostDO.getHostIp() + "的主机上");
+
         // 获取需要挂载的硬盘
         List<DiskVO> diskVOList = getNeedAttachDiskList(vmUuid);
-
+        //get the mac address from Mac Pool
         String macAddress = this.ipMacPool.getMacFromPool();
+
+        //generate a new image by srcVmUuid in bestHostId
+        MyCloudResult<VmDTO> srcVmResult = getVmByUuid(vmDTO.getParentVmUuid());
+        if (!srcVmResult.isSuccess()) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
+        }
+        VmDTO srcVmDTO = srcVmResult.getModel();
+        String newImageUuid = cloneImageByLibvirt(bestHostId, srcVmDTO.getImagePath(), srcVmDTO.getImageTotalSize());
+
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("vmUuid", vmDTO.getVmUuid());
-        // 单位为KB
-        context.put("vmMemory", vmDTO.getVmMemory() / 1024);
+        context.put("vmMemory", vmDTO.getVmMemory() / 1024);// 单位为KB
         context.put("vmVcpu", vmDTO.getVmVcpu());
-        context.put("imagePath", vmDTO.getImagePath());
+        context.put("imagePath", StoreConstants.IMAGE_POOL_PATH + newImageUuid);
         context.put("showType", vmDTO.getShowType());
         context.put("showPassword", vmDTO.getShowPassword());
         context.put("diskList", diskVOList);
@@ -273,44 +259,6 @@ public class VmManageServiceImpl implements IVmManageService {
         context.put("interfaceType", vmDTO.getInterfaceType());
         context.put("systemType", vmDTO.getSystemType());
         String xmlDesc = TemplateUtil.renderTemplate(VmConstants.VOLUME_TEMPLATE_PATH, context);
-
-        Integer bestHostId = scheduler.getBestHostId(vmDTO);
-        HostDO hostDO = this.hostManage.getHostById(bestHostId);
-        if (bestHostId == null) {
-            log.error("启动虚拟机" + vmDTO + "时，获取最佳物理机id失败");
-            return MyCloudResult.failedResult(ErrorEnum.VM_GET_BEST_HOST_FIAL);
-        }
-        log.info("虚拟机调度在Ip为" + hostDO.getHostIp() + "的主机上");
-
-        /**
-         * 如果此次调度产生的主机与上一次运行的主机相同，那么不需要镜像传输过程 否则需要传输镜像在bestHostId
-         */
-        VmDO vmDO = this.vmManage.getVmByUuid(vmUuid);
-        if (vmDO.getLastHostId() != bestHostId) {
-            /**
-             * 将需要的虚拟机镜像拷贝到目标理理机上，这是一个同步线程
-             */
-            /****************************************************/
-            boolean canRead = (vmDO.getIsCanRead() == 1 ? true : false);
-            while (!canRead) {//只要不可读，一直等待到可读
-                //            canRead = (vmDO.getIsCanRead() == 1 ? true : false);  error codding
-                canRead = (this.vmManage.getVmByUuid(vmUuid).getIsCanRead() == 1 ? true : false);
-            }
-            boolean result = false;
-            try {
-                result = CopyImageFileUtils.copyImageToHost(Runtime.getRuntime(), vmDO.getImageUuid(),
-                        hostDO.getHostIp());
-            } catch (Exception e) {
-                e.printStackTrace();
-                return MyCloudResult.failedResult(ErrorEnum.VM_TRANSFER_FIAL);
-            }
-            if (!result) {
-                return MyCloudResult.failedResult(ErrorEnum.VM_TRANSFER_FIAL);
-            }
-            log.info("从文件系统拷贝镜像" + vmDO.getImageUuid() + "到" + hostDO.getHostIp() + "成功");
-        } else {
-            log.info("镜像already在目标主机上");
-        }
 
         //starting the vm  --start
         Connection conn = mutilHostConnPool.getConnByHostId(bestHostId);
@@ -335,21 +283,9 @@ public class VmManageServiceImpl implements IVmManageService {
             }
         }
         log.info("started vm " + vmUuid);
-        //starting the vm  --end
 
-        //从DHCP获取虚拟机的IP地址--start
-        //        String ip = NetworkService.getIPFromDHCP(vmDTO.getVmMacAddress());
-        //        if ("0".equals(ip)) {
-        //            MyCloudResult<Boolean> res = this.killVmOnHost(vmUuid, bestHostId);
-        //            if (!res.isSuccess())
-        //                log.warn("调用vmManageService.killVmOnHost()出错，" + res.getMsgCode() + ":" + res.getMsgInfo());
-        //            log.error(ErrorEnum.VM_DHCP_FAIL.getErrDesc());
-        //            return MyCloudResult.failedResult(ErrorEnum.VM_DHCP_FAIL);
-        //        }
-        //calculate ip by mac address
         String ip = this.ipMacPool.getIpByMac(macAddress);
         log.info("the LAN IP of vm is " + ip);
-        //从DHCP获取虚拟机的IP地址--end
 
         //在网关上做虚拟机地址映射--start
         String pri_ipport = null;
@@ -373,6 +309,9 @@ public class VmManageServiceImpl implements IVmManageService {
         vmDTO.setHostId(bestHostId);
         vmDTO.setShowPort(result + ";" + pri_ipport);
         vmDTO.setVmMacAddress(macAddress);
+        vmDTO.setImageUuid(newImageUuid);
+        vmDTO.setImageTotalSize(srcVmDTO.getImageTotalSize());
+
         if (!updateVmIn(vmDTO)) {
             log.error("在数据库中更新vm失败");
             return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
@@ -425,26 +364,17 @@ public class VmManageServiceImpl implements IVmManageService {
             if (!conn.destroyVm(vmUuid)) {
                 return MyCloudResult.failedResult(ErrorEnum.VM_DESTROY_FAIL);
             }
-            String lastHostIp = this.hostManage.getHostById(vmDTO.getHostId()).getHostIp();
             // 在数据库中更新虚拟机状态
             vmDTO.setVmStatus(VmStatusEnum.CLOSED);
             vmDTO.setLastHostId(vmDTO.getHostId());
             vmDTO.setHostId(0);//在设置为0之前,先吧他的值放到lastHostId中去
             vmDTO.setShowPort(0 + "");
             vmDTO.setVmMacAddress(0 + "");
-
+            vmDTO.setImageUuid(0 + "");
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
             }
-            /**
-             * 开启异步线程，将镜像上传到主机 上传完毕后，版本号加1，文件重新设置为可读
-             */
-            /************* start **************************************/
-            executorService.submit(new CopyImageFromHostTask(vmUuid, lastHostIp, this.vmManage));
-
-            /************** end *************************************/
-
             return MyCloudResult.successResult(Boolean.TRUE);
         } catch (LibvirtException e) {
             log.error("error message", e);
@@ -520,14 +450,8 @@ public class VmManageServiceImpl implements IVmManageService {
         if (!srcVmDTO.getIsTemplateVm()) {
             return MyCloudResult.failedResult(ErrorEnum.VM_ONLY_CLONE_FROM_TEMPLATE);
         }
-        // 利用libvirt创建新的镜像
-        //        String newImageUuid = cloneImageByLibvirt(srcVmDTO.getImagePath(), srcVmDTO.getImageTotalSize());
-        String newImageUuid = cloneImageByLibvirt(StoreConstants.IMAGE_POOL_REMOTE_PATH + srcVmDTO.getImageUuid(),
-                srcVmDTO.getImageTotalSize());
-        if (StringUtils.isBlank(newImageUuid)) {
-            return MyCloudResult.failedResult(ErrorEnum.IMAGE_CREATE_FAIL);
-        }
-        destVmDTO.setImageUuid(newImageUuid);
+
+        destVmDTO.setImageUuid(0 + "");
         destVmDTO.setParentVmUuid(srcVmUuid);
         // 沿用父虚拟机的主硬盘总线类型和网卡类型
         destVmDTO.setMasterDiskBusType(srcVmDTO.getMasterDiskBusType());
@@ -549,15 +473,14 @@ public class VmManageServiceImpl implements IVmManageService {
      * @param imageTotalSize
      * @return
      */
-    private String cloneImageByLibvirt(String srcImagePath, long imageTotalSize) {
-        Connection conn = mutilHostConnPool.getLocalConn();
+    private String cloneImageByLibvirt(int hostId, String srcImagePath, long imageTotalSize) {
+        Connection conn = mutilHostConnPool.getConnByHostId(hostId);
         if (conn == null) {
-            log.error("获取本地libvirt连接失败");
+            log.error("获取--" + hostId + "--libvirt连接失败");
             return null;
         }
         String newImageUuid = CommonUtil.createUuid();
-        //        String newImagePath = StoreConstants.IMAGE_POOL_PATH + newImageUuid;
-        String newImagePath = StoreConstants.IMAGE_POOL_REMOTE_PATH + newImageUuid;
+        String newImagePath = StoreConstants.IMAGE_POOL_PATH + newImageUuid;
         try {
             StoragePool pool = conn.getStoragePoolByName(StoreConstants.IMAGE_POOL_NAME);
             Map<String, Object> context = new HashMap<String, Object>();
@@ -682,48 +605,10 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         // 如果虚拟机还在运行，则先强制关闭虚拟机
         if (deleteVmDTO.getVmStatus() == VmStatusEnum.RUNNING) {
-            //            forceShutDownVm(deleteVmDTO.getVmUuid());
             forceShutDownVmWithoutCopy(deleteVmDTO.getVmUuid());
         }
-
-        // 物理删除虚拟机镜像
-        if (!physicalDeleteImageByLibvirt(deleteVmDTO.getImageUuid())) {
-            log.error("利用libvirt删除虚拟机" + deleteVmDTO + "失败");
-            return false;
-        }
-
         // 在数据库中删除虚拟机
         return vmManage.deleteVmByUuid(deleteVmDTO.getVmUuid());
-
-        //        if (!vmManage.deleteVmByUuid(deleteVmDTO.getVmUuid())) {
-        //            return false;
-        //        }
-        //
-        //        return physicalDeleteImageByLibvirt(deleteVmDTO.getImageUuid());
-    }
-
-    private boolean physicalDeleteImageByLibvirt(String imageUuid) {
-        Connection conn = mutilHostConnPool.getLocalConn();
-        if (conn == null) {
-            log.error("获取本地libvirt失败");
-            return false;
-        }
-        try {
-            StoragePool pool = conn.getStoragePoolByName(StoreConstants.IMAGE_POOL_NAME);
-            pool.refresh(0);
-            StorageVol vol = pool.storageVolLookupByName(imageUuid);
-            vol.delete(0);
-        } catch (LibvirtException e) {
-            log.error("删除卷" + imageUuid + "失败", e);
-            return false;
-        } finally {
-            try {
-                conn.close();
-            } catch (LibvirtException e) {
-                log.error("error message", e);
-            }
-        }
-        return true;
     }
 
     @Override
@@ -1116,7 +1001,6 @@ public class VmManageServiceImpl implements IVmManageService {
             String result1 = NetworkService.addOrMinusMapping("-1", pri_ipport, pub_port);
             if ("0".equals(result1)) {
                 log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
-                //                return MyCloudResult.failedResult(ErrorEnum.VM_ADDRESSMAPPING_FAIL);
             }
             log.info("cancle gateway mapping for " + pub_port + "--" + pri_ipport);
         }
@@ -1138,6 +1022,7 @@ public class VmManageServiceImpl implements IVmManageService {
             vmDTO.setHostId(0);//在设置为0之前,先吧他的值放到lastHostId中去
             vmDTO.setShowPort(0 + "");
             vmDTO.setVmMacAddress(0 + "");
+            vmDTO.setImageUuid(0 + "");
             if (!updateVmIn(vmDTO)) {
                 log.error("在数据库中更新vm失败");
                 return MyCloudResult.failedResult(ErrorEnum.VM_UPDATE_FIAL);
@@ -1202,4 +1087,54 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         return MyCloudResult.successResult(Boolean.TRUE);
     }
+
+    /**
+     * 创建新的虚拟机，必须设置vmName, vmVcpu、vmMemory、imageUuid、userAccount、showType、
+     * showPassword ，classId(0表示没有课程),parentVmUuid(如果没有，则设为“”),isTemplateVm,
+     * isPublicTemplate, masterDiskBusType, interfaceType,systemType 可选：desc
+     * isCanRead默认为1 lastHostId默认为-1 imageVersion默认为0
+     */
+    @Override
+    public MyCloudResult<String> createImage(VmDTO vmDTO) {
+        if (vmDTO == null || vmDTO.getVmVcpu() == null || vmDTO.getVmMemory() == null
+                || StringUtils.isBlank(vmDTO.getImageUuid()) || StringUtils.isBlank(vmDTO.getUserAccount())
+                || vmDTO.getShowType() == null || StringUtils.isBlank(vmDTO.getShowPassword())
+                || vmDTO.getClassId() == null || vmDTO.getParentVmUuid() == null || vmDTO.getIsTemplateVm() == null
+                || vmDTO.getIsPublicTemplate() == null || vmDTO.getVmNetworkType() == null
+                || vmDTO.getMasterDiskBusType() == null || vmDTO.getInterfaceType() == null
+                || vmDTO.getSystemType() == null || vmDTO.getImageTotalSize() == null) {
+            return MyCloudResult.failedResult(ErrorEnum.PARAM_IS_INVAILD);
+        }
+
+        //验证课程是否存在
+        if (vmDTO.getClassId() != 0) {
+            MyCloudResult<ClassDTO> classResult = classManageService.getClassById(vmDTO.getClassId());
+            if (!classResult.isSuccess()) {
+                log.warn("课程 " + vmDTO.getClassId() + "不存在");
+                return MyCloudResult.failedResult(ErrorEnum.CLASS_NOT_EXIST);
+            }
+        }
+
+        // 验证用户是否存在
+        MyCloudResult<UserDTO> userResult = userManageService.getUserByAccount(vmDTO.getUserAccount());
+        if (!userResult.isSuccess()) {
+            log.warn("用户 " + vmDTO.getUserAccount() + " 不存在");
+            return MyCloudResult.failedResult(ErrorEnum.USER_NOT_EXIST);
+        }
+
+        String vmUuid = CommonUtil.createUuid();
+        vmDTO.setVmUuid(vmUuid);
+        vmDTO.setHostId(0);
+        vmDTO.setShowPort(0 + "");
+        vmDTO.setVmStatus(VmStatusEnum.CLOSED);
+        vmDTO.setImageFormat(StoreFormat.QCOW2);
+        vmDTO.setVmMacAddress(0 + "");
+        VmDO vmDO = VmConvent.conventToVmDO(vmDTO);
+        if (!vmManage.createVm(vmDO)) {
+            log.error("创建虚拟机 " + vmDO + "失败");
+            return MyCloudResult.failedResult(ErrorEnum.VM_CREATE_FAIL);
+        }
+        return MyCloudResult.successResult(vmUuid);
+    }
+
 }

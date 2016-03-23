@@ -138,7 +138,7 @@ public class VmListener {
 
         for (String activeVmName : runningVmUuidFromDB) {
             if (!activeVmNameSet.contains(activeVmName)) {
-                executorService.execute(new SetVMCloseTask(activeVmName, vmManageService, vmManage, hostManage));
+                executorService.execute(new SetVMCloseTask(activeVmName, vmManageService, hostManage));
             }
         }
     }
