@@ -37,12 +37,12 @@ public class VmManage {
         return vmManageMapper.getVmByUuid(vmUuid);
     }
 
-    public VmDO getVmByMacAddr(String vmMacAddr) {
-        if (StringUtils.isBlank(vmMacAddr)) {
-            return null;
-        }
-        return vmManageMapper.getVmByMacAddr(vmMacAddr);
-    }
+    //    public VmDO getVmByMacAddr(String vmMacAddr) {
+    //        if (StringUtils.isBlank(vmMacAddr)) {
+    //            return null;
+    //        }
+    //        return vmManageMapper.getVmByMacAddr(vmMacAddr);
+    //    }
 
     public boolean createVm(VmDO vmDO) {
         if (vmDO == null) {

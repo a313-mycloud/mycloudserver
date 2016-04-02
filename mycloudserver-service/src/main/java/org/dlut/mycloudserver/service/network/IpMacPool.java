@@ -2,6 +2,7 @@ package org.dlut.mycloudserver.service.network;
 
 import javax.annotation.Resource;
 
+import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
 import org.dlut.mycloudserver.service.vmmanage.VmManage;
 import org.mycloudserver.common.constants.StoreConstants;
 import org.slf4j.Logger;
@@ -65,7 +66,9 @@ public class IpMacPool {
             }
             macAddr = String.format(MAC_ADDRESS_TEMPLATE, getFormatHexString(newIp[0]), getFormatHexString(newIp[1]),
                     getFormatHexString(newIp[2]), getFormatHexString(newIp[3]));
-            if (this.vmManage.getVmByMacAddr(macAddr) == null)
+            QueryVmCondition queryVmCondition = new QueryVmCondition();
+            queryVmCondition.setVmMacAddress(macAddr);
+            if (this.vmManage.countQuery(queryVmCondition) <= 0)
                 return macAddr;
             randomVal++;
         }

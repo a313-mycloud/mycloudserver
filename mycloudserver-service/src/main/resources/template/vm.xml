@@ -68,7 +68,6 @@
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x07'
 				function='0x0' multifunction='on' />
 		</controller>
-		-->
 
 		<controller type='usb' index='0' model='ich9-ehci1'>
     	  <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x7'/>
@@ -97,11 +96,17 @@
 	    <redirdev bus='usb' type='spicevmc'>
 	      <address type='usb' bus='0' port='6'/>
 	    </redirdev>
+	    
+	    -->
+	    
+	    <controller type='usb' index='0'> 
+	    <alias name='usb0' /> 
+         <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x2'/>  
+       </controller>  
 		
 		<controller type='pci' index='0' model='pci-root' />
 		<controller type='ide' index='0'>
-			<address type='pci' domain='0x0000' bus='0x00' slot='0x01'
-				function='0x1' />
+			<address type='pci' domain='0x0000' bus='0x00' slot='0x01'		function='0x1' />
 		</controller>
 		<controller type='virtio-serial' index='0'>
 			<address type='pci' domain='0x0000' bus='0x00' slot='0x06'

@@ -92,6 +92,9 @@
 			<if test="lastHostId!=null">
 			AND	last_hostid=#{lastHostId}
 			</if>
+			<if test="vmMacAddress!=null">
+			AND	vm_mac_address=#{vmMacAddress}
+			</if>
 	</sql>
 
 	<select id="getVmByUuid" resultMap="RM-VmDO">
@@ -100,11 +103,7 @@
 		FROM mycloud_vm where vm_uuid=#{vmUuid}
 	</select>
 	
-	<select id="getVmByMacAddr" resultMap="RM-VmDO">
-		SELECT
-		<include refid="select-param-column" />
-		FROM mycloud_vm where vm_mac_address=#{vmMacAddress}
-	</select>
+
 
 	<insert id="createVm">
 		INSERT INTO mycloud_vm(vm_name, vm_uuid, vm_vcpu,
