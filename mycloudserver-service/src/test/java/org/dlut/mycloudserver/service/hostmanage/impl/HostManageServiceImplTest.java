@@ -16,7 +16,6 @@ import org.dlut.mycloudserver.client.common.hostmanage.HostDTO;
 import org.dlut.mycloudserver.client.common.hostmanage.QueryHostCondition;
 import org.dlut.mycloudserver.client.service.hostmanage.IHostManageService;
 import org.dlut.mycloudserver.service.BaseTestCase;
-import org.dlut.mycloudserver.service.hostmanage.HostListener;
 import org.junit.Test;
 import org.libvirt.Connect;
 import org.libvirt.Domain;
@@ -37,8 +36,6 @@ public class HostManageServiceImplTest extends BaseTestCase {
     @Resource
     private IHostManageService hostManageService;
 
-    @Resource
-    private HostListener       hostListener;
 
     /**
      * Test method for
@@ -113,10 +110,6 @@ public class HostManageServiceImplTest extends BaseTestCase {
         fail("Not yet implemented");
     }
 
-    @Test
-    public void testHostListen() {
-        hostListener.execute();
-    }
 
     @Test
     public void testEvent() throws LibvirtException, InterruptedException {
