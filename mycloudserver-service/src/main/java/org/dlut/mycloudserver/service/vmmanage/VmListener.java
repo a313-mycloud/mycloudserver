@@ -7,15 +7,13 @@
  */
 package org.dlut.mycloudserver.service.vmmanage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
+import org.dlut.mycloudserver.client.common.ErrorEnum;
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.hostmanage.HostDTO;
@@ -28,7 +26,10 @@ import org.dlut.mycloudserver.client.service.hostmanage.IHostManageService;
 import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
+import org.dlut.mycloudserver.service.connpool.ISingleHostConnPool;
+import org.dlut.mycloudserver.service.connpool.simpleconnpool.SimpleMutilHostConnPool;
 import org.dlut.mycloudserver.service.hostmanage.HostManage;
+import org.dlut.mycloudserver.service.network.NetworkService;
 import org.libvirt.LibvirtException;
 import org.mycloudserver.common.util.CommonUtil;
 import org.slf4j.Logger;
@@ -37,29 +38,22 @@ import org.springframework.stereotype.Service;
 
 /**
  * 类VmListener.java的实现描述：TODO 类实现描述
- * 
+ *
  * @author luojie 2014年12月13日 下午6:29:59
  */
 @Service
 public class VmListener {
 
-    private static Logger      log             = LoggerFactory.getLogger(VmListener.class);
+    private static Logger log = LoggerFactory.getLogger(VmListener.class);
 
     @Resource(name = "hostManageService")
     private IHostManageService hostManageService;
 
     @Resource(name = "vmManageService")
-    private IVmManageService   vmManageService;
+    private IVmManageService vmManageService;
 
-    @Resource(name = "vmManage")
-    private VmManage           vmManage;
-
-    @Resource(name = "hostManage")
-    private HostManage         hostManage;
     @Resource(name = "mutilHostConnPool")
     private IMutilHostConnPool mutilHostConnPool;
-
-    private ExecutorService    executorService = Executors.newCachedThreadPool();
 
     /**
      * 每隔一段时间检测illegal running虚拟机
@@ -80,7 +74,7 @@ public class VmListener {
 
     /**
      * 检测一台物理机中的虚拟机
-     * 
+     *
      * @param hostId
      * @throws LibvirtException
      */
@@ -108,10 +102,18 @@ public class VmListener {
 
         for (String activeVmName : activeVmNameSet) {
             if (!runningVmUuidFromDB.contains(activeVmName)) {
-                executorService.execute(new KillVMTask(activeVmName, vmManageService, hostId));
+                try{
+                    if(conn.destroyVm(activeVmName))
+                        log.info("shutdown  the vm --" + activeVmName + " running on " + hostId);
+                }catch(Exception e){}
+                MyCloudResult<VmDTO> result = this.vmManageService.getVmByUuid(activeVmName);
+                if (result.isSuccess()) {
+                    VmDTO vmDTO=result.getModel();
+                    vmDTO.setVmStatus(VmStatusEnum.CLOSED);
+                    this.vmManageService.updateVm(vmDTO);
+                }
             }
         }
-
     }
 
     private void closeVmOfOneHost(int hostId) {
@@ -138,14 +140,44 @@ public class VmListener {
 
         for (String activeVmName : runningVmUuidFromDB) {
             if (!activeVmNameSet.contains(activeVmName)) {
-                executorService.execute(new SetVMCloseTask(activeVmName, vmManageService, hostManage));
+                MyCloudResult<VmDTO> result = vmManageService.getVmByUuid(activeVmName);
+                if (!result.isSuccess()) {
+                    log.error("获取虚拟机" + activeVmName + "失败，原因：" + result.getMsgInfo());
+                } else {
+                    VmDTO vmDTO = result.getModel();
+
+                    log.info("检测到虚拟机" + vmDTO.getVmUuid() + "--" + vmDTO.getVmName() + "关机");
+                    //从网关上删除虚拟机地址映射
+                    String ips = vmDTO.getShowPort(); //外网IP;内网IP
+                    if (ips.split(";").length != 2)
+                        log.error(ErrorEnum.VM_SHOWPORT_ILLEGAL.getErrDesc());
+                    else {
+                        String pub_port = ips.split(";")[0].split(":")[1];
+                        String pri_ipport = ips.split(";")[1];
+                        String result1 = NetworkService.addOrMinusMapping("-1", pri_ipport, pub_port);
+                        if ("0".equals(result1))
+                            log.error(ErrorEnum.VM_ADDRESSMAPPING_FAIL.getErrDesc());
+                        log.info("cancle gateway mapping for " + pub_port + "--" + pri_ipport);
+                    }
+
+                    vmDTO.setVmStatus(VmStatusEnum.CLOSED);
+                    vmDTO.setLastHostId(vmDTO.getHostId());
+                    vmDTO.setHostId(0);
+                    vmDTO.setShowPort(0 + "");
+                    vmDTO.setImageUuid(0 + "");
+                    MyCloudResult<Boolean> updateResult = vmManageService.updateVm(vmDTO);
+                    if (!updateResult.isSuccess()) {
+                        log.error("更新虚拟机" + vmDTO + "失败，原因：" + updateResult.getMsgInfo());
+                    }
+
+                }
             }
         }
     }
 
     /**
      * 根据数据库的数据获取某个指定的物理机的运行中的虚拟机uuid
-     * 
+     *
      * @param hostId
      * @return
      */
@@ -169,7 +201,7 @@ public class VmListener {
 
     /**
      * 过滤那些不符合uuid的名称的虚拟机名称
-     * 
+     *
      * @param vmNameList
      * @return
      */
@@ -184,15 +216,15 @@ public class VmListener {
     }
 
     private List<HostDTO> getOnlineHostList() {
-        QueryHostCondition queryHostCondition = new QueryHostCondition();
-        queryHostCondition.setHostStatusEnum(HostStatusEnum.RUNNING);
-        queryHostCondition.setOffset(0);
-        queryHostCondition.setLimit(1000);
-        MyCloudResult<Pagination<HostDTO>> result = hostManageService.query(queryHostCondition);
-        if (!result.isSuccess()) {
-            log.error("在数据库中获取在线的物理机列表失败，原因：" + result.getMsgInfo());
-            return new ArrayList<HostDTO>();
+        Set<Integer> hostIds = SimpleMutilHostConnPool.getRemoteMutilHostConnPoolMap().keySet();
+        List<HostDTO> hostDTOs = new ArrayList<HostDTO>();
+        for (int hostId : hostIds) {
+            MyCloudResult<HostDTO> result = hostManageService.getHostById(hostId);
+            if (!result.isSuccess()) {
+                log.error("在数据库中获取物理机失败，原因：" + result.getMsgInfo());
+            } else
+                hostDTOs.add(result.getModel());
         }
-        return result.getModel().getList();
+        return hostDTOs;
     }
 }
