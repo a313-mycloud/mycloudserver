@@ -28,7 +28,7 @@ public class HttpRequest {
         URL url = new URL(str_url);
         URLConnection conn = url.openConnection();
         conn.setDoOutput(true);
-
+        conn.setConnectTimeout(5000);
         JSONObject json = new JSONObject();
         Iterator<Map.Entry<String, String>> iter = params.entrySet().iterator();
         while (iter.hasNext()) {

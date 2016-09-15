@@ -8,33 +8,14 @@
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="hostListenerTrigger" />
 				<ref bean="simpleConnPoolListenerTrigger"/>
 				<ref bean="vmListenerTriggerOne"/>
 				<ref bean="vmListenerTriggerTwo"/>
-	<!--			<ref bean="performanceMonitorTrigger"/>  -->
 			</list>
 		</property>
 	</bean>
 
-	<bean id="hostListenerTrigger"
-		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
-		<property name="jobDetail" ref="hostListenerJobDetail" />
-		<property name="startDelay" value="5000" />
-		<property name="repeatInterval" value="5000" />
-	</bean>
 
-	<!-- 监听物理机的运行状态 -->
-	<bean id="hostListenerJobDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject">
-			<ref bean="hostListener" />
-		</property>
-		<property name="targetMethod">
-			<value>execute</value>
-		</property>
-	</bean>
-	
 	<!-- 连接池的更新 -->
 	<bean id="simpleConnPoolListenerTrigger"
 		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
