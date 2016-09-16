@@ -10,6 +10,7 @@ package org.dlut.mycloudserver.client.service.vmmanage;
 import org.dlut.mycloudserver.client.common.MyCloudResult;
 import org.dlut.mycloudserver.client.common.Pagination;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
+import org.dlut.mycloudserver.client.common.vmmanage.MetaData;
 import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
 import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
 
@@ -167,11 +168,13 @@ public interface IVmManageService {
     /**
      * 用于判断ip为ipAddress的主机上的imageUuid镜像是否可以被删除
      * 
-     * @param ip
+     * @param ipAddress
      * @param imageUuid
      * @return
      */
     public MyCloudResult<Boolean> isCanDelete(String ipAddress, String imageUuid);
 
     public MyCloudResult<Boolean> killVmOnHost(String vmUuid, int hostId);
+
+    public MyCloudResult<MetaData> getMetadataByIp(String vmLanIp);
 }

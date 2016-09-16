@@ -85,4 +85,13 @@ public interface VmManageMapper {
      * @return
      */
     List<VmDO> query(QueryVmCondition queryVmCondition);
+
+    /**
+     * 根据lanIp获取虚拟机信息
+     *
+     * @param vmLanIp
+     * @return
+     */
+    VmDO getVmByLanIp(String vmLanIp);
+
 }

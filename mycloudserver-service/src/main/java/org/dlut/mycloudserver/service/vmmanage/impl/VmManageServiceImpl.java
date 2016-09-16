@@ -20,10 +20,7 @@ import org.dlut.mycloudserver.client.common.storemanage.DiskDTO;
 import org.dlut.mycloudserver.client.common.storemanage.QueryDiskCondition;
 import org.dlut.mycloudserver.client.common.storemanage.StoreFormat;
 import org.dlut.mycloudserver.client.common.usermanage.UserDTO;
-import org.dlut.mycloudserver.client.common.vmmanage.QueryVmCondition;
-import org.dlut.mycloudserver.client.common.vmmanage.SystemTypeEnum;
-import org.dlut.mycloudserver.client.common.vmmanage.VmDTO;
-import org.dlut.mycloudserver.client.common.vmmanage.VmStatusEnum;
+import org.dlut.mycloudserver.client.common.vmmanage.*;
 import org.dlut.mycloudserver.client.service.classmanage.IClassManageService;
 import org.dlut.mycloudserver.client.service.storemanage.IDiskManageService;
 import org.dlut.mycloudserver.client.service.storemanage.IImageManageService;
@@ -1136,5 +1133,19 @@ public class VmManageServiceImpl implements IVmManageService {
         }
         return MyCloudResult.successResult(vmUuid);
     }
+
+    public MyCloudResult<MetaData> getMetadataByIp(String vmLanIp){
+        VmDO vmDO=vmManage.getVmByLanIp(vmLanIp);
+        VmDTO vmDTO = VmConvent.conventToVmDTO(vmDO);
+        if (vmDTO == null) {
+            return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
+        }
+        MetaData metaData=new MetaData();
+        metaData.setHostName("ssdut"+(Integer.parseInt(vmLanIp.split(".")[3])-100));
+        metaData.setHostUserName(vmDTO.getUserAccount());
+        metaData.setHostPassword(vmDTO.getShowPassword());
+        return MyCloudResult.successResult(metaData);
+    }
+
 
 }
