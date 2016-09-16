@@ -27,6 +27,7 @@ import org.dlut.mycloudserver.client.service.storemanage.IImageManageService;
 import org.dlut.mycloudserver.client.service.usermanage.IUserManageService;
 import org.dlut.mycloudserver.client.service.vmmanage.IVmManageService;
 import org.dlut.mycloudserver.dal.dataobject.HostDO;
+import org.dlut.mycloudserver.dal.dataobject.UserDO;
 import org.dlut.mycloudserver.dal.dataobject.VmDO;
 import org.dlut.mycloudserver.service.connpool.Connection;
 import org.dlut.mycloudserver.service.connpool.IMutilHostConnPool;
@@ -35,6 +36,7 @@ import org.dlut.mycloudserver.service.network.IpMacPool;
 import org.dlut.mycloudserver.service.network.NetworkService;
 import org.dlut.mycloudserver.service.schedule.IScheduler;
 import org.dlut.mycloudserver.service.storemanage.DiskVO;
+import org.dlut.mycloudserver.service.usermanage.UserManage;
 import org.dlut.mycloudserver.service.vmmanage.VmManage;
 import org.dlut.mycloudserver.service.vmmanage.convent.VmConvent;
 import org.dom4j.Document;
@@ -55,22 +57,25 @@ import org.springframework.stereotype.Service;
 
 /**
  * 类VmManageServiceImpl.java的实现描述：
- * 
+ *
  * @author luojie 2014年12月1日 下午1:01:27
  */
 @Service("vmManageService")
 public class VmManageServiceImpl implements IVmManageService {
 
-    private static Logger       log = LoggerFactory.getLogger(VmManageServiceImpl.class);
+    private static Logger log = LoggerFactory.getLogger(VmManageServiceImpl.class);
 
     @Resource(name = "vmManage")
-    private VmManage            vmManage;
+    private VmManage vmManage;
+
+    @Resource(name = "userManage")
+    private UserManage userManage;
 
     @Resource(name = "hostManage")
-    private HostManage          hostManage;
+    private HostManage hostManage;
 
     @Resource(name = "userManageService")
-    private IUserManageService  userManageService;
+    private IUserManageService userManageService;
 
     @Resource(name = "imageManageService")
     private IImageManageService imageManageService;
@@ -79,16 +84,16 @@ public class VmManageServiceImpl implements IVmManageService {
     private IClassManageService classManageService;
 
     @Resource(name = "mutilHostConnPool")
-    private IMutilHostConnPool  mutilHostConnPool;
+    private IMutilHostConnPool mutilHostConnPool;
 
     @Resource(name = "scheduler")
-    private IScheduler          scheduler;
+    private IScheduler scheduler;
 
     @Resource(name = "diskManageService")
-    private IDiskManageService  diskManageService;
+    private IDiskManageService diskManageService;
 
     @Resource(name = "ipMacPool")
-    private IpMacPool           ipMacPool;
+    private IpMacPool ipMacPool;
 
     @Override
     public MyCloudResult<VmDTO> getVmByUuid(String vmUuid) {
@@ -153,7 +158,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 判断镜像是否和虚拟机绑定
-     * 
+     *
      * @param imageUuid
      * @return
      */
@@ -169,7 +174,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 获取需要挂载到vmUuid上的所有硬盘列表
-     * 
+     *
      * @param vmUuid
      * @return
      */
@@ -388,7 +393,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 更新虚拟机
-     * 
+     *
      * @param vmDTO
      * @return
      */
@@ -465,7 +470,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 利用libvirt克隆新的镜像，返回新镜像的uuid
-     * 
+     *
      * @param srcImagePath
      * @param imageTotalSize
      * @return
@@ -550,7 +555,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 删除被templateVmUuid克隆出来的所有虚拟机
-     * 
+     *
      * @param templateVmUuid
      * @return
      */
@@ -575,7 +580,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 删除虚拟机，如果该虚拟机为模板虚拟机，则会将从该模板虚拟机克隆出来的虚拟机全部删除
-     * 
+     *
      * @param vmUuid
      * @return
      */
@@ -621,7 +626,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 根据domainDescXml获取未使用的硬盘设备名称
-     * 
+     *
      * @param domainDescXml
      * @return
      */
@@ -656,7 +661,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 根据domainDescXml获取硬盘对应的设备名
-     * 
+     *
      * @param domainDescXml
      * @param diskDTO
      * @return
@@ -719,7 +724,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 利用libvirt将硬盘挂载到虚拟机上
-     * 
+     *
      * @param vmDTO
      * @param diskDTO
      * @return
@@ -761,7 +766,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
     /**
      * 利用libvirt将硬盘从虚拟机中卸载
-     * 
+     *
      * @param vmDTO
      * @param diskDTO
      * @return
@@ -1134,18 +1139,24 @@ public class VmManageServiceImpl implements IVmManageService {
         return MyCloudResult.successResult(vmUuid);
     }
 
-    public MyCloudResult<MetaData> getMetadataByIp(String vmLanIp){
-        VmDO vmDO=vmManage.getVmByLanIp(vmLanIp);
+    public MyCloudResult<MetaData> getMetadataByIp(String vmLanIp) {
+        VmDO vmDO = vmManage.getVmByLanIp(vmLanIp);
         VmDTO vmDTO = VmConvent.conventToVmDTO(vmDO);
         if (vmDTO == null) {
             return MyCloudResult.failedResult(ErrorEnum.VM_NOT_EXIST);
         }
-        MetaData metaData=new MetaData();
-        metaData.setHostName("ssdut"+(Integer.parseInt(vmLanIp.split(".")[3])-100));
+
+        MetaData metaData = new MetaData();
+        metaData.setHostName("ssdut");
+        String[] strs = vmLanIp.split(".");
+        if (strs.length >= 4)
+            metaData.setHostName("ssdut" + (Integer.parseInt(strs[3]) - 100));
         metaData.setHostUserName(vmDTO.getUserAccount());
         metaData.setHostPassword(vmDTO.getShowPassword());
+        //虚拟机首选密码为user表中的密码，如果user表中该账户不存在，则密码为vm表中虚拟机密码
+        UserDO userDO = userManage.getUserByAccount(vmDTO.getUserAccount());
+        if (userDO != null)
+            metaData.setHostPassword(userDO.getPassword());
         return MyCloudResult.successResult(metaData);
     }
-
-
 }

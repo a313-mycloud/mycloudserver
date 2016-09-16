@@ -232,7 +232,7 @@
 	<select id="getVmByLanIp" resultMap="RM-VmDO">
 		SELECT
 		<include refid="select-param-column" />
-		FROM mycloud_vm where show_port like CONCAT('%','#{vmLanIp}','%')
+		FROM mycloud_vm where show_port like CONCAT(CONCAT('%',#{vmLanIp}),'%')
 	</select>
 
 </mapper>
