@@ -1148,7 +1148,7 @@ public class VmManageServiceImpl implements IVmManageService {
 
         MetaData metaData = new MetaData();
         metaData.setHostName("ssdut");
-        String[] strs = vmLanIp.split(".");
+        String[] strs = vmLanIp.split("\\.");
         if (strs.length >= 4)
             metaData.setHostName("ssdut" + (Integer.parseInt(strs[3]) - 100));
         metaData.setHostUserName(vmDTO.getUserAccount());
