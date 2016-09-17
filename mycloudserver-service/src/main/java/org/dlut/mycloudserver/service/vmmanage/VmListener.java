@@ -59,17 +59,21 @@ public class VmListener {
      * 每隔一段时间检测illegal running虚拟机
      */
     public void executeKill() {
-        List<HostDTO> hostList = getOnlineHostList();
-        for (HostDTO host : hostList) {
-            killIllegalVmOfOneHost(host.getHostId());
-        }
+        try {
+            List<HostDTO> hostList = getOnlineHostList();
+            for (HostDTO host : hostList) {
+                killIllegalVmOfOneHost(host.getHostId());
+            }
+        }catch(java.lang.NullPointerException e){}
     }
 
     public void executeClose() {
-        List<HostDTO> hostList = getOnlineHostList();
-        for (HostDTO host : hostList) {
-            closeVmOfOneHost(host.getHostId());
-        }
+        try {
+            List<HostDTO> hostList = getOnlineHostList();
+            for (HostDTO host : hostList) {
+                closeVmOfOneHost(host.getHostId());
+            }
+        }catch(java.lang.NullPointerException e){}
     }
 
     /**

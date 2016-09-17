@@ -37,8 +37,8 @@
 	<bean id="vmListenerTriggerOne"
 		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<property name="jobDetail" ref="vmListenerJobDetailOne" />
-		<property name="startDelay" value="5000" />
-		<property name="repeatInterval" value="180000" />
+		<property name="startDelay" value="2000" />
+		<property name="repeatInterval" value="30000" />
 	</bean>
 
 	<!-- 监听虚拟机运行状态 -->
@@ -55,7 +55,7 @@
 	<bean id="vmListenerTriggerTwo"
 		class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<property name="jobDetail" ref="vmListenerJobDetailTwo" />
-		<property name="startDelay" value="5000" />
+		<property name="startDelay" value="2000" />
 		<property name="repeatInterval" value="5000" />
 	</bean>
 
