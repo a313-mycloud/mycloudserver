@@ -103,6 +103,7 @@ public class SimpleMutilHostConnPool implements IMutilHostConnPool {
         for (Map.Entry<Integer, Integer> lossCount : lossCounts.entrySet()) {
             if (lossCount.getValue() > 2 && remoteMutilHostConnPoolMap.containsKey(lossCount.getKey())) {
                 remoteMutilHostConnPoolMap.remove(lossCount.getKey());
+                System.out.println("remove host --"+hostList.get(lossCount.getKey()).getHostIp());
             } else if (lossCount.getValue()<=2 && !remoteMutilHostConnPoolMap.containsKey(lossCount.getKey())) {
                 String hostConnUrl = "qemu+tcp://" + hostList.get(lossCount.getKey()).getHostIp() + "/system";
                 ISingleHostConnPool singleHostConnPool = new SimpleSingleHostConnPool(hostConnUrl, initConnNum, maxConnNum);
