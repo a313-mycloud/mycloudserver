@@ -3,4 +3,5 @@
 *.log
 *.iml
 *.md
-
+target/**
+/.gitignore
